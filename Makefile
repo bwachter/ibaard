@@ -67,7 +67,7 @@ SRCDIR=src
 PREFIX?=/usr
 .PHONY: clean install tar rename upload deb maintainer-deb
 
-ibaard.a: $(OBJDIR)/cat.o $(OBJDIR)/fs.o $(OBJDIR)/aardlog.o
+ibaard.a: $(OBJDIR)/cat.o $(OBJDIR)/fs.o $(OBJDIR)/aardlog.o $(OBJDIR)/strip.o
 	$(Q)echo "AR $@"
 	$(Q)$(CROSS)$(AR) $(ARFLAGS) $@ $^
 
