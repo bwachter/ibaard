@@ -25,10 +25,7 @@ int loglevel(int loglevel){
 	return current_loglevel; 
 }
 
-int logmsg(int loglevel, int facility, char *msg, ...) {
-#ifdef __GNUC__
-	(void) facility;
-#endif
+int logmsg(int loglevel, char *facility, char *msg, ...) {
 	va_list ap;
 	char *tmp;
 	int die=0;
@@ -37,49 +34,28 @@ int logmsg(int loglevel, int facility, char *msg, ...) {
 
 	switch(loglevel){
 	case L_DEADLY:
-		__write1("[DEADLY]");
+		__write1("[DEADLY][");
 		die=1;
 		break;
 	case L_ERROR:
-		__write1("[ERROR]");
+		__write1("[ERROR][");
 		break;
 	case L_WARNING:
-		__write1("[WARNING]");
+		__write1("[WARNING][");
 		break;
 	case L_INFO:
-		__write1("[INFO]");
+		__write1("[INFO][");
 		break;
 	case L_DEBUG:
-		__write1("[DEBUG]");
+		__write1("[DEBUG][");
 		break;
 	default:
-		__write1("[UNKNOWN]");
+		__write1("[UNKNOWN][");
 		break;
 	}
 
-	switch(facility){
-	case F_GENERAL:
-		__write1("[GENERAL] ");
-		break;
-	case F_NET:
-		__write1("[NET] ");
-		break;
-	case F_SSL:
-		__write1("[SSL] ");
-		break;
-	case F_MAILDIR:
-		__write1("[MAILDIR] ");
-		break;
-	case F_AUTHINFO:
-		__write1("[AUTHINFO] ");
-		break;
-	case F_ADDRLIST:
-		__write1("[ADDRLIST] ");
-		break;
-	default:
-		__write1("[UNKNOWN] ");
-		break;
-	}
+	__write1(facility);
+	__write1("]");
 
 	logwrite(msg);
 	va_start(ap, msg);

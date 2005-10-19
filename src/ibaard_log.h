@@ -1,15 +1,15 @@
 #ifndef _IBAARD_LOG_H
 #define _IBAARD_LOG_H
 
-enum facilities {
-	F_GENERAL,
-	F_NET,
-	F_SSL,
-	F_FS,
-	F_MAILDIR,
-	F_AUTHINFO,
-	F_ADDRLIST,
-};
+/*
+F_GENERAL,
+F_NET,
+F_SSL,
+F_FS,
+F_MAILDIR,
+F_AUTHINFO,
+F_ADDRLIST,
+*/
 
 enum loglevel {
 	L_UNSPEC,
@@ -20,7 +20,7 @@ enum loglevel {
 	L_DEBUG,
 };
 
-int logmsg(int loglevel, int facility, char *msg, ...);
+int logmsg(int loglevel, char *facility, char *msg, ...);
 int loglevel(int loglevel);
 
 #endif
