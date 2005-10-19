@@ -18,6 +18,7 @@
 #endif
 
 #include "ibaard_log.h"
+#include "ibaard_types.h"
 
 #define MAXNETBUF 1024
 #define AM_SSL_ALLOWPLAIN 1

@@ -1,5 +1,7 @@
-#include <strings.h>
 #include <string.h>
+#ifndef __WIN32__
+#include <strings.h>
+#endif
 
 /* strip \n at end of buf */
 char *stripn(char *buf) {
