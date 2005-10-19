@@ -1,0 +1,43 @@
+# set up some basic programs
+CC=bcc32
+LD=bcc32
+RM=del /F
+
+LDFLAGS=-tWC -w- -k- -q -O2 -lq -lc -lx -lGpd -lGn -lGl -lw- 
+CFLAGS=-w- -O2 -q 
+LIBS=-Lsrc ws2_32.lib
+SSL=1
+!ifdef SSL
+#SSLLIBS=ssleay32.lib libeay32.lib
+SSLCFLAGS=-DHAVE_SSL
+!endif
+
+EXE=.exe
+Q=@
+
+# you should not need to touch anything below this line
+
+OBJDIR=src
+SRCDIR=src
+.PHONY: clean
+ 
+src\ibaard.lib: $(OBJDIR)/cat.obj $(OBJDIR)/cati.obj $(OBJDIR)/aardlog.obj $(OBJDIR)/strip.obj \
+	$(OBJDIR)/split.obj \
+	$(OBJDIR)/fs_td.obj $(OBJDIR)/fs_tf.obj $(OBJDIR)/fs_md.obj $(OBJDIR)/fs_mf.obj $(OBJDIR)/fs_filewrite.obj \
+	$(OBJDIR)/fs_openreadclose.obj \
+	$(OBJDIR)/netaddrinfo.obj $(OBJDIR)/netconnect.obj $(OBJDIR)/netlogportservice.obj \
+	$(OBJDIR)/netnameinfo.obj $(OBJDIR)/netread.obj $(OBJDIR)/netreadline.obj $(OBJDIR)/netwriteline.obj\
+	$(OBJDIR)/netsocket.obj $(OBJDIR)/netsslread.obj $(OBJDIR)/netsslwrite.obj $(OBJDIR)/netsslstart.obj
+	$(Q)echo "TLIB $@"
+	$(Q)cd $(@D)
+	$(Q)tlib $(@F) /a $(**F)
+	$(Q)cd ..
+
+.c.obj:
+	$(Q)echo "CC $@"
+	$(Q)$(CC) $(CFLAGS) $(SSLCFLAGS) -o$@ -c $<
+
+clean:
+	$(Q)echo "cleaning up"
+	$(Q)$(RM) $(ALL) $(OBJDIR)\*.obj 
+
