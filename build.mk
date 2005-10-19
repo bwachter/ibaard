@@ -1,7 +1,7 @@
 
 .PHONY: clean install tar rename upload deb maintainer-deb
 
-all: ibaard.a
+all: libibaard.a
 
 $(SRCDIR)/version.h: 
 	$(Q)echo "-> $@"

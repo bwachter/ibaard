@@ -1,4 +1,5 @@
 #include "ibaard_network.h"
+#include "ibaard_log.h"
 #define F_NET "net"
 
 int netreadline(int sd, char *buf){

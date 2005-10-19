@@ -42,5 +42,6 @@ static inline int __write2(const char *s)
 #endif
 
 char **split(char *buf,int c,int *len,int plus,int ofs);
+void kirahvi();
 
 #endif

@@ -1,4 +1,5 @@
 #include "ibaard_network.h"
+#include "ibaard_log.h"
 #define F_NET "net"
 
 // opens a network connection and returns a socket descriptor

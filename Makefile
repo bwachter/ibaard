@@ -65,8 +65,8 @@ CFLAGS+=$(DEV_CFLAGS)
 	$(Q)$(COMMENT) -$(CROSS)$(STRIP) $@
 .endif
 
-ibaard.a: $(OBJDIR)/cat.o $(OBJDIR)/cati.o $(OBJDIR)/aardlog.o $(OBJDIR)/strip.o \
-	$(OBJDIR)/split.o \
+libibaard.a: $(OBJDIR)/cat.o $(OBJDIR)/cati.o $(OBJDIR)/aardlog.o $(OBJDIR)/strip.o \
+	$(OBJDIR)/split.o $(OBJDIR)/kirahvi.o $(OBJDIR)/authinfo.o \
 	$(OBJDIR)/fs_td.o $(OBJDIR)/fs_tf.o $(OBJDIR)/fs_md.o $(OBJDIR)/fs_mf.o $(OBJDIR)/fs_filewrite.o \
 	$(OBJDIR)/fs_openreadclose.o \
 	$(OBJDIR)/netaddrinfo.o $(OBJDIR)/netconnect.o $(OBJDIR)/netlogportservice.o \

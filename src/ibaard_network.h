@@ -17,7 +17,6 @@
 #include <netdb.h>
 #endif
 
-#include "ibaard_log.h"
 #include "ibaard_types.h"
 
 #define MAXNETBUF 1024
