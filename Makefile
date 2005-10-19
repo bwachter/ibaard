@@ -1,22 +1,12 @@
 # set up some basic programs
-#DIET=`which diet`
-CROSS=
-CC=gcc
-LD=gcc
-AR=ar
-RM=/bin/rm -f
-INSTALL=install
-DESTDIR=
-BINDIR=/usr/bin
-MANDIR=/usr/share/man
-STRIP=
+include system.mk
 
 # set up some basic flags
 VERSIONNR=$(shell head -1 CHANGES|sed 's/://')
 VERSION=aardmail-$(shell head -1 CHANGES|sed 's/://')
 CURNAME=$(notdir $(shell pwd))
 
-LIBS=-L. -laardmail
+#LIBS=-L. -laardmail
 
 ifdef DEBUG
 CFLAGS=-g -Wall -W -pipe -Os
@@ -52,6 +42,21 @@ ifdef BROKEN
 CFLAGS+=-D_BROKEN_IO
 endif
 
+ifdef MATRIXSSL
+LIBS+=$(MATRIX_LIBS)
+CFLAGS+=$(MATRIX_CFLAGS)
+endif
+
+ifdef GNUTLS
+LIBS+=$(GNUTLS_LIBS)
+CFLAGS+=$(GNUTLS_CFLAGS)
+endif
+
+ifdef SSL
+LIBS+=$(SSL_LIBS)
+CFLAGS+=$(SSL_CFLAGS)
+endif
+
 ARFLAGS=cru
 Q=@
 
@@ -67,8 +72,13 @@ SRCDIR=src
 PREFIX?=/usr
 .PHONY: clean install tar rename upload deb maintainer-deb
 
-ibaard.a: $(OBJDIR)/cat.o $(OBJDIR)/fs.o $(OBJDIR)/aardlog.o $(OBJDIR)/strip.o \
-	$(OBJDIR)/split.o
+ibaard.a: $(OBJDIR)/cat.o $(OBJDIR)/cati.o $(OBJDIR)/aardlog.o $(OBJDIR)/strip.o \
+	$(OBJDIR)/split.o \
+	$(OBJDIR)/fs_td.o $(OBJDIR)/fs_tf.o $(OBJDIR)/fs_md.o $(OBJDIR)/fs_mf.o $(OBJDIR)/fs_filewrite.o \
+	$(OBJDIR)/fs_openreadclose.o \
+	$(OBJDIR)/netaddrinfo.o $(OBJDIR)/netconnect.o $(OBJDIR)/netlogportservice.o \
+	$(OBJDIR)/netnameinfo.o $(OBJDIR)/netread.o $(OBJDIR)/netreadline.o $(OBJDIR)/netwriteline.o\
+	$(OBJDIR)/netsocket.o $(OBJDIR)/netsslread.o $(OBJDIR)/netsslwrite.o $(OBJDIR)/netsslstart.o
 	$(Q)echo "AR $@"
 	$(Q)$(CROSS)$(AR) $(ARFLAGS) $@ $^
 
