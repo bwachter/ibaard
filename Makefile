@@ -68,10 +68,11 @@ CFLAGS+=$(DEV_CFLAGS)
 libibaard.a: $(OBJDIR)/cat.o $(OBJDIR)/cati.o $(OBJDIR)/aardlog.o $(OBJDIR)/strip.o \
 	$(OBJDIR)/split.o $(OBJDIR)/kirahvi.o $(OBJDIR)/authinfo.o \
 	$(OBJDIR)/fs_td.o $(OBJDIR)/fs_tf.o $(OBJDIR)/fs_md.o $(OBJDIR)/fs_mf.o $(OBJDIR)/fs_filewrite.o \
-	$(OBJDIR)/fs_openreadclose.o \
+	$(OBJDIR)/fs_openreadclose.o $(OBJDIR)/fs_xgetcwd.o \
 	$(OBJDIR)/netaddrinfo.o $(OBJDIR)/netconnect.o $(OBJDIR)/netlogportservice.o \
 	$(OBJDIR)/netnameinfo.o $(OBJDIR)/netread.o $(OBJDIR)/netreadline.o $(OBJDIR)/netwriteline.o\
-	$(OBJDIR)/netsocket.o $(OBJDIR)/netsslread.o $(OBJDIR)/netsslwrite.o $(OBJDIR)/netsslstart.o
+	$(OBJDIR)/netsocket.o $(OBJDIR)/netsslread.o $(OBJDIR)/netsslwrite.o $(OBJDIR)/netsslstart.o \
+	$(OBJDIR)/msg.o $(OBJDIR)/emsg.o $(OBJDIR)/dmsg.o $(OBJDIR)/shell.o
 	$(Q)echo "AR $@"
 	$(Q)$(CROSS)$(AR) $(ARFLAGS) $@ $>
 

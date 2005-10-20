@@ -48,8 +48,8 @@ typedef struct {
 	sslBuf_t outsock;
 	int outBufferCount;
 	int fd;
-} sslConn_t;
-sslConn_t *ssl;
+} SSL; // was: sslConn_t
+SSL *ssl;
 #endif
 
 int netaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);

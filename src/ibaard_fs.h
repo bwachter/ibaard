@@ -15,5 +15,6 @@ int filewrite(FILE *fd, char *buf, int len);
 #else
 int filewrite(int fd, char *buf, int len);
 #endif
+char *xgetcwd (char *cwd);
 
 #endif
