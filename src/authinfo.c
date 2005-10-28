@@ -11,8 +11,7 @@
 #include "ibaard_log.h"
 #include "ibaard_cat.h"
 #include "ibaard_fs.h"
-
-#define F_AUTHINFO "AUTHINFO"
+#include "logtypes.h"
 
 static int authinfo_append(authinfo *authinfo_add);
 

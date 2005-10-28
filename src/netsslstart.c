@@ -1,5 +1,6 @@
 #include "ibaard_network.h"
-#define F_SSL "ssl"
+#include "ibaard_log.h"
+#include "logtypes.h"
 
 #if (defined HAVE_SSL) && (!defined HAVE_MATRIXSSL)
 

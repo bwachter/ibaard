@@ -1,9 +1,7 @@
 #include "ibaard_network.h"
 
 #if (defined(__WIN32__)) || (defined(_BROKEN_IO))
-static struct addrinfo *
-dup_addrinfo (struct addrinfo *info, void *addr, size_t addrlen)
-{
+static struct addrinfo * dup_addrinfo (struct addrinfo *info, void *addr, size_t addrlen) {
   struct addrinfo *ret;
 
   ret = malloc (sizeof (struct addrinfo));
@@ -23,9 +21,7 @@ dup_addrinfo (struct addrinfo *info, void *addr, size_t addrlen)
 #endif
 
 #if (defined __WIN32__) || (defined _BROKEN_IO)
-void
-netfreeaddrinfo (struct addrinfo *ai)
-{
+void netfreeaddrinfo (struct addrinfo *ai) {
   struct addrinfo *next;
 
   while (ai != NULL)

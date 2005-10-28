@@ -55,7 +55,7 @@ int logmsg(int loglevel, char *facility, char *msg, ...) {
 	}
 
 	__write1(facility);
-	__write1("]");
+	__write1("] ");
 
 	logwrite(msg);
 	va_start(ap, msg);

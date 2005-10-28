@@ -1,13 +1,13 @@
 #DIET=`which diet`
 CROSS=
-CC=gcc
-LD=gcc
-AR=ar
-RM=/bin/rm -f
-INSTALL=install
+CC?=gcc
+LD?=gcc
+AR?=ar
+RM?=/bin/rm -f
+INSTALL?=install
 DESTDIR=
-BINDIR=/usr/bin
-MANDIR=/usr/share/man
+BINDIR?=/usr/bin
+MANDIR?=/usr/share/man
 STRIP=
 
 OBJDIR=src
@@ -15,7 +15,7 @@ SRCDIR=src
 PREFIX?=/usr
 
 #set up some flags for later use
-Q=@
+Q?=@
 ARFLAGS=cru
 #-pipe crashes on IRIX
 CFLAGS=-Wall -W -Os

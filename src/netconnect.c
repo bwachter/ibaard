@@ -1,6 +1,6 @@
 #include "ibaard_network.h"
 #include "ibaard_log.h"
-#define F_NET "net"
+#include "logtypes.h"
 
 // opens a network connection and returns a socket descriptor
 int netconnect(char *hostname, char *servicename){
