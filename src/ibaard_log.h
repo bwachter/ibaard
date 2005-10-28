@@ -17,6 +17,7 @@ enum loglevel {
 	L_ERROR,
 	L_WARNING,
 	L_INFO,
+	L_VERBOSE,
 	L_DEBUG,
 };
 

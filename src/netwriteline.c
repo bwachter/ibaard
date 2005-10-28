@@ -5,7 +5,7 @@
 int netwriteline(int sd, char *buf){
 	int i;
 
-	logmsg(L_INFO, F_NET, "> ", buf, NULL);
+	logmsg(L_VERBOSE, F_NET, "> ", buf, NULL);
 
 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
 	if (am_sslconf & AM_SSL_USETLS){

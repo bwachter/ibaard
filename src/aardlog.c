@@ -46,6 +46,9 @@ int logmsg(int loglevel, char *facility, char *msg, ...) {
 	case L_INFO:
 		__write1("[INFO][");
 		break;
+	case L_VERBOSE:
+		__write1("[VERBOSE][");
+		break;
 	case L_DEBUG:
 		__write1("[DEBUG][");
 		break;
