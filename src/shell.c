@@ -7,11 +7,13 @@
 
 #ifdef __GLIBC__
 //#include <asm/fcntl.h>
-#include <stdio.h>
 #define MNT_DETACH      0x00000002
+#include <stdio.h>
 #endif
 
 #ifndef __WIN32__
+// we need param.h to compile on *BSD
+#include <sys/param.h>
 #include <sys/mount.h>
 #endif
 
@@ -177,7 +179,7 @@ void ash_ni(int argc, char **argv){
   emsg(argv[0], ": not yet implemented\n", 0);
 }
 
-#ifndef __WIN32__
+#ifdef __linux__
 void ash_poweroff(int argc, char **argv){
 #ifdef __GNUC__
   (void) argc;
@@ -196,7 +198,7 @@ void ash_pwd(int argc, char **argv){
   msg(xgetcwd(buf),"\n",0);
 }
 
-#ifndef __WIN32__
+#ifdef __linux__
 void ash_reset(int argc, char **argv){
 #ifdef __GNUC__
   (void) argc;
@@ -229,8 +231,10 @@ void ash_umount(int argc, char **argv){
   if (argv[0]==NULL) return;
  
   if (!umount(argv[0])) {
+#ifdef __linux__
     emsg("umounting with MNT_DETACH\n", 0);
     umount2(argv[0], MNT_DETACH);
+#endif
   }
 }
 #endif
@@ -261,12 +265,14 @@ static ash_cdefs ash_commands[] = {
   {"mount", ash_ni, 2, 99, "[] - mount foo"},
 #endif
   {"mv", ash_mv, 3, 99, "SOURCE DEST - move SOURCE to DEST"},
-#ifndef __WIN32__
+#ifdef __linux__
   {"poweroff", ash_poweroff, 1, 1, "- switch the system off"},
 #endif
   {"pwd", ash_pwd, 1, 1, "- print name of current directory"},
 #ifndef __WIN32__
   {"umount", ash_umount, 2, 2, "MOUNTPOINT - umount"},
+#endif
+#ifdef __linux__
   {"reset", ash_reset, 1, 1, "- reboot the system"},
 #endif
   {"rm", ash_rm, 2, 99, "FILE - removes one or more files"},

@@ -11,6 +11,7 @@ LDFLAGS=$(DEBUG_LDFLAGS)
 .endif
 
 .ifdef WIN32
+.if $(WIN32) == 1
 LIBS+=$(WIN32_LIBS)
 EXE=.exe
 .else
@@ -32,9 +33,12 @@ CFLAGS=-g -Wall -W -Os
 .if $(OS) == FreeBSD
 .endif
 .endif
+.endif
 
 .ifdef BROKEN
+.if $(BROKEN) == 1
 CFLAGS+=$(BROKEN_CFLAGS)
+.endif
 .endif
 
 .ifdef MATRIXSSL
@@ -48,12 +52,16 @@ CFLAGS+=$(GNUTLS_CFLAGS)
 .endif
 
 .ifdef SSL
+.if $(SSL) == 1
 LIBS+=$(SSL_LIBS)
 CFLAGS+=$(SSL_CFLAGS)
 .endif
+.endif
 
 .ifdef DEV
+.if $(DEV) == 1
 CFLAGS+=$(DEV_CFLAGS)
+.endif
 .endif
 
 .include "build.mk"
