@@ -71,7 +71,7 @@ int netsslstart(int sd);
 #ifdef HAVE_SSL
 int netsslread(SSL *ssl_handle, char *buf, int len);
 int netsslwrite(SSL *ssl_handle, char *buf, int len);
-int netsslcacert();
+int netsslcacert(char *subdir);
 #endif
 #ifdef HAVE_MATRIXSSL
 int netsslread(sslConn_t *ssl_handle, char *buf, int len);

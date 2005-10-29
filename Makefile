@@ -6,8 +6,10 @@ VERSION=aardmail-$(VERSIONNR)
 OS!=uname
 
 .ifdef DEBUG
+.if $(DEBUG) == 1
 CFLAGS=$(DEBUG_CFLAGS)
 LDFLAGS=$(DEBUG_LDFLAGS)
+.endif
 .endif
 
 .ifdef WIN32

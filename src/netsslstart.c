@@ -94,6 +94,9 @@ int netsslstart(int sd){
 		case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
 			logmsg(L_WARNING, F_SSL, "Peer certificate is self signed. You should add it to the list of trusted certificates", NULL);
 			break;
+		case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
+			logmsg(L_WARNING, F_SSL, "Peer certificate contains an unknown self-signed certificate in certificate chain", NULL);
+			break;
 		default:
 			logmsg(L_WARNING, F_SSL, "Unable to verify peer certificate", NULL);
 		}
