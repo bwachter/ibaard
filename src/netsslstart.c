@@ -1,5 +1,6 @@
 #include "ibaard_network.h"
 #include "ibaard_log.h"
+#include "ibaard_fs.h"
 #include "logtypes.h"
 
 #if (defined HAVE_SSL) && (!defined HAVE_MATRIXSSL)
@@ -26,6 +27,7 @@ static int provide_client_cert(SSL *ssl, X509 **cert, EVP_PKEY **pkey)
 int netsslstart(int sd){
 	int err;
 	SSL_CTX *ctx;
+	long verify_result;
 	//	X509 *server_cert;
 
 	// we're not meant to use ssl, return
@@ -54,6 +56,14 @@ int netsslstart(int sd){
 	} else
 		SSL_CTX_set_client_cert_cb(ctx, provide_client_cert);
 
+	if (!tf(am_ssl_servercerts)){
+		if (!SSL_CTX_load_verify_locations(ctx, am_ssl_servercerts, NULL) ||
+				!SSL_CTX_set_default_verify_paths(ctx)){
+			logmsg(L_WARNING, F_SSL, "Unable to set default verify locations", NULL);
+		} else 
+			logmsg(L_INFO, F_SSL, "Using ", am_ssl_servercerts, " to verify certificates", NULL);
+	}
+
 	ssl = SSL_new(ctx);
 	if (!ssl) {
 		logmsg(L_ERROR, F_SSL, "ssl not working\n", NULL);
@@ -69,6 +79,25 @@ int netsslstart(int sd){
 	} else
 		am_sslconf |= AM_SSL_USETLS; // enable usetls
 	logmsg(L_INFO, F_SSL, "SSL-connection using ", (SSL_get_cipher(ssl)), NULL);
+
+	if ((verify_result = SSL_get_verify_result(ssl)) != X509_V_OK){
+		switch (verify_result){
+		case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
+			logmsg(L_WARNING, F_SSL, "Issuer certificate not found", NULL);
+			break;
+		case X509_V_ERR_CERT_NOT_YET_VALID:
+			logmsg(L_WARNING, F_SSL, "Peer certificate is not yet valid", NULL);
+			break;
+		case X509_V_ERR_CERT_HAS_EXPIRED:
+			logmsg(L_WARNING, F_SSL, "Peer certificate has expired", NULL);
+			break;
+		case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+			logmsg(L_WARNING, F_SSL, "Peer certificate is self signed. You should add it to the list of trusted certificates", NULL);
+			break;
+		default:
+			logmsg(L_WARNING, F_SSL, "Unable to verify peer certificate", NULL);
+		}
+	}
 	return 0;
 }
 #endif

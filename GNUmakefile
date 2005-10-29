@@ -74,7 +74,7 @@ libibaard.a: $(OBJDIR)/cat.o $(OBJDIR)/cati.o $(OBJDIR)/aardlog.o $(OBJDIR)/stri
 	$(OBJDIR)/netaddrinfo.o $(OBJDIR)/netconnect.o $(OBJDIR)/netlogportservice.o \
 	$(OBJDIR)/netnameinfo.o $(OBJDIR)/netread.o $(OBJDIR)/netreadline.o $(OBJDIR)/netwriteline.o\
 	$(OBJDIR)/netsocket.o $(OBJDIR)/netsslread.o $(OBJDIR)/netsslwrite.o $(OBJDIR)/netsslstart.o \
-	$(OBJDIR)/msg.o $(OBJDIR)/emsg.o $(OBJDIR)/dmsg.o $(OBJDIR)/shell.o
+	$(OBJDIR)/netsslcacert.o $(OBJDIR)/msg.o $(OBJDIR)/emsg.o $(OBJDIR)/dmsg.o $(OBJDIR)/shell.o
 	$(Q)echo "AR $@"
 	$(Q)$(CROSS)$(AR) $(ARFLAGS) $@ $^
 

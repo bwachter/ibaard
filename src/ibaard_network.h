@@ -32,6 +32,7 @@
 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
 int am_sslconf;
 char am_sslkey[1024];
+char am_ssl_servercerts[1024];
 #endif
 
 #ifdef HAVE_SSL
@@ -70,6 +71,7 @@ int netsslstart(int sd);
 #ifdef HAVE_SSL
 int netsslread(SSL *ssl_handle, char *buf, int len);
 int netsslwrite(SSL *ssl_handle, char *buf, int len);
+int netsslcacert();
 #endif
 #ifdef HAVE_MATRIXSSL
 int netsslread(sslConn_t *ssl_handle, char *buf, int len);
