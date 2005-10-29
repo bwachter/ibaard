@@ -4,6 +4,7 @@ CC?=gcc
 LD?=gcc
 AR?=ar
 RM?=/bin/rm -f
+RANLIB?=ranlib
 INSTALL?=install
 DESTDIR=
 BINDIR?=/usr/bin

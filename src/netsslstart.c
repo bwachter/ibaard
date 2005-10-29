@@ -44,12 +44,12 @@ int netsslstart(int sd){
 
 	if (strcmp(am_sslkey, "")){
 		if ((SSL_CTX_use_certificate_chain_file(ctx, am_sslkey))!=1){
-			logmsg(L_ERROR, F_SSL, "problem with SSL certfoo", NULL);
+			logmsg(L_ERROR, F_SSL, "Unable to load your cert / private key", NULL);
 			am_sslconf ^= AM_SSL_USETLS; 
 			return  -1;
 		} 
 		if ((SSL_CTX_use_PrivateKey_file(ctx, am_sslkey, SSL_FILETYPE_PEM))!=1){
-			logmsg(L_ERROR, F_SSL, "problem with SSL certfoo", NULL);
+			logmsg(L_ERROR, F_SSL, "Unable to load your cert / private key", NULL);
 			am_sslconf ^= AM_SSL_USETLS; 
 			return  -1;
 		}

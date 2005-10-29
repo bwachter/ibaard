@@ -77,6 +77,7 @@ libibaard.a: $(OBJDIR)/cat.o $(OBJDIR)/cati.o $(OBJDIR)/aardlog.o $(OBJDIR)/stri
 	$(OBJDIR)/netsslcacert.o $(OBJDIR)/msg.o $(OBJDIR)/emsg.o $(OBJDIR)/dmsg.o $(OBJDIR)/shell.o
 	$(Q)echo "AR $@"
 	$(Q)$(CROSS)$(AR) $(ARFLAGS) $@ $^
+	$(Q)$(CROSS)$(RANLIB)  $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(Q)echo "CC $@"
