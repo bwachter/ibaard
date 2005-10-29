@@ -83,22 +83,22 @@ int netsslstart(int sd){
 	if ((verify_result = SSL_get_verify_result(ssl)) != X509_V_OK){
 		switch (verify_result){
 		case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
-			logmsg(L_WARNING, F_SSL, "Issuer certificate not found", NULL);
+			logmsg(am_ssl_paranoid, F_SSL, "Issuer certificate not found", NULL);
 			break;
 		case X509_V_ERR_CERT_NOT_YET_VALID:
-			logmsg(L_WARNING, F_SSL, "Peer certificate is not yet valid", NULL);
+			logmsg(am_ssl_paranoid, F_SSL, "Peer certificate is not yet valid", NULL);
 			break;
 		case X509_V_ERR_CERT_HAS_EXPIRED:
-			logmsg(L_WARNING, F_SSL, "Peer certificate has expired", NULL);
+			logmsg(am_ssl_paranoid, F_SSL, "Peer certificate has expired", NULL);
 			break;
 		case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
-			logmsg(L_WARNING, F_SSL, "Peer certificate is self signed. You should add it to the list of trusted certificates", NULL);
+			logmsg(am_ssl_paranoid, F_SSL, "Peer certificate is self signed. You should add it to the list of trusted certificates", NULL);
 			break;
 		case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
-			logmsg(L_WARNING, F_SSL, "Peer certificate contains an unknown self-signed certificate in certificate chain", NULL);
+			logmsg(am_ssl_paranoid, F_SSL, "Peer certificate contains an unknown self-signed certificate in certificate chain", NULL);
 			break;
 		default:
-			logmsg(L_WARNING, F_SSL, "Unable to verify peer certificate", NULL);
+			logmsg(am_ssl_paranoid, F_SSL, "Unable to verify peer certificate", NULL);
 		}
 	}
 	return 0;

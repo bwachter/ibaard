@@ -31,6 +31,7 @@
 
 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
 int am_sslconf;
+int am_ssl_paranoid;
 char am_sslkey[1024];
 char am_ssl_servercerts[1024];
 #endif
