@@ -5,10 +5,11 @@
 #include <dirent.h>
 #include <fcntl.h>
 
+#include <stdio.h>
+
 #ifdef __GLIBC__
 //#include <asm/fcntl.h>
 #define MNT_DETACH      0x00000002
-#include <stdio.h>
 #endif
 
 #ifndef __WIN32__
@@ -18,7 +19,6 @@
 #endif
 
 #ifdef __WIN32__
-#include <stdio.h>
 #include <io.h>
 #else
 #include <unistd.h>

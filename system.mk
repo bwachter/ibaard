@@ -14,14 +14,17 @@ STRIP=
 OBJDIR=src
 SRCDIR=src
 PREFIX?=/usr
+MAKE?=make
 
 #set up some flags for later use
 Q?=@
 ARFLAGS=cru
 #-pipe crashes on IRIX
-WARN=-Wextra -Wdeclaration-after-statement -Wundef -Wno-endif-labels -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wmissing-declarations -Wno-multichar
+WARN=-W -Wundef -Wno-endif-labels -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wmissing-declarations -Wno-multichar
 #-Wunreachable-code
-CFLAGS=-Wall -W -Os $(WARN)
+#-Wextra will clash with gcc3
+#-Wdeclaration-after-statement
+CFLAGS?=-Wall -W -Os $(WARN)
 LDFLAGS=-s
 DEBUG_CFLAGS=-g -Wall -W -Os
 DEBUG_LDFLAGS=-g

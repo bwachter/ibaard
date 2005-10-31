@@ -1,5 +1,8 @@
 #include <fcntl.h>
 #include <sys/stat.h>
+#ifndef __WIN32__
+#include <unistd.h>
+#endif
 #include "ibaard_fs.h"
 
 int mf(char* name){
