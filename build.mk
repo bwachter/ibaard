@@ -91,7 +91,7 @@ Makefile.borland:
 	$(Q)for i in 1; do \
 	printf '.c.obj:\n';\
 	printf '\t$$(Q)echo "CC $$@"\n';\
-	printf '\t$$(Q)$$(CC) $$(CFLAGS) $(SSLCFLAGS) -o$$@ -c $$<\n';\
+	printf '\t$$(Q)$$(CC) $$(CFLAGS) $$(SSLCFLAGS) -o$$@ -c $$<\n';\
 	printf '\n';\
 	done >> $@
 
@@ -101,7 +101,7 @@ install: all
 	install -m 755 $(ALL) $(DESTDIR)$(BINDIR)
 	install -m 644 doc/man/*.1 $(DESTDIR)$(MANDIR)/man1
 
-tar: Makefile.borland clean rename
+tar: distclean Makefile.borland rename
 	$(Q)echo "building archive ($(VERSION).tar.bz2)"
 	$(Q)cd .. && tar cvvf $(VERSION).tar.bz2 $(VERSION) --use=bzip2 --exclude CVS
 	$(Q)cd .. && rm -Rf $(VERSION)

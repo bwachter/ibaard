@@ -1,9 +1,14 @@
+#if (defined HAVE_SSL) && (!defined HAVE_MATRIXSSL)
 #include "ibaard_network.h"
 #include "ibaard_log.h"
 #include "ibaard_fs.h"
 #include "logtypes.h"
 
-#if (defined HAVE_SSL) && (!defined HAVE_MATRIXSSL)
+int am_sslconf;
+int am_ssl_paranoid;
+char am_sslkey[1024];
+char am_ssl_servercerts[1024];
+SSL *ssl;
 
 // in case we found a certificate we'll set it before negotiating any ssl
 // stuff. If the other site requests it on handshake SSL will just return 
@@ -15,8 +20,7 @@
 // we were unable to load a certifikate on startup we guess we still would
 // not get it, and use this method just as a simple way to report a 
 // certificate problem 
-static int provide_client_cert(SSL *ssl, X509 **cert, EVP_PKEY **pkey)
-{
+static int provide_client_cert(SSL *ssl, X509 **cert, EVP_PKEY **pkey){
 	(void)ssl;
 	(void)cert;
 	(void)pkey;
@@ -73,7 +77,7 @@ int netsslstart(int sd){
 	SSL_set_fd(ssl, sd);
 
 	if ((err = SSL_connect(ssl)) < 0){
-		logmsg(L_ERROR, F_SSL, "error on SSL_connect(): ", strerror(errno), NULL);
+		logmsg(L_ERROR, F_SSL, "Error on SSL_connect(): ", strerror_ssl(SSL_get_error(ssl, err)), NULL);
 		am_sslconf ^= AM_SSL_USETLS;
 		return -1;
 	} else

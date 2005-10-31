@@ -30,15 +30,15 @@
 #endif
 
 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
-int am_sslconf;
-int am_ssl_paranoid;
-char am_sslkey[1024];
-char am_ssl_servercerts[1024];
+extern int am_sslconf;
+extern int am_ssl_paranoid;
+extern char am_sslkey[1024];
+extern char am_ssl_servercerts[1024];
 #endif
 
 #ifdef HAVE_SSL
 #include <openssl/ssl.h>
-SSL *ssl;
+extern SSL *ssl;
 #endif
 
 #ifdef HAVE_MATRIXSSL
@@ -68,6 +68,7 @@ int netsocket(struct addrinfo *ai);
 
 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
 int netsslstart(int sd);
+char* strerror_ssl(int err);
 #endif
 #ifdef HAVE_SSL
 int netsslread(SSL *ssl_handle, char *buf, int len);
