@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "ibaard.h"
 
 /* split buf into n strings that are separated by c.  return n as *len.
  * Allocate plus more slots and leave the first ofs of them alone. */

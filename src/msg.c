@@ -3,7 +3,7 @@
 #include "ibaard.h"
 #include "ibaard_log.h"
 
-int msg(char *msg, ...){
+int lmsg(char *msg, ...){
   va_list arguments;
 
   va_start(arguments, msg);

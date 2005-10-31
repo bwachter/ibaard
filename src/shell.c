@@ -48,7 +48,7 @@ struct {
   int fancyprompt;
 } ash_settings;
 
-void ash_cat(int argc, char **argv){
+static void ash_cat(int argc, char **argv){
   int i,len,fd;
   char buf[1024];
   for (i=1;i<argc;i++){
@@ -69,19 +69,19 @@ void ash_cat(int argc, char **argv){
   }
 }
 
-void ash_cd(int argc, char **argv){
+static void ash_cd(int argc, char **argv){
   (void) argc;
   if (chdir(argv[1]))
     emsg("cd: ", strerror(errno), "\n", 0);
 }
 
-void ash_clear(int argc, char **argv){
+static void ash_clear(int argc, char **argv){
   (void) argc;
   (void) argv;
   write(1,"\e[H\e[J",6);
 }
 
-void ash_cp(int argc, char **argv){
+static void ash_cp(int argc, char **argv){
   int src, dst=0, len;
   char buf[1024];
   if (argc > 3) {
@@ -113,14 +113,14 @@ void ash_cp(int argc, char **argv){
   }
 }
 
-void ash_exit(int argc, char **argv){
+static void ash_exit(int argc, char **argv){
   (void) argc;
   (void) argv;
   // we handle exit in the while-loop. Just a dummy.
 }
 
 // TODO: sorted output
-void ash_ls(int argc, char **argv){
+static void ash_ls(int argc, char **argv){
   char *dirname;
   struct dirent *e;
   DIR *d;
@@ -131,11 +131,11 @@ void ash_ls(int argc, char **argv){
     else if (i==0) continue;
     else dirname=argv[i];
 
-    if (argc>2) msg(dirname, ":\n", 0);
+    if (argc>2) lmsg(dirname, ":\n", 0);
 
     if ((d=opendir(dirname))==NULL) {
       if (errno==ENOTDIR) {
-	msg(dirname, "\n", 0);
+	lmsg(dirname, "\n", 0);
 	continue;
       } else 
       emsg("ls: ", dirname, ": ", strerror(errno), "\n", 0);
@@ -143,13 +143,13 @@ void ash_ls(int argc, char **argv){
     }
 
     while ((e=readdir(d))){
-      msg(e->d_name, "\n", 0);
+      lmsg(e->d_name, "\n", 0);
     }
     closedir(d);
   }
 }
 
-void ash_mkdir(int argc, char **argv){
+static void ash_mkdir(int argc, char **argv){
   mode_t mode=0777;
   int i;
   for (i=1;i<argc;i++){
@@ -158,7 +158,7 @@ void ash_mkdir(int argc, char **argv){
   }
 }
 
-void ash_mv(int argc, char **argv){
+static void ash_mv(int argc, char **argv){
   if (argc > 3) {
     // in this case last arg has to be a directory.
     // not yet supported.
@@ -172,7 +172,7 @@ void ash_mv(int argc, char **argv){
   }
 }
 
-void ash_ni(int argc, char **argv){
+static void ash_ni(int argc, char **argv){
 #ifdef __GNUC__
   (void) argc;
 #endif
@@ -180,7 +180,7 @@ void ash_ni(int argc, char **argv){
 }
 
 #ifdef __linux__
-void ash_poweroff(int argc, char **argv){
+static void ash_poweroff(int argc, char **argv){
 #ifdef __GNUC__
   (void) argc;
   (void) argv;
@@ -189,17 +189,18 @@ void ash_poweroff(int argc, char **argv){
 }
 #endif
 
-void ash_pwd(int argc, char **argv){
+static void ash_pwd(int argc, char **argv){
+  char *buf=NULL;
 #ifdef __GNUC__
   (void) argc;
   (void) argv;
 #endif
-  char *buf=NULL;
-  msg(xgetcwd(buf),"\n",0);
+
+  lmsg(xgetcwd(buf),"\n",0);
 }
 
 #ifdef __linux__
-void ash_reset(int argc, char **argv){
+static void ash_reset(int argc, char **argv){
 #ifdef __GNUC__
   (void) argc;
   (void) argv;
@@ -208,7 +209,7 @@ void ash_reset(int argc, char **argv){
 }
 #endif
 
-void ash_rm(int argc, char **argv){
+static void ash_rm(int argc, char **argv){
   int i;
   for (i=1;i<argc;i++){
     if (unlink(argv[i])){
@@ -217,7 +218,7 @@ void ash_rm(int argc, char **argv){
   }
 }
 
-void ash_rmdir(int argc, char **argv){
+static void ash_rmdir(int argc, char **argv){
   int i;
   for (i=1;i<argc;i++){
     if (rmdir(argv[i]))
@@ -226,7 +227,7 @@ void ash_rmdir(int argc, char **argv){
 }
 
 #ifndef __WIN32__
-void ash_umount(int argc, char **argv){
+static void ash_umount(int argc, char **argv){
   if (argc != 1) return;
   if (argv[0]==NULL) return;
  
@@ -239,7 +240,7 @@ void ash_umount(int argc, char **argv){
 }
 #endif
 
-void ash_set(int argc, char **argv){
+static void ash_set(int argc, char **argv){
   (void) argc;
   (void) argv;
   if (!strcmp(argv[1], "fancyprompt")) {
@@ -248,7 +249,7 @@ void ash_set(int argc, char **argv){
 }
 
 // end of command part, start of `management' part
-void ash_help(int argc, char **argv);
+static void ash_help(int argc, char **argv);
 
 static ash_cdefs ash_commands[] = {
   {"cat", ash_cat, 2, 99, "[FILE]... - concatenate files and print on stdout"},
@@ -281,21 +282,21 @@ static ash_cdefs ash_commands[] = {
   {NULL, 0, 0, 0, NULL}
 };
 
-void ash_help(int argc, char **argv){
+static void ash_help(int argc, char **argv){
+  ash_cdefs *cdef;
 #ifdef __GNUC__
   (void) argc;
   (void) argv;
 #endif
-  ash_cdefs *cdef;
 
-  msg("AardShell v0.1\n",0);
-  msg("You can use the following built-in commands:\n\n",0);
+  lmsg("AardShell v0.1\n",0);
+  lmsg("You can use the following built-in commands:\n\n",0);
   for (cdef = ash_commands; cdef->name; cdef++) {
-    msg(cdef->name, " ", cdef->usage, "\n", 0);
+    lmsg(cdef->name, " ", cdef->usage, "\n", 0);
   }
 }
 
-int ash_shellcmd(char *cmd){
+static int ash_shellcmd(char *cmd){
   int argc;
   ash_cdefs *cdef;
   char **argv;
@@ -334,7 +335,7 @@ int ash_shellcmd(char *cmd){
   return 0;
 }
 
-int ash_read(char buf[512]){
+static int ash_read(char buf[512]){
   int i=0;
   if ((i=read(0,buf,512))==-1) return -1;
   buf[i]='\0';
@@ -349,9 +350,9 @@ int ash_init(char* info){
 
   while(strcmp(buf,"exit")){
     if (ash_settings.fancyprompt)
-      msg(xgetcwd(buf), "> ", 0);
+      lmsg(xgetcwd(buf), "> ", 0);
     else 
-      msg("> ", 0);
+      lmsg("> ", 0);
     ash_read(buf);
     ash_shellcmd(buf);
   }

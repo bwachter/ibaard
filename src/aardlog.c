@@ -6,6 +6,7 @@
 #endif
 
 #include "ibaard.h"
+#include "ibaard_log.h"
 
 static int current_loglevel=L_ERROR;
 
@@ -19,20 +20,20 @@ static void logwrite (char *msg){
 	return;
 }
 
-int loglevel(int loglevel){
+int loglevel(int level){
 	if (loglevel != 0)
-		current_loglevel = loglevel;
+		current_loglevel = level;
 	return current_loglevel; 
 }
 
-int logmsg(int loglevel, char *facility, char *msg, ...) {
+int logmsg(int level, char *facility, char *msg, ...) {
 	va_list ap;
 	char *tmp;
 	int die=0;
 
-	if (loglevel > current_loglevel) return 0;
+	if (level > current_loglevel) return 0;
 
-	switch(loglevel){
+	switch(level){
 	case L_DEADLY:
 		__write1("[DEADLY][");
 		die=1;

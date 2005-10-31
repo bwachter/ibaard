@@ -11,7 +11,7 @@ F_AUTHINFO,
 F_ADDRLIST,
 */
 
-enum loglevel {
+enum loglevels {
 	L_UNSPEC,
 	L_DEADLY,
 	L_ERROR,
@@ -21,9 +21,9 @@ enum loglevel {
 	L_DEBUG,
 };
 
-int logmsg(int loglevel, char *facility, char *msg, ...);
-int loglevel(int loglevel);
-int msg(char *msg, ...);
+int logmsg(int level, char *facility, char *msg, ...);
+int loglevel(int level);
+int lmsg(char *msg, ...);
 int emsg(char *msg, ...);
 int dmsg(char *msg, ...);
 

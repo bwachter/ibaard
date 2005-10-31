@@ -2,6 +2,7 @@
 #ifndef __WIN32__
 #include <strings.h>
 #endif
+#include "ibaard_strip.h"
 
 /* strip \n at end of buf */
 char *stripn(char *buf) {

@@ -20,8 +20,8 @@ SSL *ssl;
 // we were unable to load a certifikate on startup we guess we still would
 // not get it, and use this method just as a simple way to report a 
 // certificate problem 
-static int provide_client_cert(SSL *ssl, X509 **cert, EVP_PKEY **pkey){
-	(void)ssl;
+static int provide_client_cert(SSL *_ssl, X509 **cert, EVP_PKEY **pkey){
+	(void)_ssl;
 	(void)cert;
 	(void)pkey;
   logmsg(L_ERROR, F_SSL, "The server requested a client certificate, but you did not specify one\n", NULL);

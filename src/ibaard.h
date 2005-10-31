@@ -2,10 +2,6 @@
 #define _IBAARD_H
 
 #include "ibaard_types.h"
-#include "ibaard_cat.h"
-#include "ibaard_fs.h"
-#include "ibaard_log.h"
-#include "ibaard_strip.h"
 
 #ifdef __dietlibc__
 #include <write12.h>

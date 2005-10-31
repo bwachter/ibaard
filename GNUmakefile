@@ -11,9 +11,6 @@ CURNAME=$(notdir $(shell pwd))
 ifdef DEBUG
 CFLAGS=-g -Wall -W -pipe -Os
 LDFLAGS=-g
-else
-CFLAGS=-Wall -W -pipe  -Os
-LDFLAGS=-s
 endif
 
 ifdef WIN32
@@ -56,9 +53,6 @@ ifdef SSL
 LIBS+=$(SSL_LIBS)
 CFLAGS+=$(SSL_CFLAGS)
 endif
-
-ARFLAGS=cru
-Q=@
 
 ifdef DEV
 CFLAGS+=-D_DEV

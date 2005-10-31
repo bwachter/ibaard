@@ -90,7 +90,7 @@ int authinfo_init(){
 	return 0;
 }
 
-int authinfo_lookup(authinfo *authinfo_keys){
+int authinfo_lookup(authinfo *authinfo_data){
 	authinfo *p, defaultauth;
 	memset(&defaultauth, 0, sizeof(authinfo));
 	for (p=authinfo_storage; p!=NULL; p=p->next){
@@ -98,22 +98,22 @@ int authinfo_lookup(authinfo *authinfo_keys){
 			memcpy(&defaultauth, p, sizeof(authinfo));
 			continue;
 		}
-		if (strcmp(authinfo_keys->machine, ""))
-			if (strcmp(authinfo_keys->machine, p->machine))
+		if (strcmp(authinfo_data->machine, ""))
+			if (strcmp(authinfo_data->machine, p->machine))
 				continue;
-		if (strcmp(authinfo_keys->port, ""))
-			if (strcmp(authinfo_keys->port, p->port))
+		if (strcmp(authinfo_data->port, ""))
+			if (strcmp(authinfo_data->port, p->port))
 				continue;
-		if (strcmp(authinfo_keys->login, ""))
-			if (strcmp(authinfo_keys->login, p->login))
+		if (strcmp(authinfo_data->login, ""))
+			if (strcmp(authinfo_data->login, p->login))
 				continue;
-		if (strcmp(authinfo_keys->password, ""))
-			if (strcmp(authinfo_keys->password, p->password))
+		if (strcmp(authinfo_data->password, ""))
+			if (strcmp(authinfo_data->password, p->password))
 				continue;
-		// if we got that far we either found a valid key, or
+		// if we got that far we either found a valid data, or
 		// all fields are set to NULL
-		memcpy(authinfo_keys, p, sizeof(authinfo));
-		authinfo_keys->next=NULL;
+		memcpy(authinfo_data, p, sizeof(authinfo));
+		authinfo_data->next=NULL;
 		return 0;
 	}
 	return -1; // we did not find a key
