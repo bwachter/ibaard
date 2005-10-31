@@ -68,22 +68,10 @@ CFLAGS+=$(DEV_CFLAGS)
 
 .include "build.mk"
 
-.c.o:
-	$(Q)echo "CC $@"
-	$(Q)$(DIET) $(CROSS)$(CC) $(CFLAGS) -c $< -o $@
-.ifdef $(STRIP)
-	$(Q)$(COMMENT) -$(CROSS)$(STRIP) $@
+.if exists(dyn-bsdmake.mk)
+.include "dyn-bsdmake.mk"  
+.else   
+DEPSTAT= "You need to run 'make dep'\n"
 .endif
 
-libibaard.a: $(OBJDIR)/cat.o $(OBJDIR)/cati.o $(OBJDIR)/aardlog.o $(OBJDIR)/strip.o \
-	$(OBJDIR)/split.o $(OBJDIR)/kirahvi.o $(OBJDIR)/authinfo.o \
-	$(OBJDIR)/fs_td.o $(OBJDIR)/fs_tf.o $(OBJDIR)/fs_md.o $(OBJDIR)/fs_mf.o $(OBJDIR)/fs_filewrite.o \
-	$(OBJDIR)/fs_openreadclose.o $(OBJDIR)/fs_xgetcwd.o \
-	$(OBJDIR)/netaddrinfo.o $(OBJDIR)/netconnect.o $(OBJDIR)/netlogportservice.o \
-	$(OBJDIR)/netnameinfo.o $(OBJDIR)/netread.o $(OBJDIR)/netreadline.o $(OBJDIR)/netwriteline.o\
-	$(OBJDIR)/netsocket.o $(OBJDIR)/netsslread.o $(OBJDIR)/netsslwrite.o $(OBJDIR)/netsslstart.o \
-	$(OBJDIR)/netsslcacert.o $(OBJDIR)/msg.o $(OBJDIR)/emsg.o $(OBJDIR)/dmsg.o $(OBJDIR)/shell.o
-	$(Q)echo "AR $@"
-	$(Q)$(CROSS)$(AR) $(ARFLAGS) $@ $>
-	$(Q)$(CROSS)$(RANLIB) $@
-
+dep: dyn-bsdmake.mk

@@ -28,7 +28,7 @@ int netsslstart(int sd){
 	int err;
 	SSL_CTX *ctx;
 	long verify_result;
-	//	X509 *server_cert;
+	X509 *server_cert;
 
 	// we're not meant to use ssl, return
 	if (!(am_sslconf & AM_SSL_USETLS)) return -1;
@@ -79,6 +79,8 @@ int netsslstart(int sd){
 	} else
 		am_sslconf |= AM_SSL_USETLS; // enable usetls
 	logmsg(L_INFO, F_SSL, "SSL-connection using ", (SSL_get_cipher(ssl)), NULL);
+
+	server_cert = SSL_get_peer_certificate(ssl);
 
 	if ((verify_result = SSL_get_verify_result(ssl)) != X509_V_OK){
 		switch (verify_result){

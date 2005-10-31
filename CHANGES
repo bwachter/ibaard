@@ -1,4 +1,6 @@
-0.1-pre1:
+0.1-pre-2:
+
+0.1-pre-1:
 	Added SSL certificate verification
 	Compile fixes for Windows, BSD, Solaris
 	Added common functions from different projects

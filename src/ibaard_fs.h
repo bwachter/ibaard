@@ -6,6 +6,7 @@
 #endif
 
 #include <fcntl.h>
+#include <sys/stat.h>
 
 int tf(char *name);
 int td(char *name);

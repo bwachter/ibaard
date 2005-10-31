@@ -1,4 +1,6 @@
 #include "ibaard_network.h"
+#include "ibaard_log.h"
+#include "logtypes.h"
 
 int netnameinfo(const struct sockaddr *sa, socklen_t salen, 
 						char *hostname, size_t hostlen, 
@@ -22,7 +24,7 @@ int netnameinfo(const struct sockaddr *sa, socklen_t salen,
 #endif
 		char *tmp;
 		if ((tmp = malloc((NI_MAXHOST+1)*sizeof(char))) == NULL) {
-			__write2("malloc() failed\n");
+			logmsg(L_ERROR, F_NET, "malloc() failed", NULL);
 			return -1;
 		}
 
@@ -37,7 +39,7 @@ int netnameinfo(const struct sockaddr *sa, socklen_t salen,
 
 		if (hostname != NULL) {
 			if ((tmp = inet_ntoa(((struct sockaddr_in*)sa)->sin_addr)) == NULL){
-				__write2("converting ip failed\n");
+				logmsg(L_ERROR, F_NET, "converting ip failed", NULL);
 			}
 			strncpy(hostname, tmp, hostlen);
 		}
