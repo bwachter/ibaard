@@ -21,7 +21,7 @@ static void logwrite (char *msg){
 }
 
 int loglevel(int level){
-	if (loglevel != 0)
+	if (level != 0)
 		current_loglevel = level;
 	return current_loglevel; 
 }
