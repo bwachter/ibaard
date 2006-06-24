@@ -74,7 +74,12 @@ int netsslstart(int sd){
 		am_sslconf ^= AM_SSL_USETLS;
 		return -1;
 	}
-	SSL_set_fd(ssl, sd);
+
+	if (sd==-1){
+		logmsg(L_DEBUG, F_SSL, "Setting I/O for SSL to fd 0/1", NULL);
+		SSL_set_wfd(ssl, 0);
+		SSL_set_rfd(ssl, 1);
+	} else SSL_set_fd(ssl, sd);
 
 	if ((err = SSL_connect(ssl)) < 0){
 		logmsg(L_ERROR, F_SSL, "Error on SSL_connect(): ", strerror_ssl(SSL_get_error(ssl, err)), NULL);
