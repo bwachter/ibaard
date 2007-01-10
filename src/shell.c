@@ -101,8 +101,8 @@ static void ash_cp(int argc, char **argv){
 
     while((len=read(src,buf,1024))){
       if (len<0) {
-	emsg("cp: ", strerror(errno), "\n", 0);
-	goto cleanup;
+				emsg("cp: ", strerror(errno), "\n", 0);
+				goto cleanup;
       }
       buf[len]='\0';
       write(dst,buf,strlen(buf));
@@ -135,8 +135,8 @@ static void ash_ls(int argc, char **argv){
 
     if ((d=opendir(dirname))==NULL) {
       if (errno==ENOTDIR) {
-	lmsg(dirname, "\n", 0);
-	continue;
+				lmsg(dirname, "\n", 0);
+				continue;
       } else 
       emsg("ls: ", dirname, ": ", strerror(errno), "\n", 0);
       continue;
@@ -227,14 +227,26 @@ static void ash_rmdir(int argc, char **argv){
 }
 
 #ifndef __WIN32__
+
+static void ash_mount(int argc, char **argv){
+	(void) argc;
+  if (argv[3]==NULL) return;
+
+	if (mount(argv[1], argv[2], argv[3], MS_MGC_VAL, "")){
+		emsg("mount: ", argv[1], " on ", argv[2], " as ", argv[3], " failed: ", strerror(errno), "\n", 0);
+	}
+}
+
 static void ash_umount(int argc, char **argv){
-  if (argc != 1) return;
-  if (argv[0]==NULL) return;
+	(void) argc;
  
-  if (!umount(argv[0])) {
+  if (umount(argv[1])) {
 #ifdef __linux__
-    emsg("umounting with MNT_DETACH\n", 0);
-    umount2(argv[0], MNT_DETACH);
+    emsg("umount: umounting ", argv[1], " failed, umounting with MNT_DETACH\n", 0);
+    if (umount2(argv[1], MNT_DETACH))
+			emsg("umount: unmounting ", argv[1], " failed: ", strerror(errno), "\n", 0);
+#else
+		emsg("umount: unmounting ", argv[1], " failed: ", strerror(errno), "\n", 0);
 #endif
   }
 }
@@ -263,7 +275,7 @@ static ash_cdefs ash_commands[] = {
   {"ls", ash_ls, 1, 99, "[DIR] - list contents of DIR or current directory"},
   {"mkdir", ash_mkdir, 2, 99, "[DIR]... - creates one or more directories"},
 #ifndef __WIN32__
-  {"mount", ash_ni, 2, 99, "[] - mount foo"},
+  {"mount", ash_mount, 4, 5, "DEVICE MOUNTPOINT FSTYPE - mount device on mountpoint"},
 #endif
   {"mv", ash_mv, 3, 99, "SOURCE DEST - move SOURCE to DEST"},
 #ifdef __linux__
@@ -303,7 +315,16 @@ static int ash_shellcmd(char *cmd){
 
   if (cmd[strlen(cmd)-1] == '\n')
     cmd[strlen(cmd)-1] = '\0';
-  else cmd[strlen(cmd)] = '\0';
+
+	while(1){
+		if (cmd[strlen(cmd)-1] == ' ')
+			cmd[strlen(cmd)-1] = '\0';
+		else break;
+	}
+
+	if (strlen(cmd)==0) return 0;
+
+	//cmd[strlen(cmd)] = '\0';
 
   // split string into args; FIXME ;)
   argv=split(cmd, ' ', &argc, 0, 0);
