@@ -29,7 +29,7 @@ LDFLAGS=-s
 DEBUG_CFLAGS=-g -Wall -W -Os
 DEBUG_LDFLAGS=-g
 
-LIBS=-L. -laardmail
+#LIBS=-L. -laardmail
 
 SOLARIS_LIBS=-lresolv -lsocket
 WIN32_LIBS=-lws2_32 -lwsock32 -lgdi32

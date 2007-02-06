@@ -1,6 +1,7 @@
 0.1-pre-3:
 	Added strerror_ssl
 	SSL-fixes for BCC
+	Added Maildirstuff
 
 0.1-pre-2:
 	BCC compile fixes
