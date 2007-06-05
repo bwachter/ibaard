@@ -22,6 +22,7 @@ enum loglevels {
 };
 
 int logmsg(int level, char *facility, char *msg, ...);
+int logmsg_fd(int fd, int level, char *facility, char *msg, ...); 
 int loglevel(int level);
 int lmsg(char *msg, ...);
 int emsg(char *msg, ...);

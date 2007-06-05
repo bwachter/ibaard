@@ -32,6 +32,16 @@ static inline int __write2(const char *s)
 }
 #endif
 
+#ifdef __BORLANDC__
+static int __writefd(int fd, const char *s)
+#else
+static inline int __writefd(int fd, const char *s)
+#endif
+{
+	write(fd, s, strlen(s));
+	return 0;
+}
+
 char **split(char *buf,int c,int *len,int plus,int ofs);
 void kirahvi();
 
