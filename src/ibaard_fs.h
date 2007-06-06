@@ -14,6 +14,7 @@ int md(char* name);
 int md2(char* name, mode_t mode);
 int mf(char* name);
 int rdf(char *name, char **buf);
+int touch(char *name);
 int openreadclose(char *fn, char **buf, unsigned long *len);
 #if (defined __WIN32__) || (defined _BROKEN_IO)
 int filewrite(FILE *fd, char *buf, int len);
