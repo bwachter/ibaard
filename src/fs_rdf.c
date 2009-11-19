@@ -26,10 +26,10 @@ int rdf(char *name, char **buf){
     flen+=len;
     if (len>=1024)
       if ((buf=realloc(buf,strlen(*buf)*sizeof(char*)*1024))==NULL){
-				close(fd);
-				return -1;
+        close(fd);
+        return -1;
       }
   }
   buf[flen]='\0';
-	return 0;
+  return 0;
 }

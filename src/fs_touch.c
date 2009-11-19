@@ -9,8 +9,8 @@
 #include "ibaard_fs.h"
 
 int touch(char *name){
-	int fd;
-	if ((fd=open(name, O_CREAT|O_RDWR))==-1) return errno;
-	close(fd);
-	return 0;
+  int fd;
+  if ((fd=open(name, O_CREAT|O_RDWR))==-1) return errno;
+  close(fd);
+  return 0;
 }

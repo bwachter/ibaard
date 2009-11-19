@@ -12,8 +12,8 @@
 #include "ibaard_cat.h"
 
 static struct {
-  char *dest;
-  size_t buflen;
+    char *dest;
+    size_t buflen;
 } catmem;
 
 /* cats all args together and return a pointer to the catted string. Uses a 
@@ -35,7 +35,7 @@ char *cati(char *str, ...) {
   if (len+1 >= catmem.buflen) {
     if (!(tmp = realloc(catmem.dest, len+1))) 
       return (char*)NULL;
-	else { 
+    else { 
       catmem.buflen = len+1;
       catmem.dest = tmp;
     }

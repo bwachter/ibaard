@@ -8,38 +8,38 @@
 #if (defined(__WIN32__)) || (defined _BROKEN_IO)
 int mdclose(char *maildir, char **uniqname, FILE *fd){
 #else
-int mdclose(char *maildir, char **uniqname, int fd){
+  int mdclose(char *maildir, char **uniqname, int fd){
 #endif
-	char *oldpath=NULL, *newpath=NULL;
-	int status=0;
-	if ((mdfind(maildir)) == -1) {
+    char *oldpath=NULL, *newpath=NULL;
+    int status=0;
+    if ((mdfind(maildir)) == -1) {
 #if (defined(__WIN32__)) || (defined _BROKEN_IO)
-		fflush(fd);
-		fclose(fd);
+      fflush(fd);
+      fclose(fd);
 #else
-		close(fd);
+      close(fd);
 #endif
-		return -1;
-	}
+      return -1;
+    }
 
-	cat(&oldpath, maildirpath, "/tmp/", *uniqname, NULL);
-	cat(&newpath, maildirpath, "/new/", *uniqname, NULL);
-	//cat(&newpath, maildirpath, "/cur/", *uniqname, ":2,", NULL);
+    cat(&oldpath, maildirpath, "/tmp/", *uniqname, NULL);
+    cat(&newpath, maildirpath, "/new/", *uniqname, NULL);
+    //cat(&newpath, maildirpath, "/cur/", *uniqname, ":2,", NULL);
 
 #if (defined(__WIN32__)) || (defined _BROKEN_IO)
-	if (!(status=fclose(fd))){
+    if (!(status=fclose(fd))){
 #else
-	if (!(status=close(fd))){
+      if (!(status=close(fd))){
 #endif
 #ifdef __WIN32__
-		status=MoveFile(oldpath, newpath);
+        status=MoveFile(oldpath, newpath);
 #else
-		status=link(oldpath, newpath);
-		unlink(oldpath);
+        status=link(oldpath, newpath);
+        unlink(oldpath);
 #endif
-	} else logmsg(L_ERROR, F_GENERAL, "Closing mail failed: ", strerror(errno), NULL);
+      } else logmsg(L_ERROR, F_GENERAL, "Closing mail failed: ", strerror(errno), NULL);
 
-	free(oldpath);
-	free(newpath);
-	return status;
-}
+      free(oldpath);
+      free(newpath);
+      return status;
+    }

@@ -9,9 +9,9 @@
 #include "ibaard_fs.h"
 
 int tf(char *name){
-	int fd;
-	if ((fd=open(name, O_RDONLY))==-1) return errno;
-	close(fd);
-	return 0;
+  int fd;
+  if ((fd=open(name, O_RDONLY))==-1) return errno;
+  close(fd);
+  return 0;
 }
 

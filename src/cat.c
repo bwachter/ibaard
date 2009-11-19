@@ -12,30 +12,30 @@
 #include "ibaard_cat.h"
 
 int cat(char **dest, char *str, ...){
-	va_list ap;
-	int len;
-	char *ptr, *tmp;
+  va_list ap;
+  int len;
+  char *ptr, *tmp;
 	
-	if (*dest != NULL)
-		free(*dest);
+  if (*dest != NULL)
+    free(*dest);
 	
-	len = strlen(str);
-	va_start(ap, str);
-	while ((tmp = va_arg(ap, char*)))
-		len += strlen(tmp);
-	va_end(ap);
+  len = strlen(str);
+  va_start(ap, str);
+  while ((tmp = va_arg(ap, char*)))
+    len += strlen(tmp);
+  va_end(ap);
 
-	if (!(*dest=malloc(len+1)))
-		return -1;
+  if (!(*dest=malloc(len+1)))
+    return -1;
 
-	ptr = *dest;
-	for (tmp=str; *tmp; tmp++) *ptr++ = *tmp;
-	va_start(ap, str);
-	while ((tmp = va_arg(ap, char*)))
-		while (*tmp) *ptr++ = *tmp++;
-	va_end(ap);
-	*ptr = '\0';
-	return 0;
+  ptr = *dest;
+  for (tmp=str; *tmp; tmp++) *ptr++ = *tmp;
+  va_start(ap, str);
+  while ((tmp = va_arg(ap, char*)))
+    while (*tmp) *ptr++ = *tmp++;
+  va_end(ap);
+  *ptr = '\0';
+  return 0;
 }
 
 
