@@ -4,6 +4,10 @@
 #include "logtypes.h"
 
 int netsocket(struct addrinfo *ai){
+  return netsocket2(ai, 0);
+}
+
+int netsocket2(struct addrinfo *ai, struct addrinfo *lai){
 	int sd;
 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
 	int err;
@@ -16,6 +20,11 @@ int netsocket(struct addrinfo *ai){
 		logmsg(L_ERROR, F_NET, "socket() failed: ", strerror(errno), NULL);
 		return -1;
 	}
+
+        if (lai!=0)
+          if (bind(sd, lai->ai_addr, lai->ai_addrlen) < 0){
+            logmsg(L_ERROR, F_NET, "bind() failed: ", strerror(errno), NULL);
+          }
 
 	if (connect(sd, ai->ai_addr, ai->ai_addrlen) < 0){
 		logmsg(L_ERROR, F_NET, "connect() failed: ", strerror(errno), NULL);
