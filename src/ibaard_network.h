@@ -55,6 +55,7 @@ SSL *ssl;
 #endif
 
 int netaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
+void netfreeaddrinfo (struct addrinfo *ai);
 int netconnect(char *hostname, char *servicename);
 // transport binding address
 int netconnect2(char *hostname, char *servicename, char *bindaddress);
