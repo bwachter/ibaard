@@ -36,14 +36,14 @@
 #define pclose(a) _pclose(a)
 #define popen(a,b) _popen(a,b)
 struct addrinfo {
-	int     ai_flags;
-	int     ai_family;
-	int     ai_socktype;
-	int     ai_protocol;
-	size_t  ai_addrlen;
-	struct sockaddr *ai_addr;
-	char   *ai_canonname;
-	struct addrinfo *ai_next;
+    int     ai_flags;
+    int     ai_family;
+    int     ai_socktype;
+    int     ai_protocol;
+    size_t  ai_addrlen;
+    struct sockaddr *ai_addr;
+    char   *ai_canonname;
+    struct addrinfo *ai_next;
 };
 
 typedef unsigned __int32 uint32_t;

@@ -13,10 +13,10 @@
 typedef struct _maildirent maildirent;
 
 struct _maildirent {
-	char name[AM_MAXPATH];
-	off_t size;
-	int deleted;
-	maildirent *next;
+    char name[AM_MAXPATH];
+    off_t size;
+    int deleted;
+    maildirent *next;
 };
 
 char *maildirpath;

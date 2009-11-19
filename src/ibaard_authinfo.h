@@ -14,18 +14,18 @@ typedef struct _authinfo authinfo;
 typedef struct _authinfo_key authinfo_key;
 
 struct _authinfo {
-	char machine[NI_MAXHOST];
-	char port[NI_MAXSERV];
-	char login[AM_MAXUSER];
-	char password[AM_MAXPASS];
-	int defaultauth;
-	int force;
-	authinfo *next;
+    char machine[NI_MAXHOST];
+    char port[NI_MAXSERV];
+    char login[AM_MAXUSER];
+    char password[AM_MAXPASS];
+    int defaultauth;
+    int force;
+    authinfo *next;
 };
 
 struct _authinfo_key {
-	char *name;
-	int hasargs;
+    char *name;
+    int hasargs;
 };
 
 int authinfo_init();

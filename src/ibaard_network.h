@@ -44,12 +44,12 @@ extern SSL *ssl;
 #ifdef HAVE_MATRIXSSL
 #include <matrixSsl.h>
 typedef struct {
-	ssl_t *ssl;
-	sslBuf_t inbuf;
-	sslBuf_t insock;
-	sslBuf_t outsock;
-	int outBufferCount;
-	int fd;
+    ssl_t *ssl;
+    sslBuf_t inbuf;
+    sslBuf_t insock;
+    sslBuf_t outsock;
+    int outBufferCount;
+    int fd;
 } SSL; // was: sslConn_t
 SSL *ssl;
 #endif
@@ -64,8 +64,8 @@ int netreadline(int sd, char *buf);
 int netwriteline(int sd, char *buf);
 void netlogportservice(const struct sockaddr *sa, socklen_t salen, char *msg);
 int netnameinfo(const struct sockaddr *sa, socklen_t salen, 
-						char *hostname, size_t hostlen, 
-						char *servname, size_t servlen, int flags);
+                char *hostname, size_t hostlen, 
+                char *servname, size_t servlen, int flags);
 int netsocket(struct addrinfo *ai);
 // connect and bind to local address
 int netsocket2(struct addrinfo *ai, struct addrinfo *lai);

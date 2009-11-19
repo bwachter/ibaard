@@ -3,15 +3,15 @@
 #include "logtypes.h"
 
 int netwriteline(int sd, char *buf){
-	int i;
+  int i;
 
-	logmsg(L_VERBOSE, F_NET, "> ", buf, NULL);
+  logmsg(L_VERBOSE, F_NET, "> ", buf, NULL);
 
 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
-	if (am_sslconf & AM_SSL_USETLS){
-		i=netsslwrite(ssl, buf, strlen(buf));
-	} else
+  if (am_sslconf & AM_SSL_USETLS){
+    i=netsslwrite(ssl, buf, strlen(buf));
+  } else
 #endif
-		i=send(sd, buf, strlen(buf), 0);
-	return i;
+    i=send(sd, buf, strlen(buf), 0);
+  return i;
 }

@@ -27,7 +27,7 @@ int getopt(int argc, char * const argv[], const char *optstring) {
   static int lastidx,lastofs;
   char *tmp;
   if (optind==0) optind=1;	/* whoever started setting optind to 0 should be shot */
- again:
+  again:
   if (optind>argc || !argv[optind] || *argv[optind]!='-' || argv[optind][1]==0)
     return -1;
   if (argv[optind][1]=='-' && argv[optind][2]==0) {
@@ -45,22 +45,22 @@ int getopt(int argc, char * const argv[], const char *optstring) {
     }
     if (tmp[1]==':') {	/* argument expected */
       if (tmp[2]==':' || argv[optind][lastofs+2]) {	/* "-foo", return "oo" as optarg */
-				if (!*(optarg=argv[optind]+lastofs+2)) optarg=0;
-				goto found;
+        if (!*(optarg=argv[optind]+lastofs+2)) optarg=0;
+        goto found;
       }
       optarg=argv[optind+1];
       if (!optarg) {	/* missing argument */
-				++optind;
-				if (*optstring==':') return ':';
-				getopterror(1);
-				return ':';
+        ++optind;
+        if (*optstring==':') return ':';
+        getopterror(1);
+        return ':';
       }
       ++optind;
     } else {
       ++lastofs;
       return optopt;
     }
-	found:
+    found:
     ++optind;
     return optopt;
   } else {	/* not found */

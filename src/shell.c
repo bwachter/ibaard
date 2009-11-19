@@ -37,15 +37,15 @@
 #endif
 
 typedef struct {
-  char *name;
-  void(*func)(int argc, char **argv);
-  int minArgs;
-  int maxArgs;
-  char *usage;
+    char *name;
+    void(*func)(int argc, char **argv);
+    int minArgs;
+    int maxArgs;
+    char *usage;
 } ash_cdefs;
 
 struct {
-  int fancyprompt;
+    int fancyprompt;
 } ash_settings;
 
 static void ash_cat(int argc, char **argv){
@@ -101,13 +101,13 @@ static void ash_cp(int argc, char **argv){
 
     while((len=read(src,buf,1024))){
       if (len<0) {
-				emsg("cp: ", strerror(errno), "\n", 0);
-				goto cleanup;
+        emsg("cp: ", strerror(errno), "\n", 0);
+        goto cleanup;
       }
       buf[len]='\0';
       write(dst,buf,strlen(buf));
     }
-  cleanup:
+    cleanup:
     close(src);
     close(dst);
   }
@@ -135,10 +135,10 @@ static void ash_ls(int argc, char **argv){
 
     if ((d=opendir(dirname))==NULL) {
       if (errno==ENOTDIR) {
-				lmsg(dirname, "\n", 0);
-				continue;
+        lmsg(dirname, "\n", 0);
+        continue;
       } else 
-      emsg("ls: ", dirname, ": ", strerror(errno), "\n", 0);
+        emsg("ls: ", dirname, ": ", strerror(errno), "\n", 0);
       continue;
     }
 
@@ -229,24 +229,24 @@ static void ash_rmdir(int argc, char **argv){
 #ifndef __WIN32__
 
 static void ash_mount(int argc, char **argv){
-	(void) argc;
+  (void) argc;
   if (argv[3]==NULL) return;
 
-	if (mount(argv[1], argv[2], argv[3], MS_MGC_VAL, "")){
-		emsg("mount: ", argv[1], " on ", argv[2], " as ", argv[3], " failed: ", strerror(errno), "\n", 0);
-	}
+  if (mount(argv[1], argv[2], argv[3], MS_MGC_VAL, "")){
+    emsg("mount: ", argv[1], " on ", argv[2], " as ", argv[3], " failed: ", strerror(errno), "\n", 0);
+  }
 }
 
 static void ash_umount(int argc, char **argv){
-	(void) argc;
+  (void) argc;
  
   if (umount(argv[1])) {
 #ifdef __linux__
     emsg("umount: umounting ", argv[1], " failed, umounting with MNT_DETACH\n", 0);
     if (umount2(argv[1], MNT_DETACH))
-			emsg("umount: unmounting ", argv[1], " failed: ", strerror(errno), "\n", 0);
+      emsg("umount: unmounting ", argv[1], " failed: ", strerror(errno), "\n", 0);
 #else
-		emsg("umount: unmounting ", argv[1], " failed: ", strerror(errno), "\n", 0);
+    emsg("umount: unmounting ", argv[1], " failed: ", strerror(errno), "\n", 0);
 #endif
   }
 }
@@ -316,15 +316,15 @@ static int ash_shellcmd(char *cmd){
   if (cmd[strlen(cmd)-1] == '\n')
     cmd[strlen(cmd)-1] = '\0';
 
-	while(1){
-		if (cmd[strlen(cmd)-1] == ' ')
-			cmd[strlen(cmd)-1] = '\0';
-		else break;
-	}
+  while(1){
+    if (cmd[strlen(cmd)-1] == ' ')
+      cmd[strlen(cmd)-1] = '\0';
+    else break;
+  }
 
-	if (strlen(cmd)==0) return 0;
+  if (strlen(cmd)==0) return 0;
 
-	//cmd[strlen(cmd)] = '\0';
+  //cmd[strlen(cmd)] = '\0';
 
   // split string into args; FIXME ;)
   argv=split(cmd, ' ', &argc, 0, 0);

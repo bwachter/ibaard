@@ -2,23 +2,23 @@
 #define _IBAARD_LOG_H
 
 /*
-F_GENERAL,
-F_NET,
-F_SSL,
-F_FS,
-F_MAILDIR,
-F_AUTHINFO,
-F_ADDRLIST,
+  F_GENERAL,
+  F_NET,
+  F_SSL,
+  F_FS,
+  F_MAILDIR,
+  F_AUTHINFO,
+  F_ADDRLIST,
 */
 
 enum loglevels {
-	L_UNSPEC,
-	L_DEADLY,
-	L_ERROR,
-	L_WARNING,
-	L_INFO,
-	L_VERBOSE,
-	L_DEBUG,
+  L_UNSPEC,
+  L_DEADLY,
+  L_ERROR,
+  L_WARNING,
+  L_INFO,
+  L_VERBOSE,
+  L_DEBUG,
 };
 
 int logmsg(int level, char *facility, char *msg, ...);

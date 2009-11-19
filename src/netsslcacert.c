@@ -8,28 +8,28 @@
 
 #if (defined HAVE_SSL) && (!defined HAVE_MATRIXSSL)
 int netsslcacert(char *subdir){
-	char *cacert_path = NULL;
-	char *cacert = NULL;
+  char *cacert_path = NULL;
+  char *cacert = NULL;
 
-	if (subdir != NULL) {
-		if (cat(&cacert, subdir, "/cacerts.pem", NULL)) return -1;
-	} else if (cat(&cacert, ".libaard/cacerts.pem", NULL)) return -1;
+  if (subdir != NULL) {
+    if (cat(&cacert, subdir, "/cacerts.pem", NULL)) return -1;
+  } else if (cat(&cacert, ".libaard/cacerts.pem", NULL)) return -1;
 
 #ifdef __WIN32__
-	if (getenv("USERPROFILE")!=NULL) {
-		if (cat(&cacert_path, getenv("USERPROFILE"), "/", cacert, NULL)) {
+  if (getenv("USERPROFILE")!=NULL) {
+    if (cat(&cacert_path, getenv("USERPROFILE"), "/", cacert, NULL)) {
 #else
-	if (getenv("HOME")!=NULL) {
-		if (cat(&cacert_path, getenv("HOME"), "/", cacert, NULL)) {
+      if (getenv("HOME")!=NULL) {
+        if (cat(&cacert_path, getenv("HOME"), "/", cacert, NULL)) {
 #endif
-			free(cacert);
-			return -1;
-		} else
-			strncpy(am_ssl_servercerts, cacert_path, 1024);
-	}
-	logmsg(L_INFO, F_SSL, cacert_path, NULL);
-	free(cacert);
-	free(cacert_path);
-	return 0;
-}
+          free(cacert);
+          return -1;
+        } else
+          strncpy(am_ssl_servercerts, cacert_path, 1024);
+      }
+      logmsg(L_INFO, F_SSL, cacert_path, NULL);
+      free(cacert);
+      free(cacert_path);
+      return 0;
+    }
 #endif
