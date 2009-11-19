@@ -56,6 +56,8 @@ SSL *ssl;
 
 int netaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
 int netconnect(char *hostname, char *servicename);
+// transport binding address
+int netconnect2(char *hostname, char *servicename, char *bindaddress);
 int netread(int sd, char *buf);
 int netreadline(int sd, char *buf);
 //int netwrite(int sd, char *buf);
@@ -65,6 +67,8 @@ int netnameinfo(const struct sockaddr *sa, socklen_t salen,
 						char *hostname, size_t hostlen, 
 						char *servname, size_t servlen, int flags);
 int netsocket(struct addrinfo *ai);
+// connect and bind to local address
+int netsocket2(struct addrinfo *ai, struct addrinfo *lai);
 
 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
 int netsslstart(int sd);
