@@ -24,6 +24,7 @@ int netsocket2(struct addrinfo *ai, struct addrinfo *lai){
   if (lai!=NULL)
     if (bind(sd, lai->ai_addr, lai->ai_addrlen) < 0){
       logmsg(L_ERROR, F_NET, "bind() failed: ", strerror(errno), NULL);
+      return -1;
     }
 
   if (connect(sd, ai->ai_addr, ai->ai_addrlen) < 0){
