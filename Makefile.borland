@@ -22,5 +22,3 @@ ibaard.lib:  $(OBJDIR)aardlog.obj $(OBJDIR)authinfo.obj $(OBJDIR)cat.obj $(OBJDI
 
 clean:
 	$(RM) *.exe *.lib *.tds src\*.obj
-	$(Q)cd ibaard
-	$(Q)make -f Makefile.borland clean
