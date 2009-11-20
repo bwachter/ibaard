@@ -15,11 +15,6 @@ int netconnect2(char *hostname, char *servicename, char *bindaddress){
   WSADATA wsaData;
 #endif
 
-  if (bindaddress==NULL)
-    logmsg(L_ERROR, F_NET, "not trying to bind to anything", NULL);
-  else
-    logmsg(L_ERROR, F_NET, "will try binding", NULL);
-
   memset(&hints, 0, sizeof hints);
   hints.ai_flags = AI_PASSIVE;
   hints.ai_socktype = SOCK_STREAM;
