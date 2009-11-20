@@ -94,6 +94,13 @@ Makefile.borland:
 	printf '\t$$(Q)$$(CC) $$(CFLAGS) $$(SSLCFLAGS) -o$$@ -c $$<\n';\
 	printf '\n';\
 	done >> $@
+	$(Q)for i in 1; do \
+	printf 'clean:\n';\
+	printf '\t$$(RM) *.exe *.lib *.tds src\*.obj\n';\
+	printf '\t$$(Q)cd ibaard\n';\
+	printf '\t$$(Q)make -f Makefile.borland clean\n';\
+	done >> $@
+
 
 install: all
 	install -d $(DESTDIR)$(BINDIR)
