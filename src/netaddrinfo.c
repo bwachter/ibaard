@@ -21,6 +21,7 @@ static struct addrinfo * dup_addrinfo (struct addrinfo *info, void *addr, size_t
 #endif
 
 void netfreeaddrinfo (struct addrinfo *ai) {
+#if (defined(__WIN32__)) || (defined(_BROKEN_IO))
   struct addrinfo *next;
 
   while (ai != NULL)
@@ -33,6 +34,9 @@ void netfreeaddrinfo (struct addrinfo *ai) {
     free (ai);
     ai = next;
   }
+#else
+  freeaddrinfo(ai);
+#endif
 }
 
 int netaddrinfo(const char *node, const char *service, 

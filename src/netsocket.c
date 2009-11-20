@@ -4,7 +4,7 @@
 #include "logtypes.h"
 
 int netsocket(struct addrinfo *ai){
-  return netsocket2(ai, 0);
+  return netsocket2(ai, NULL);
 }
 
 int netsocket2(struct addrinfo *ai, struct addrinfo *lai){
@@ -21,7 +21,7 @@ int netsocket2(struct addrinfo *ai, struct addrinfo *lai){
     return -1;
   }
 
-  if (lai!=0)
+  if (lai!=NULL)
     if (bind(sd, lai->ai_addr, lai->ai_addrlen) < 0){
       logmsg(L_ERROR, F_NET, "bind() failed: ", strerror(errno), NULL);
     }
