@@ -1,0 +1,8 @@
+
+
+If you'd like to include ibaard in your software please include a copy 
+of the library, whenever possible. That way you can ensure that every 
+user uses the version you've tested with.
+
+When using git as a scm the best way to work with this library is to 
+add git://git.lart.info/ibaard as a submodule.
