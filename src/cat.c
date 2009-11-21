@@ -1,3 +1,5 @@
+#include "ibaard_platform.h"
+
 #include <stdarg.h>
 #include <string.h>
 

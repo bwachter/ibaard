@@ -1,6 +1,7 @@
 #ifndef _IBAARD_H
 #define _IBAARD_H
 
+#include "ibaard_platform.h"
 #include "ibaard_types.h"
 
 #ifdef __dietlibc__
@@ -11,7 +12,7 @@
 #include <io.h>
 #endif
 
-#ifdef __BORLANDC__
+#if ((defined __WIN32BORLAND)||(defined __WIN32MSC))
 static int __write1(const char *s)
 #else
   static inline int __write1(const char *s)
@@ -21,7 +22,7 @@ static int __write1(const char *s)
   return 0;
 }
 
-#ifdef __BORLANDC__
+#if ((defined __WIN32BORLAND)||(defined __WIN32MSC))
 static int __write2(const char *s)
 #else
   static inline int __write2(const char *s)
@@ -32,7 +33,7 @@ static int __write2(const char *s)
 }
 #endif
 
-#ifdef __BORLANDC__
+#if ((defined __WIN32BORLAND)||(defined __WIN32MSC))
 static int __writefd(int fd, const char *s)
 #else
   static inline int __writefd(int fd, const char *s)

@@ -1,3 +1,5 @@
+#include "ibaard_platform.h"
+
 #ifdef __WIN32__
 #include <stdio.h>
 #include <io.h>

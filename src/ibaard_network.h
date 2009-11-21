@@ -6,10 +6,10 @@
 #include <errno.h>
 #include <ctype.h>
 #ifdef __WIN32__
+#include <winsock2.h>
 #include <windows.h>
 #include <winbase.h>
 #include <ws2tcpip.h>
-#include <winsock2.h>
 #else
 #include <arpa/inet.h>
 #include <sys/types.h>

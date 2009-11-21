@@ -1,3 +1,8 @@
+#include "ibaard_platform.h"
+
+// FIXME, msvc-hack
+#ifndef __WIN32MSC
+
 #include <fcntl.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -15,3 +20,5 @@ int md2(char* name, mode_t mode) {
   }
   return 0; // dir either exists or we were able to create it
 }
+
+#endif

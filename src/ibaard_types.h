@@ -2,6 +2,8 @@
 #define _AM_TYPES_H
 
 #ifdef __WIN32__
+// the great win32 sdk needs winsock2.h to be included before windows.h...
+#include <winsock2.h>
 #include <io.h>
 #include <windows.h>
 #include <winbase.h>
