@@ -27,4 +27,3 @@ char *stripa(char *buf) {
   }
   return buf;
 }
-

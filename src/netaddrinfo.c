@@ -1,4 +1,6 @@
 #include "ibaard_network.h"
+#include "ibaard_log.h"
+#include "logtypes.h"
 
 #if (defined(__WIN32__)) || (defined(_BROKEN_IO))
 static struct addrinfo * dup_addrinfo (struct addrinfo *info, void *addr, size_t addrlen) {
@@ -9,8 +11,7 @@ static struct addrinfo * dup_addrinfo (struct addrinfo *info, void *addr, size_t
     return NULL;
   memcpy (ret, info, sizeof (struct addrinfo));
   ret->ai_addr = malloc (addrlen);
-  if (ret->ai_addr == NULL)
-  {
+  if (ret->ai_addr == NULL){
     free (ret);
     return NULL;
   }
@@ -24,8 +25,7 @@ void netfreeaddrinfo (struct addrinfo *ai) {
 #if (defined(__WIN32__)) || (defined(_BROKEN_IO))
   struct addrinfo *next;
 
-  while (ai != NULL)
-  {
+  while (ai != NULL){
     next = ai->ai_next;
     if (ai->ai_canonname != NULL)
       free (ai->ai_canonname);
@@ -39,16 +39,17 @@ void netfreeaddrinfo (struct addrinfo *ai) {
 #endif
 }
 
-int netaddrinfo(const char *node, const char *service, 
+int netaddrinfo(const char *node, const char *service,
                 const struct addrinfo *hints, struct addrinfo **res){
   int err;
 #ifdef __WIN32__
   HINSTANCE _hInstance = LoadLibrary( "ws2_32" );
   int (WSAAPI *pfn_getaddrinfo) (const char*, const char*, const struct addrinfo*, struct addrinfo **);
 
-  pfn_getaddrinfo =	GetProcAddress( _hInstance, "getaddrinfo" );
+  pfn_getaddrinfo = GetProcAddress( _hInstance, "getaddrinfo" );
 
   if (pfn_getaddrinfo){
+    logmsg(L_DEBUG, F_NET, "Using native getaddrinfo()", NULL);
     return (err=pfn_getaddrinfo(node, service, hints, res));
   } else {
 #endif
@@ -64,9 +65,10 @@ int netaddrinfo(const char *node, const char *service,
 
     memset (&result, 0, sizeof result);
 
+    logmsg(L_DEBUG, F_NET, "Using getaddrinfo() emulation", NULL);
+
     /* default for hints */
-    if (hints == NULL)
-    {
+    if (hints == NULL){
       memset (&hint, 0, sizeof hint);
       hint.ai_family = PF_UNSPEC;
       hints = &hint;
@@ -95,16 +97,15 @@ int netaddrinfo(const char *node, const char *service,
 
     /* if nodename == NULL refer to the local host for a client or any
        for a server */
-    if (node == NULL)
-    {
+    if (node == NULL){
       struct sockaddr_in sin;
 
       /* check protocol family is PF_UNSPEC or PF_INET - could try harder
          for IPv6 but that's more code than I'm prepared to write */
       if (hints->ai_family == PF_UNSPEC || hints->ai_family == PF_INET)
-	result.ai_family = AF_INET;
+        result.ai_family = AF_INET;
       else
-	return EAI_FAMILY;
+        return EAI_FAMILY;
 
       sin.sin_family = result.ai_family;
       sin.sin_port = htons (port);
@@ -119,15 +120,14 @@ int netaddrinfo(const char *node, const char *service,
 
     /* If AI_NUMERIC is specified, use inet_addr to translate numbers and
        dots notation. */
-    if (hints->ai_flags & AI_NUMERICHOST)
-    {
+    if (hints->ai_flags & AI_NUMERICHOST){
       struct sockaddr_in sin;
 
       /* check protocol family is PF_UNSPEC or PF_INET */
       if (hints->ai_family == PF_UNSPEC || hints->ai_family == PF_INET)
-	result.ai_family = AF_INET;
+        result.ai_family = AF_INET;
       else
-	return EAI_FAMILY;
+        return EAI_FAMILY;
 
       sin.sin_family = result.ai_family;
       sin.sin_port = htons (port);
@@ -143,8 +143,7 @@ int netaddrinfo(const char *node, const char *service,
 
     /* Check that the address family is acceptable.
      */
-    switch (hp->h_addrtype)
-    {
+    switch (hp->h_addrtype){
       case AF_INET:
         if (!(hints->ai_family == PF_UNSPEC || hints->ai_family == PF_INET))
           return EAI_FAMILY;
@@ -160,29 +159,27 @@ int netaddrinfo(const char *node, const char *service,
     /* For each element pointed to by hp, create an element in the
        result linked list. */
     sai = eai = NULL;
-    for (addrs = hp->h_addr_list; *addrs != NULL; addrs++)
-    {
+    for (addrs = hp->h_addr_list; *addrs != NULL; addrs++){
       struct sockaddr sa;
       size_t addrlen;
 
       if (hp->h_length < 1)
         continue;
       sa.sa_family = hp->h_addrtype;
-      switch (hp->h_addrtype)
-      {
+      switch (hp->h_addrtype){
         case AF_INET:
-	  ((struct sockaddr_in *) &sa)->sin_port = htons (port);
-	  memcpy (&((struct sockaddr_in *) &sa)->sin_addr,
-	          *addrs, hp->h_length);
+          ((struct sockaddr_in *) &sa)->sin_port = htons (port);
+          memcpy (&((struct sockaddr_in *) &sa)->sin_addr,
+                  *addrs, hp->h_length);
           addrlen = sizeof (struct sockaddr_in);
           break;
         case AF_INET6:
 # if SIN6_LEN
-	  ((struct sockaddr_in6 *) &sa)->sin6_len = hp->h_length;
+          ((struct sockaddr_in6 *) &sa)->sin6_len = hp->h_length;
 # endif
-	  ((struct sockaddr_in6 *) &sa)->sin6_port = htons (port);
-	  memcpy (&((struct sockaddr_in6 *) &sa)->sin6_addr,
-	  	  *addrs, hp->h_length);
+          ((struct sockaddr_in6 *) &sa)->sin6_port = htons (port);
+          memcpy (&((struct sockaddr_in6 *) &sa)->sin6_addr,
+                  *addrs, hp->h_length);
           addrlen = sizeof (struct sockaddr_in6);
           break;
         default:
@@ -191,28 +188,24 @@ int netaddrinfo(const char *node, const char *service,
 
       result.ai_family = hp->h_addrtype;
       ai = dup_addrinfo (&result, &sa, addrlen);
-      if (ai == NULL)
-      {
+      if (ai == NULL){
         netfreeaddrinfo (sai);
         return EAI_MEMORY;
       }
       if (sai == NULL)
-	sai = ai;
+        sai = ai;
       else
-	eai->ai_next = ai;
+        eai->ai_next = ai;
       eai = ai;
     }
 
-    if (sai == NULL)
-    {
+    if (sai == NULL){
       return EAI_NODATA;
     }
-  
-    if (hints->ai_flags & AI_CANONNAME) 
-    {
+
+    if (hints->ai_flags & AI_CANONNAME){
       sai->ai_canonname = malloc (strlen (hp->h_name) + 1);
-      if (sai->ai_canonname == NULL)
-      {
+      if (sai->ai_canonname == NULL){
         netfreeaddrinfo (sai);
         return EAI_MEMORY;
       }
