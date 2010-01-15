@@ -58,9 +58,9 @@ static void ash_cat(int argc, char **argv){
     }
     while ((len=read(fd,buf,1024))){
       if (len<0) {
-	emsg("cat: ", strerror(errno), "\n", 0);
-	close(fd);
-	break;
+        emsg("cat: ", strerror(errno), "\n", 0);
+        close(fd);
+        break;
       }
       buf[len]='\0';
       write(1,buf,strlen(buf));
@@ -137,7 +137,7 @@ static void ash_ls(int argc, char **argv){
       if (errno==ENOTDIR) {
         lmsg(dirname, "\n", 0);
         continue;
-      } else 
+      } else
         emsg("ls: ", dirname, ": ", strerror(errno), "\n", 0);
       continue;
     }
@@ -153,8 +153,13 @@ static void ash_mkdir(int argc, char **argv){
   mode_t mode=0777;
   int i;
   for (i=1;i<argc;i++){
-    if (mkdir(argv[i],mode))
-      emsg("mkdir: ", argv[i], ": ", strerror(errno), "\n", 0);
+    if
+#ifdef __WIN32__
+      (mkdir(argv[i]))
+#else
+      (mkdir(argv[i],mode))
+#endif
+        emsg("mkdir: ", argv[i], ": ", strerror(errno), "\n", 0);
   }
 }
 
@@ -239,7 +244,7 @@ static void ash_mount(int argc, char **argv){
 
 static void ash_umount(int argc, char **argv){
   (void) argc;
- 
+
   if (umount(argv[1])) {
 #ifdef __linux__
     emsg("umount: umounting ", argv[1], " failed, umounting with MNT_DETACH\n", 0);
@@ -257,7 +262,7 @@ static void ash_set(int argc, char **argv){
   (void) argv;
   if (!strcmp(argv[1], "fancyprompt")) {
     if (argv[2]!=NULL) ash_settings.fancyprompt=atoi(argv[2]);
-  } 
+  }
 }
 
 // end of command part, start of `management' part
@@ -309,6 +314,7 @@ static void ash_help(int argc, char **argv){
 }
 
 static int ash_shellcmd(char *cmd){
+// FIXME fork, wait and execve need te be replaced on windows
   int argc;
   ash_cdefs *cdef;
   char **argv;
@@ -342,7 +348,7 @@ static int ash_shellcmd(char *cmd){
     } else {
       // FIXME: properly terminate args
       if (execvp(argv[0], argv)==-1)
-	emsg(argv[0], ": ", strerror(errno), "\n", 0);
+        emsg(argv[0], ": ", strerror(errno), "\n", 0);
       exit(0);
     }
     return 0;
@@ -372,7 +378,7 @@ int ash_init(char* info){
   while(strcmp(buf,"exit")){
     if (ash_settings.fancyprompt)
       lmsg(xgetcwd(buf), "> ", 0);
-    else 
+    else
       lmsg("> ", 0);
     ash_read(buf);
     ash_shellcmd(buf);

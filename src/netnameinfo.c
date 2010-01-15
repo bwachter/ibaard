@@ -1,9 +1,10 @@
+#include <stdint.h>
 #include "ibaard_network.h"
 #include "ibaard_log.h"
 #include "logtypes.h"
 
-int netnameinfo(const struct sockaddr *sa, socklen_t salen, 
-                char *hostname, size_t hostlen, 
+int netnameinfo(const struct sockaddr *sa, socklen_t salen,
+                char *hostname, size_t hostlen,
                 char *servname, size_t servlen, int flags){
 #ifdef __WIN32__
   HINSTANCE _hInstance = LoadLibrary( "ws2_32" );
@@ -11,7 +12,7 @@ int netnameinfo(const struct sockaddr *sa, socklen_t salen,
                                  char *hostname, size_t hostlen,
                                  char *servname, size_t servlen, int flags);
 
-  pfn_getnameinfo =	GetProcAddress( _hInstance, "getnameinfo" );
+  pfn_getnameinfo =     GetProcAddress( _hInstance, "getnameinfo" );
 
   if (pfn_getnameinfo){
     return (pfn_getnameinfo(sa, salen, hostname, hostlen, servname, servlen, flags));
