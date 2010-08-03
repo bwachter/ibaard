@@ -7,15 +7,16 @@
 
 #include <stdio.h>
 
-#ifdef __GLIBC__
-//#include <asm/fcntl.h>
-#define MNT_DETACH      0x00000002
-#endif
-
 #ifndef __WIN32__
 // we need param.h to compile on *BSD
 #include <sys/param.h>
 #include <sys/mount.h>
+#endif
+
+#ifdef __GLIBC__
+#ifndef MNT_DETACH
+#define MNT_DETACH      0x00000002
+#endif
 #endif
 
 #ifdef __WIN32__
