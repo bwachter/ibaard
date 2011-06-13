@@ -1,6 +1,10 @@
 #ifndef _AUTHINFO_H
 #define _AUTHINFO_H
 
+/** @file
+ * Functions for authinfo parsing
+ */
+
 #ifdef __WIN32__
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -10,7 +14,10 @@
 
 #include "ibaard_types.h"
 
+/** An entry in .authinfo */
 typedef struct _authinfo authinfo;
+
+/** A key in authinfo, with information if it has arguments */
 typedef struct _authinfo_key authinfo_key;
 
 struct _authinfo {
@@ -28,7 +35,17 @@ struct _authinfo_key {
     int hasargs;
 };
 
+/** Parse authinfo
+ *
+ * @todo complete documentation
+ * @return -1 on error, 0 on success
+ */
 int authinfo_init();
+
+/** Look up an authinfo record
+ *
+ * @todo complete documentation
+ */
 int authinfo_lookup(authinfo *authinfo_data);
 
 #endif

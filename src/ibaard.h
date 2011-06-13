@@ -1,6 +1,9 @@
 #ifndef _IBAARD_H
 #define _IBAARD_H
 
+/** @file
+ */
+
 #include "ibaard_platform.h"
 #include "ibaard_types.h"
 
@@ -43,7 +46,19 @@ static int __writefd(int fd, const char *s)
   return 0;
 }
 
+/** Split a string
+ *
+ * @param buf
+ * @param c
+ * @param len
+ * @param plus
+ * @param ofs
+ * @return @todo
+ */
 char **split(char *buf,int c,int *len,int plus,int ofs);
+
+/** Draw a nice ascii-art giraffe
+ */
 void kirahvi();
 
 #endif

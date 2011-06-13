@@ -1,9 +1,13 @@
-/* ibaard_platform.h    -- Bernd Wachter bwachter-usenet@lart.info
- *
+/*
+ * ibaard_platform.h    -- Bernd Wachter <bwachter@lart.info>
  */
 
 #ifndef _IBAARD_PLATFORM_H
 #define _IBAARD_PLATFORM_H
+
+/** @file
+ * Define common macros for different compilers
+ */
 
 #ifdef _MSC_VER //FIXME: don't recent versions of msvc define WIN32?
 #define __WIN32__

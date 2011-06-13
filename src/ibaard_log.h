@@ -1,17 +1,12 @@
 #ifndef _IBAARD_LOG_H
 #define _IBAARD_LOG_H
 
-/*
-  F_GENERAL,
-  F_NET,
-  F_SSL,
-  F_FS,
-  F_MAILDIR,
-  F_AUTHINFO,
-  F_ADDRLIST,
-*/
+/** @file
+ * Log related functions
+ */
 
-enum loglevels {
+/** Log levels used in logging functions */
+enum LOGLEVELS {
   L_UNSPEC,
   L_DEADLY,
   L_ERROR,
@@ -21,13 +16,35 @@ enum loglevels {
   L_DEBUG,
 };
 
-extern int ibaard_logsettings;
-
+/** Write a log message to stdout
+ *
+ * @todo complete documentation
+ */
 int logmsg(int level, char *facility, char *msg, ...);
-int logmsg_fd(int fd, int level, char *facility, char *msg, ...); 
+
+/** Write a log message to fd
+ *
+ * @todo complete documentation
+ */
+int logmsg_fd(int fd, int level, char *facility, char *msg, ...);
+
+/** Change or get loglevel
+ *
+ * @param level 0 to check loglevel, any value from LOGLEVELS to set level
+ * @return the current loglevel, or the new loglevel set
+ */
 int loglevel(int level);
+
+/** Write a message to stdout
+ *
+ * @todo complete documentation
+ */
 int lmsg(char *msg, ...);
+
+/** Write a message to stderr
+ *
+ * @todo complete documentation
+ */
 int emsg(char *msg, ...);
-int dmsg(char *msg, ...);
 
 #endif

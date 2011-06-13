@@ -1,11 +1,15 @@
 #ifndef _AM_GETOPT_H
 #define _AM_GETOPT_H
-// the getopt-implementation has been ripped out of dietlibc
+
+/** @file
+ * getopt() ripped out of dietlibc for use in win32 and other environments
+ * not providing getopt()
+ */
 
 #if (defined __WIN32__) && !(defined _GNUC_)
 #include <string.h>
 
-int	getopt(int argc, char * const argv[], const char *optstring);
+int     getopt(int argc, char * const argv[], const char *optstring);
 char *optarg;
 int optind, opterr, optopt;
 
@@ -26,7 +30,7 @@ static void getopterror(int which) {
 int getopt(int argc, char * const argv[], const char *optstring) {
   static int lastidx,lastofs;
   char *tmp;
-  if (optind==0) optind=1;	/* whoever started setting optind to 0 should be shot */
+  if (optind==0) optind=1;      /* whoever started setting optind to 0 should be shot */
   again:
   if (optind>argc || !argv[optind] || *argv[optind]!='-' || argv[optind][1]==0)
     return -1;
@@ -39,17 +43,17 @@ int getopt(int argc, char * const argv[], const char *optstring) {
   }
   optopt=argv[optind][lastofs+1];
   if ((tmp=strchr(optstring,optopt))) {
-    if (*tmp==0) {	/* apparently, we looked for \0, i.e. end of argument */
+    if (*tmp==0) {      /* apparently, we looked for \0, i.e. end of argument */
       ++optind;
       goto again;
     }
-    if (tmp[1]==':') {	/* argument expected */
-      if (tmp[2]==':' || argv[optind][lastofs+2]) {	/* "-foo", return "oo" as optarg */
+    if (tmp[1]==':') {  /* argument expected */
+      if (tmp[2]==':' || argv[optind][lastofs+2]) {     /* "-foo", return "oo" as optarg */
         if (!*(optarg=argv[optind]+lastofs+2)) optarg=0;
         goto found;
       }
       optarg=argv[optind+1];
-      if (!optarg) {	/* missing argument */
+      if (!optarg) {    /* missing argument */
         ++optind;
         if (*optstring==':') return ':';
         getopterror(1);
@@ -63,7 +67,7 @@ int getopt(int argc, char * const argv[], const char *optstring) {
     found:
     ++optind;
     return optopt;
-  } else {	/* not found */
+  } else {      /* not found */
     getopterror(0);
     ++optind;
     return '?';

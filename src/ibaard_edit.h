@@ -1,6 +1,11 @@
 #ifndef _IBAARD_EDIT_H
 #define _IBAARD_EDIT_H
 
+/** @file
+ *
+ * Editing things
+ */
+
 #include "ibaard_platform.h"
 
 #include <string.h>
@@ -8,8 +13,8 @@
 #include <errno.h>
 #include <ctype.h>
 #ifdef __WIN32__
-#include <winsock2.h> 
-// fucking great, msvc will die if we don't put this everywhere 
+#include <winsock2.h>
+// fucking great, msvc will die if we don't put this everywhere
 // before including windows.h
 #include <windows.h>
 #include <winbase.h>
@@ -22,6 +27,14 @@
 
 #include "ibaard_types.h"
 
+/** Open a file in the default editor
+ *
+ * edit() will try to open a file in the editor set in the EDITOR environment
+ * variable or, if this does not exist, in vi.
+ *
+ * @param filename the file to open
+ * @return -1 on error, or the (old!) pid of the editor on success
+ */
 int edit(char *filename);
 
 #endif
