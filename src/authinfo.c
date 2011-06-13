@@ -66,14 +66,14 @@ int authinfo_init(){
       if (!strncmp(authinfo_content+l, key->name, strlen(key->name))){
         l+=strlen(key->name)+1;
         if (key->hasargs){
-          for (tmp=authinfo_content+l,tmp1=tmp;*tmp!=' ' && *tmp!='\n';*tmp++,l++);
+          for (tmp=authinfo_content+l,tmp1=tmp;*tmp!=' ' && *tmp!='\n';tmp++,l++);
           if (*tmp=='\n') nextrecord=1;
           *tmp=0;
           if (!strcmp(key->name, "machine")) strcpy(authinfo_tmp.machine, tmp1);
           if (!strcmp(key->name, "port")) strcpy(authinfo_tmp.port, tmp1);
           if (!strcmp(key->name, "login")) strcpy(authinfo_tmp.login, tmp1);
           if (!strcmp(key->name, "password")) strcpy(authinfo_tmp.password, tmp1);
-          if (!strcmp(key->name, "force")) 
+          if (!strcmp(key->name, "force"))
             if (!strcmp(tmp1, "yes")) authinfo_tmp.force=1;
         } else {
           if (!strcmp(key->name, "default")) authinfo_tmp.defaultauth=1;
