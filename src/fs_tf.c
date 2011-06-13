@@ -14,4 +14,3 @@ int tf(char *name){
   close(fd);
   return 0;
 }
-

@@ -9,12 +9,14 @@
 #include <sys/stat.h>
 
 int tf(char *name);
+int wf(char *name, char *content);
 int td(char *name);
 int md(char* name);
 #ifndef __WIN32MSC
 int md2(char* name, mode_t mode);
 #endif
 int mf(char* name);
+int mf2(char* name, mode_t mode);
 int rdf(char *name, char **buf);
 int touch(char *name);
 int openreadclose(char *fn, char **buf, unsigned long *len);

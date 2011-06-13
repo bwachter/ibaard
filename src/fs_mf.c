@@ -5,9 +5,9 @@
 #endif
 #include "ibaard_fs.h"
 
-int mf(char* name){
+int mf2(char* name, mode_t mode){
   struct stat fifostat;
-  mode_t mode=0666;
+
   if(stat(name, &fifostat) != -1) {
     // do some crap
   } else { // does not yet exist
@@ -15,4 +15,10 @@ int mf(char* name){
       return -1;
   }
   return 0;
+}
+
+int mf(char* name){
+  mode_t mode=0666;
+
+  return mf2(name, mode);
 }
