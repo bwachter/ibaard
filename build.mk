@@ -1,7 +1,7 @@
 
-.PHONY: clean install tar rename upload deb maintainer-deb distclean
+.PHONY: clean doc install tar rename upload deb maintainer-deb distclean
 
-all: libibaard.a
+all: libibaard.a doc
 
 $(SRCDIR)/version.h: 
 	$(Q)echo "-> $@"
@@ -15,6 +15,10 @@ clean:
 
 distclean: clean
 	$(Q)$(RM) Makefile.borland
+
+doc:
+	$(Q)echo "DOC"
+	$(Q)doxygen doc/Doxyfile > /dev/null
 
 dyn-gmake.mk:
 	$(Q)for i in 1; do \
