@@ -1,5 +1,6 @@
 #include <time.h>
 #include <stdio.h>
+#include <unistd.h>
 #ifdef _POSIX_SOURCE
 #include <sys/time.h>
 #endif

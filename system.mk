@@ -16,6 +16,8 @@ SRCDIR=src
 PREFIX?=/usr
 MAKE?=make
 
+ALL=libibaard.a doc
+
 #set up some flags for later use
 Q?=@
 ARFLAGS=cru
@@ -25,11 +27,14 @@ WARN=-W -Wundef -Wno-endif-labels -Wshadow -Wpointer-arith -Wbad-function-cast -
 #-Wextra will clash with gcc3
 #-Wdeclaration-after-statement
 CFLAGS?=-Wall -W -Os $(WARN)
+COMMON_CFLAGS=-std=c99 -D_SVID_SOURCE -D_XOPEN_SOURCE=500 
+INCLUDES=-Isrc
 LDFLAGS=-s
-DEBUG_CFLAGS=-g -Wall -W -Os
-DEBUG_LDFLAGS=-g
+DEBUG_CFLAGS=-g -Wall -W -O0 -fprofile-arcs -ftest-coverage
+DEBUG_LDFLAGS=-g -fprofile-arcs
 
-#LIBS=-L. -laardmail
+CFLAGS+=$(COMMON_CFLAGS)
+DEBUG_CFLAGS+=$(COMMON_CFLAGS)
 
 SOLARIS_LIBS=-lresolv -lsocket
 WIN32_LIBS=-lws2_32 -lwsock32 -lgdi32

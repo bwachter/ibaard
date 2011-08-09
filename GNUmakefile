@@ -3,14 +3,13 @@ include system.mk
 
 # set up some basic flags
 VERSIONNR=$(shell head -1 CHANGES|sed 's/://')
-VERSION=aardmail-$(shell head -1 CHANGES|sed 's/://')
+VERSION=ibaard-$(shell head -1 CHANGES|sed 's/://')
 CURNAME=$(notdir $(shell pwd))
-
-#LIBS=-L. -laardmail
+MK_ALL=$$^
 
 ifdef DEBUG
-CFLAGS=-g -Wall -W -pipe -Os
-LDFLAGS=-g
+CFLAGS=$(DEBUG_CFLAGS)
+LDFLAGS=$(DEBUG_LDFLAGS)
 endif
 
 ifdef WIN32
@@ -59,6 +58,10 @@ CFLAGS+=-D_DEV
 ALL+=
 endif
 
+ifneq (dyn-gmake.mk,$(wildcard dyn-gmake.mk))
+ALL=dep
+endif
+
 include build.mk
 
 ifeq (dyn-gmake.mk,$(wildcard dyn-gmake.mk))
@@ -66,6 +69,5 @@ include dyn-gmake.mk
 endif
 
 dep: dyn-gmake.mk
-
-
+	$(MAKE)
 
