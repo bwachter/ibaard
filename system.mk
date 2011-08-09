@@ -27,7 +27,7 @@ WARN=-W -Wundef -Wno-endif-labels -Wshadow -Wpointer-arith -Wbad-function-cast -
 #-Wextra will clash with gcc3
 #-Wdeclaration-after-statement
 CFLAGS?=-Wall -W -Os $(WARN)
-COMMON_CFLAGS=-std=c99 -D_SVID_SOURCE -D_XOPEN_SOURCE=500 
+COMMON_CFLAGS=-std=c99 -D_XPG6 -D_SVID_SOURCE -D_XOPEN_SOURCE=500 
 INCLUDES=-Isrc
 LDFLAGS=-s
 DEBUG_CFLAGS=-g -Wall -W -O0 -fprofile-arcs -ftest-coverage

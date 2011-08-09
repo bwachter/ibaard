@@ -37,6 +37,10 @@
 #define O_LARGEFILE  0100000
 #endif
 
+#ifndef __linux
+#define MS_MGC_VAL 0
+#endif
+
 typedef struct {
     char *name;
     void(*func)(int argc, char **argv);
