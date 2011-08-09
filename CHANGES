@@ -1,14 +1,22 @@
-0.1-pre-3:
-	Added strerror_ssl
-	SSL-fixes for BCC
-	Added Maildirstuff
+0.2:
+        Require c99, add a few test cases
+        Add doxygen documentation
+        Fix mode flags for creat()
+        Add some MSVC related fixes (though it's still mostly broken)
+        Support bind() on outgoing connections (netsocket2())
+        Support logging to arbitrary file descriptors
+        Added strerror_ssl, touch()
+        Added Maildirstuff
+
+0.1:
+        SSL-fixes for BCC
+        Build fixes for Solaris and OS-X
 
 0.1-pre-2:
-	BCC compile fixes
-	Made some Makefile parts dynamic
+        BCC compile fixes
+        Made some Makefile parts dynamic
 
 0.1-pre-1:
-	Added SSL certificate verification
-	Compile fixes for Windows, BSD, Solaris
-	Added common functions from different projects
-
+        Added SSL certificate verification
+        Compile fixes for Windows, BSD, Solaris
+        Added common functions from different projects

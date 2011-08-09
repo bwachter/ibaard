@@ -11,3 +11,4 @@ doc/man
 test
 test-run/
 coverage/
+mswin32.mak
