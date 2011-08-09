@@ -68,7 +68,7 @@ dyn-gmake.mk: dyn-library-targets.mk dyn-tests.mk
 	printf '%%.o: %%.c\n';\
 	printf '\t$$(Q)echo "CC $$@"\n';\
 	printf '\t$$(Q)$$(DIET) $$(CROSS)$$(CC) $$(CFLAGS) $(INCLUDES) -c $$< -o $$@\n';\
-	printf 'ifdef $$(STRIP)\n';\
+	printf 'ifdef STRIP\n';\
 	printf '\t$$(Q)$$(COMMENT) -$$(CROSS)$$(STRIP) $$@\n';\
 	printf 'endif\n\n';\
 	done > $@
