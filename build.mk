@@ -20,7 +20,7 @@ distclean: clean
 
 doc:
 	$(Q)echo "DOC"
-	$(Q)doxygen doc/Doxyfile > /dev/null
+	$(Q)doxygen doc/Doxyfile > /dev/null||echo "doxygen not found, skipping"
 
 debug: clean
 	$(MAKE) DEBUG=1
