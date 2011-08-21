@@ -58,7 +58,7 @@ dyn-library-targets.mk: $(SRCDIR)/version.h build.mk system.mk
 	printf " $$DEP"; done >> $@
 	$(Q)for i in 1; do \
 	printf '\n\t$$(Q)echo "AR $$@"\n';\
-	printf '\t$$(Q)$$(CROSS)$$(AR) $$(ARFLAGS) $$@ $$^\n';\
+	printf '\t$$(Q)$$(CROSS)$$(AR) $$(ARFLAGS) $$@ $(MK_ALL)\n';\
 	printf '\t$$(Q)$$(CROSS)$$(RANLIB) $$@\n';\
 	printf '\n';\
 	done >> $@
