@@ -26,7 +26,7 @@ WARN=-W -Wundef -Wno-endif-labels -Wshadow -Wpointer-arith -Wbad-function-cast -
 #-Wunreachable-code
 #-Wextra will clash with gcc3
 #-Wdeclaration-after-statement
-CFLAGS?=-Wall -W -Os $(WARN)
+CFLAGS?=-Wall -W $(WARN)
 COMMON_CFLAGS=-std=c99 -D_XPG6 -D_SVID_SOURCE -D_XOPEN_SOURCE=500 
 INCLUDES=-Isrc
 LDFLAGS=-s
