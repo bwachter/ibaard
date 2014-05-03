@@ -1,3 +1,4 @@
+BD_LIB=ibaard
 
 .PHONY: clean doc install tar rename upload deb maintainer-deb distclean
 
@@ -11,8 +12,8 @@ $(SRCDIR)/version.h: CHANGES
 
 clean:
 	$(Q)echo "cleaning up"
-	$(Q)$(RM) *.a *.exe *.lib $(OBJDIR)/*.{o,obj,lib} crammd5/*.{o,obj,lib} $(OBJDIR)/*.o dyn-*.mk
-	$(Q)$(RM) $(OBJDIR)/*.gc* test tests/*.{o,obj,lib} tests/*.gc* *.gcov
+	$(Q)$(RM) *.a *.exe *.lib $(BD_OBJ)/*.{o,obj,lib} crammd5/*.{o,obj,lib} $(BD_OBJ)/*.o dyn-*.mk
+	$(Q)$(RM) $(BD_OBJ)/*.gc* test tests/*.{o,obj,lib} tests/*.gc* *.gcov
 	$(Q)$(RM) -R test-run coverage
 
 distclean: clean
@@ -39,62 +40,22 @@ coverage: debug
 	done
 	$(Q)echo
 
-dyn-tests.mk: build.mk system.mk
-	$(Q)printf "test: " > $@
-	$(Q)for i in `ls tests/*.c`; do \
-	DEP=`echo $$i | sed "s/\.c/\.o/g"` ;\
-	printf " $$DEP"; done >> $@
-	$(Q)for i in 1; do  \
-	printf '\n\t$$(Q)echo "LD $$@"\n' ;\
-	printf '\t$$(Q)$$(DIET) $$(CROSS)$$(CC) $$(LDFLAGS) $$(INCLUDES) -o $$@ $(MK_ALL) $$(LIBS) -lcheck -L. -libaard\n' ;\
-	printf '\t$$(Q)rm -Rf test-run && mkdir -p test-run && ./$$@\n\n' ;\
-	done >> $@
-
-dyn-library-targets.mk: $(SRCDIR)/version.h build.mk system.mk
-	$(Q)echo > $@
-	$(Q)printf "libibaard.a: " >> $@
-	$(Q)for i in `ls src/*.c`; do \
-	DEP=`echo $$i | sed "s/\.c/\.o/g" | sed 's,src/,\$$(OBJDIR)/,g'`;\
-	printf " $$DEP"; done >> $@
-	$(Q)for i in 1; do \
-	printf '\n\t$$(Q)echo "AR $$@"\n';\
-	printf '\t$$(Q)$$(CROSS)$$(AR) $$(ARFLAGS) $$@ $$^\n';\
-	printf '\t$$(Q)$$(CROSS)$$(RANLIB) $$@\n';\
-	printf '\n';\
-	done >> $@
-
-dyn-gmake.mk: dyn-library-targets.mk dyn-tests.mk
-	$(Q)for i in 1; do \
-	printf '%%.o: %%.c\n';\
-	printf '\t$$(Q)echo "CC $$@"\n';\
-	printf '\t$$(Q)$$(DIET) $$(CROSS)$$(CC) $$(CFLAGS) $(INCLUDES) -c $$< -o $$@\n';\
-	printf 'ifdef STRIP\n';\
-	printf '\t$$(Q)$$(COMMENT) -$$(CROSS)$$(STRIP) $$@\n';\
-	printf 'endif\n\n';\
+targets:
+	$(Q)echo "-> targets"; for i in 1; do \
+	  printf "ibaard.lib: " ;\
+	  for i in $(SRCDIR)/*.c; do printf "$$i "; done ;\
 	done > $@
-	echo 'include dyn-tests.mk dyn-library-targets.mk' >> $@
-
-dyn-bsdmake.mk: dyn-library-targets.mk dyn-tests.mk
-	$(Q)for i in 1; do \
-	printf '.c.o:\n';\
-	printf '\t$$(Q)echo "CC $$@"\n';\
-	printf '\t$$(Q)$$(DIET) $$(CROSS)$$(CC) $$(CFLAGS) -c $$< -o $$@\n';\
-	printf '.ifdef $$(STRIP)\n';\
-	printf '\t$$(Q)$$(COMMENT) -$$(CROSS)$$(STRIP) $$@\n';\
-	printf '.endif\n\n';\
-	done > $@
-	echo 'include dyn-tests.mk dyn-library-targets.mk' >> $@
 
 mswin32.mak:
 	$(Q)for i in 1; do \
 	printf "!include <ntwin32.mak>\n\n" ;\
-	printf "OBJDIR=src\\ \n" ;\
+	printf "BD_OBJ=src\\ \n" ;\
 	printf "SRCDIR=src\\ \n" ;\
 	printf ".PHONY: clean\n\n" ;\
 	done > $@
 	$(Q)printf "ibaard.lib: " >> $@
 	$(Q)for i in `ls src/*.c`; do \
-	  DEP=`echo $$i | sed "s/\.c/\.obj/g" | sed 's,src/,\$$(OBJDIR),g'`;\
+	  DEP=`echo $$i | sed "s/\.c/\.obj/g" | sed 's,src/,\$$(BD_OBJ),g'`;\
 	  printf " $$DEP";\
         done >> $@
 	$(Q)for i in 1; do \
@@ -122,13 +83,13 @@ Makefile.borland:
 	printf "SSLCFLAGS=-DHAVE_SSL\n";\
 	printf "!endif\n";\
 	printf "Q=@\n";\
-	printf 'OBJDIR=src\\\\\n';\
+	printf 'BD_OBJ=src\\\\\n';\
 	printf 'SRCDIR=src\\\\\n';\
 	printf ".PHONY: clean\n";\
 	done > $@
 	$(Q)printf "ibaard.lib: " >> $@
 	$(Q)for i in `ls src/*.c`; do \
-	DEP=`echo $$i | sed "s/\.c/\.obj/g" | sed 's,src/,\$$(OBJDIR),g'`;\
+	DEP=`echo $$i | sed "s/\.c/\.obj/g" | sed 's,src/,\$$(BD_OBJ),g'`;\
 	printf " $$DEP"; done >> $@
 	$(Q)for i in 1; do \
 	printf '\n\t$$(Q)echo "TLIB $$@"\n';\

@@ -1,8 +1,16 @@
-# set up some basic programs
-include system.mk
+# Allow overwriting of some common configuration values
+ifeq (config.mk,$(wildcard config.mk))
+include config.mk
+endif
+
+include mk/config.mk
 
 # set up some basic flags
+NAME=ibaard
 VERSIONNR=$(shell head -1 CHANGES|sed 's/://')
+MAJOR=$(shell echo $(VERSIONNR)|sed 's/~.*//;s/\..*//')
+MINOR=$(shell echo $(VERSIONNR)|sed 's/~.*//;s/[0-9]*\.//;s/\.[0-9]*//')
+RELEASE=$(shell echo $(VERSIONNR)|sed 's/~.*//;s/[0-9]*\.[0-9]*\.*//;s/^$$/0/;')
 VERSION=ibaard-$(shell head -1 CHANGES|sed 's/://')
 CURNAME=$(notdir $(shell pwd))
 MK_ALL=$$^
@@ -58,16 +66,20 @@ CFLAGS+=-D_DEV
 ALL+=
 endif
 
+ifeq (dyn-conf.mk,$(wildcard dyn-conf.mk))
+include dyn-conf.mk
+endif
+
 ifneq (dyn-gmake.mk,$(wildcard dyn-gmake.mk))
 ALL=dep
 endif
 
-include build.mk
+include build.mk mk/common-targets.mk
 
 ifeq (dyn-gmake.mk,$(wildcard dyn-gmake.mk))
 include dyn-gmake.mk
 endif
 
-dep: dyn-gmake.mk
+dep: dyn-gmake.mk dyn-conf.mk
 	$(MAKE)
 
