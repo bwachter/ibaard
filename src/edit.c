@@ -1,3 +1,9 @@
+/**
+ * @file edit.c
+ * @author Bernd Wachter <bwachter@lart.info>
+ * @date 2006-2011
+ */
+
 #include "ibaard_cat.h"
 #include "ibaard_edit.h"
 

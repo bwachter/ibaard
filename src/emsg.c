@@ -1,3 +1,9 @@
+/**
+ * @file emsg.c
+ * @author Bernd Wachter <bwachter@lart.info>
+ * @date 2005-2011
+ */
+
 #include <stdarg.h>
 
 #include "ibaard.h"

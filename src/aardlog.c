@@ -1,3 +1,9 @@
+/**
+ * @file aardlog.c
+ * @author Bernd Wachter <bwachter@lart.info>
+ * @date 2005-2011
+ */
+
 #include "ibaard_platform.h"
 
 #include <stdarg.h>
@@ -25,7 +31,7 @@ static void logwrite (int fd, char *msg){
 int loglevel(int level){
   if (level != 0)
     current_loglevel = level;
-  return current_loglevel; 
+  return current_loglevel;
 }
 
 
@@ -56,7 +62,7 @@ static int logheader(int fd, int level, char *facility){
       __writefd(fd, "[UNKNOWN][");
       break;
   }
-	
+
   __writefd(fd, facility);
   __writefd(fd, "] ");
   return die;
@@ -102,5 +108,3 @@ int logmsg(int level, char *facility, char *msg, ...) {
   if (die) exit(-1);
   return 0;
 }
-
-

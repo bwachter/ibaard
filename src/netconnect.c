@@ -1,3 +1,9 @@
+/**
+ * @file netconnect.c
+ * @author Bernd Wachter <bwachter@lart.info>
+ * @date 2005-2011
+ */
+
 #include "ibaard_network.h"
 #include "ibaard_log.h"
 #include "logtypes.h"
@@ -35,7 +41,7 @@ int netconnect2(char *hostname, char *servicename, char *bindaddress){
     return -1;
   } else {
     struct addrinfo *r, *b;
-    
+
     r=res;
     while (r){
       if (bindaddress!=NULL){
@@ -57,7 +63,7 @@ int netconnect2(char *hostname, char *servicename, char *bindaddress){
       }
       if(r->ai_next==NULL)
         logmsg(L_INFO, F_NET, "r->ai_next is NULL", NULL);
-      else 
+      else
         logmsg(L_INFO, F_NET, "trying next element", NULL);
       r=r->ai_next;
     }

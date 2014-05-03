@@ -1,3 +1,9 @@
+/**
+ * @file mdopen.c
+ * @author Bernd Wachter <bwachter@lart.info>
+ * @date 2005-2011
+ */
+
 #include <errno.h>
 #include <fcntl.h>
 
@@ -6,7 +12,7 @@
 #include "ibaard_cat.h"
 #include "logtypes.h"
 
-// opens a file in maildir/ 
+// opens a file in maildir/
 // if maildir does not start with a / use subdir in maildir
 #if (defined(__WIN32__)) || (defined _BROKEN_IO)
 FILE *mdopen(char *maildir, char **uniqname){
