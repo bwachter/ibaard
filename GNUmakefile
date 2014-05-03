@@ -33,11 +33,11 @@ endif
 ifeq ($(shell uname),IRIX64)
 ifdef DEBUG
 STRIP=
-CFLAGS=-Wall -W -Os 
+CFLAGS=-Wall -W
 LDFLAGS=-g
 else
 STRIP=
-CFLAGS=-g -Wall -W -Os
+CFLAGS=-g -Wall -W
 endif
 endif
 endif

@@ -1,3 +1,9 @@
+/**
+ * @file cat.c
+ * @author Bernd Wachter <bwachter@lart.info>
+ * @date 2005-2011
+ */
+
 #include "ibaard_platform.h"
 
 #include <stdarg.h>
@@ -9,7 +15,7 @@
 #else
 #include <stdlib.h>
 #include <unistd.h>
-#endif 
+#endif
 
 #include "ibaard_cat.h"
 
@@ -17,10 +23,10 @@ int cat(char **dest, char *str, ...){
   va_list ap;
   int len;
   char *ptr, *tmp;
-	
+
   if (*dest != NULL)
     free(*dest);
-	
+
   len = strlen(str);
   va_start(ap, str);
   while ((tmp = va_arg(ap, char*)))
@@ -39,5 +45,3 @@ int cat(char **dest, char *str, ...){
   *ptr = '\0';
   return 0;
 }
-
-

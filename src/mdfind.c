@@ -1,3 +1,9 @@
+/**
+ * @file mdfind.c
+ * @author Bernd Wachter <bwachter@lart.info>
+ * @date 2005-2011
+ */
+
 #include "ibaard_maildir.h"
 #include "ibaard_fs.h"
 #include "ibaard_log.h"
@@ -8,8 +14,8 @@ int mdfind(char *maildir){
   // TODO: maybe look what's in maildirpath. check if directory exists
   if (maildir) {
     maildirpath=strdup(maildir);
-    if (!td(maildirpath)) return 0; 
-  } 
+    if (!td(maildirpath)) return 0;
+  }
 
   if ((maildirpath=getenv("MAILDIR"))==NULL){
 #ifdef __WIN32__

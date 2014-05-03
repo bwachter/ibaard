@@ -1,3 +1,9 @@
+/**
+ * @file netwriteline.c
+ * @author Bernd Wachter <bwachter@lart.info>
+ * @date 2005-2011
+ */
+
 #include "ibaard_network.h"
 #include "ibaard_log.h"
 #include "logtypes.h"

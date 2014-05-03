@@ -1,3 +1,9 @@
+/**
+ * @file netsslwrite.c
+ * @author Bernd Wachter <bwachter@lart.info>
+ * @date 2005-2011
+ */
+
 #include "ibaard_network.h"
 
 #if (defined HAVE_SSL) && (!defined HAVE_MATRIXSSL)
@@ -9,7 +15,7 @@ int netsslwrite(SSL *ssl_handle, char *buf, int len){
     switch (SSL_get_error(ssl_handle, i)){
       case SSL_ERROR_WANT_WRITE:
         continue;
-      default: 
+      default:
         return i;
     }
   }

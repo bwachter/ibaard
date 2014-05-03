@@ -1,3 +1,9 @@
+/**
+ * @file shell.c
+ * @author Bernd Wachter <bwachter@lart.info>
+ * @date 2005-2011
+ */
+
 #include <string.h>
 #include <errno.h>
 #include <sys/stat.h>
@@ -34,7 +40,7 @@
 #include "ibaard.h"
 
 #ifndef O_LARGEFILE
-#define O_LARGEFILE  0100000
+#define O_LARGEFILE  0100000  ///< Compat definition for broken platforms
 #endif
 
 #ifndef __linux
@@ -51,7 +57,7 @@ typedef struct {
 
 struct {
     int fancyprompt;
-} ash_settings;
+} ash_settings;  ///< Store runtime settings of the shell
 
 static void ash_cat(int argc, char **argv){
   int i,len,fd;
