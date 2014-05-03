@@ -12,3 +12,4 @@ test
 test-run/
 coverage/
 mswin32.mak
+/doc/Doxyfile.bak
