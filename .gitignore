@@ -1,5 +1,6 @@
 *.o
-dyn-gmake.mk
+src/version.h
+dyn-*.mk
 libibaard.a
 GPATH
 GRTAGS
@@ -7,3 +8,7 @@ GSYMS
 GTAGS
 doc/html
 doc/man
+test
+test-run/
+coverage/
+mswin32.mak

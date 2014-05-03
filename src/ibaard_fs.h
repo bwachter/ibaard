@@ -12,9 +12,10 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-/** Test if file exists
+/** Test if file exists _and_ can be opened by the user
  *
- * @todo complete documentation
+ * @param name The filename to test
+ * @return 0 if the file exists and is readable, negative values (errno) otherwise
  */
 int tf(char *name);
 
@@ -46,13 +47,26 @@ int md2(char* name, mode_t mode);
 
 /** Create a FIFO
  *
- * @todo complete documentation
+ * The mode for the new FIFO will be 666, with the value of umask applied.
+ * For a common umask with 0022 this will give you a FIFO with 644.
+ *
+ * If the FIFO already exists the mode will be set to 0666&~umask
+ *
+ * @param name The name of the FIFO
+ * @return 0 on success, -1 on error
+ *         (unable to create, or exists, but not as FIFO)
  */
 int mf(char* name);
 
 /** Create a FIFO and set mode
  *
- * @todo complete documentation
+ * The function will ignore umask when setting the mode for the new FIFO.
+ * If the FIFO already exists only the mode will be adjusted.
+ *
+ * @param name The name of the FIFO
+ * @param mode The mode for the new FIFO
+ * @return 0 on success, -1 on error
+ *         (unable to create, or exists, but not as FIFO)
  */
 int mf2(char* name, mode_t mode);
 

@@ -1,9 +1,10 @@
 .include "system.mk"
 
 VERSIONNR!=head -1 CHANGES|sed 's/://'
-VERSION=aardmail-$(VERSIONNR)
+VERSION=ibaard-$(VERSIONNR)
 #CURNAME=$(notdir $(shell pwd))
 OS!=uname
+MK_ALL=$$>
 
 .ifdef DEBUG
 .if $(DEBUG) == 1
@@ -26,10 +27,10 @@ STRIP=strip -x
 .if $(OS) == IRIX64
 STRIP=test
 .ifdef DEBUG
-CFLAGS=-Wall -W -Os 
+CFLAGS=-Wall -W
 LDFLAGS=-g
 .else
-CFLAGS=-g -Wall -W -Os
+CFLAGS=-g -Wall -W
 .endif
 .endif
 .if $(OS) == FreeBSD
@@ -66,12 +67,16 @@ CFLAGS+=$(DEV_CFLAGS)
 .endif
 .endif
 
+.if exists(dyn-bsdmake.mk)
+.else
+ALL=dep
+.endif
+
 .include "build.mk"
 
 .if exists(dyn-bsdmake.mk)
 .include "dyn-bsdmake.mk"  
-.else   
-DEPSTAT= "You need to run 'make dep'\n"
 .endif
 
 dep: dyn-bsdmake.mk
+	$(MAKE)
