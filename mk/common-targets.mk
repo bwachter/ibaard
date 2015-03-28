@@ -71,5 +71,6 @@ dyn-tests.mk: build.mk system.mk
 	  printf '\n\t$$(Q)echo "LD $$@"\n' ;\
 	  printf '\t$$(Q)$$(DIET) $$(CROSS)$$(CC) $$(LDFLAGS) $$(INCLUDES) -o $$@ $(MK_ALL) $$(LIBS) -lcheck ' ;\
 	  printf "`echo $(BD_LIB)|awk '{for (i=1;i<=NF;i++) printf " -l"$$i}'`\n" ;\
-	  printf '\t$$(Q)rm -Rf test-run && mkdir -p test-run && ./$$@\n\n' ;\
+	  printf '\t$$(Q)rm -Rf test-run && mkdir -p test-run && ./$$@\n' ;\
+	  printf '\t$$(Q)if [ -n "$$(MEMCHECK)" ]; then rm -Rf test-run && mkdir -p test-run && valgrind $$(VALGRIND_OPTS) ./$$@; fi\n\n' ;\
 	done >> $@

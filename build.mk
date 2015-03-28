@@ -40,6 +40,9 @@ coverage: debug
 	done
 	$(Q)echo
 
+memcheck: debug
+	$(MAKE) test DEBUG=1 MEMCHECK=1
+
 targets:
 	$(Q)echo "-> targets"; for i in 1; do \
 	  printf "ibaard.lib: " ;\

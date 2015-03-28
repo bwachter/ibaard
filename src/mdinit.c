@@ -38,6 +38,7 @@ int mdinit(char *maildir, char *subdir, int harddelete){
 
   if ((dirptr=opendir(mymaildir))==NULL){
     logmsg(L_ERROR, F_MAILDIR, "unable to open maildir ", mymaildir, ": ", strerror(errno), NULL);
+    free(mymaildir);
     return -1;
   }
 
@@ -46,6 +47,7 @@ int mdinit(char *maildir, char *subdir, int harddelete){
     if (!strncmp(tmpdirent->d_name, "..", 2)) continue;
     if (stat(cati(mymaildir, "/", tmpdirent->d_name, NULL), &maildirstat)==-1){
       logmsg(L_ERROR, F_MAILDIR, "stat() for file in maildir failed ", NULL);
+      free(mymaildir);
       return -1;
     }
     strncpy(tmpmaildirent.name, tmpdirent->d_name, AM_MAXPATH);
@@ -53,5 +55,7 @@ int mdinit(char *maildir, char *subdir, int harddelete){
     //maildir_sappend(&tmpmaildirent);
     memset(&tmpmaildirent, 0, sizeof(maildirent));
   }
+
+  free(mymaildir);
   return 0; //FIXME
 }

@@ -58,6 +58,7 @@ int authinfo_init(){
   if ((err=openreadclose(path, &authinfo_content, &authinfo_len))){
     logmsg(L_WARNING, F_AUTHINFO, "unable to read authinfo: ", strerror(err), NULL);
     free(path);
+    free(authinfo_content);
     return -1;
   }
 
@@ -95,6 +96,8 @@ int authinfo_init(){
     }
     l++;
   }
+
+  free(authinfo_content);
   return 0;
 }
 

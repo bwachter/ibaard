@@ -53,7 +53,8 @@ LIBDIR?=$(PREFIX)/lib
 MANDIR?=$(PREFIX)/share/man
 #STRIP=
 
-
+# Default flags for valgrind
+VALGRIND_OPTS=--leak-check=yes --track-origins=yes
 
 # Common flags for SSL
 MATRIX_LIBS=-lmatrixsslstatic -lpthread
