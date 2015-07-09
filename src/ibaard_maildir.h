@@ -10,7 +10,7 @@
 
 #include "ibaard_types.h"
 
-#if (defined(__WIN32__)) || (defined _BROKEN_IO)
+#if (defined(_WIN32)) || (defined _BROKEN_IO)
 #include <stdio.h>
 #endif
 
@@ -35,7 +35,7 @@ char *maildirpath;
 int mduniqname(char **uniqname);
 
 
-#if (defined(__WIN32__)) || (defined _BROKEN_IO)
+#if (defined(_WIN32)) || (defined _BROKEN_IO)
 FILE *mdopen(char *maildir, char **uniqname);
 int mdclose(char *maildir, char **uniqname, FILE* fd);
 #else

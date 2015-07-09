@@ -13,7 +13,7 @@
 
 #include <stdio.h>
 
-#ifndef __WIN32__
+#ifndef _WIN32
 // we need param.h to compile on *BSD
 #include <sys/param.h>
 #include <sys/mount.h>
@@ -25,7 +25,7 @@
 #endif
 #endif
 
-#ifdef __WIN32__
+#ifdef _WIN32
 #include <io.h>
 #else
 #include <unistd.h>
@@ -165,7 +165,7 @@ static void ash_mkdir(int argc, char **argv){
   int i;
   for (i=1;i<argc;i++){
     if
-#ifdef __WIN32__
+#ifdef _WIN32
       (mkdir(argv[i]))
 #else
       (mkdir(argv[i],mode))
@@ -242,7 +242,7 @@ static void ash_rmdir(int argc, char **argv){
   }
 }
 
-#ifndef __WIN32__
+#ifndef _WIN32
 
 static void ash_mount(int argc, char **argv){
   (void) argc;
@@ -290,7 +290,7 @@ static ash_cdefs ash_commands[] = {
   {"help", ash_help, 1, 1, "- print this help"},
   {"ls", ash_ls, 1, 99, "[DIR] - list contents of DIR or current directory"},
   {"mkdir", ash_mkdir, 2, 99, "[DIR]... - creates one or more directories"},
-#ifndef __WIN32__
+#ifndef _WIN32
   {"mount", ash_mount, 4, 5, "DEVICE MOUNTPOINT FSTYPE - mount device on mountpoint"},
 #endif
   {"mv", ash_mv, 3, 99, "SOURCE DEST - move SOURCE to DEST"},
@@ -298,7 +298,7 @@ static ash_cdefs ash_commands[] = {
   {"poweroff", ash_poweroff, 1, 1, "- switch the system off"},
 #endif
   {"pwd", ash_pwd, 1, 1, "- print name of current directory"},
-#ifndef __WIN32__
+#ifndef _WIN32
   {"umount", ash_umount, 2, 2, "MOUNTPOINT - umount"},
 #endif
 #ifdef __linux__

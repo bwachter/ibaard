@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef __WIN32__
+#ifdef __WIN32
 #include <stdio.h>
 #include <io.h>
 #else

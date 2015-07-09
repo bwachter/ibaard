@@ -11,11 +11,11 @@
 #include <write12.h>
 #else
 #include <string.h>
-#ifdef __WIN32__
+#ifdef _WIN32
 #include <io.h>
 #endif
 
-#if ((defined __WIN32BORLAND)||(defined __WIN32MSC))
+#ifdef _WIN32
 static int __write1(const char *s)
 #else
   static inline int __write1(const char *s)
@@ -25,7 +25,7 @@ static int __write1(const char *s)
   return 0;
 }
 
-#if ((defined __WIN32BORLAND)||(defined __WIN32MSC))
+#ifdef _WIN32
 static int __write2(const char *s)
 #else
   static inline int __write2(const char *s)
@@ -36,7 +36,7 @@ static int __write2(const char *s)
 }
 #endif
 
-#if ((defined __WIN32BORLAND)||(defined __WIN32MSC))
+#ifdef _WIN32
 static int __writefd(int fd, const char *s)
 #else
   static inline int __writefd(int fd, const char *s)

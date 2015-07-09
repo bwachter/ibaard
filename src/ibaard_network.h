@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <ctype.h>
-#ifdef __WIN32__
+#ifdef _WIN32
 #include <winsock2.h>
 #include <windows.h>
 #include <winbase.h>
@@ -40,7 +40,7 @@ enum AM_SSL {
   AM_SSL_STARTTLS=4,
 };
 
-#ifdef __WIN32__
+#ifdef _WIN32
 #define EAI_ADDRFAMILY   -9    /* Address family for NAME not supported.  */
 #define EAI_SYSTEM       -11   /* System error returned in `errno'.  */
 #endif

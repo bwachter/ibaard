@@ -5,7 +5,7 @@
  * Functions to manipulate filesystem objects
  */
 
-#if (defined __WIN32__) || (defined _BROKEN_IO)
+#if (defined _WIN32) || (defined _BROKEN_IO)
 #include <stdio.h>
 #endif
 
@@ -36,7 +36,7 @@ int td(char *name);
  * @todo complete documentation
  */
 int md(char* name);
-#ifndef __WIN32MSC
+#ifndef _WIN32
 /** Create a directory and set mode
  *
  * @todo complete documentation
@@ -57,7 +57,7 @@ int md2(char* name, mode_t mode);
  *         (unable to create, or exists, but not as FIFO)
  */
 int mf(char* name);
-
+#ifndef _WIN32
 /** Create a FIFO and set mode
  *
  * The function will ignore umask when setting the mode for the new FIFO.
@@ -69,12 +69,15 @@ int mf(char* name);
  *         (unable to create, or exists, but not as FIFO)
  */
 int mf2(char* name, mode_t mode);
+#endif
 
+#ifndef _WIN32
 /** Read contents of file
  *
  * @todo complete documentation
  */
 int rdf(char *name, char **buf);
+#endif
 
 /** Create a new, empty file
  *
@@ -92,7 +95,7 @@ int openreadclose(char *fn, char **buf, unsigned long *len);
  *
  * @todo complete documentation
  */
-#if (defined __WIN32__) || (defined _BROKEN_IO)
+#if (defined _WIN32) || (defined _BROKEN_IO)
 int filewrite(FILE *fd, char *buf, int len);
 #else
 int filewrite(int fd, char *buf, int len);

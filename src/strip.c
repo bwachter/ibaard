@@ -5,7 +5,7 @@
  */
 
 #include <string.h>
-#ifndef __WIN32__
+#ifndef _WIN32
 #include <strings.h>
 #endif
 #include "ibaard_strip.h"

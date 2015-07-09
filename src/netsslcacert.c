@@ -21,7 +21,7 @@ int netsslcacert(char *subdir){
     if (cat(&cacert, subdir, "/cacerts.pem", NULL)) return -1;
   } else if (cat(&cacert, ".libaard/cacerts.pem", NULL)) return -1;
 
-#ifdef __WIN32__
+#ifdef _WIN32
   if (getenv("USERPROFILE")!=NULL) {
     if (cat(&cacert_path, getenv("USERPROFILE"), "/", cacert, NULL)) {
 #else

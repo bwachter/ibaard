@@ -17,7 +17,7 @@ int netconnect2(char *hostname, char *servicename, char *bindaddress){
   struct addrinfo *res, *bindres;
   struct addrinfo hints;
   int sd, err;
-#ifdef __WIN32__
+#ifdef _WIN32
   WSADATA wsaData;
 #endif
 
@@ -25,7 +25,7 @@ int netconnect2(char *hostname, char *servicename, char *bindaddress){
   hints.ai_flags = AI_PASSIVE;
   hints.ai_socktype = SOCK_STREAM;
 
-#ifdef __WIN32__
+#ifdef _WIN32
   WSAStartup( 0x0202, &wsaData );
 #endif
   if (bindaddress!=NULL){

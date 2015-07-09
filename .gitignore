@@ -1,4 +1,5 @@
 *.o
+*.obj
 src/version.h
 dyn-*.mk
 libibaard.a

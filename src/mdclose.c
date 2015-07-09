@@ -11,7 +11,7 @@
 #include "ibaard_cat.h"
 #include "logtypes.h"
 
-#if (defined(__WIN32__)) || (defined _BROKEN_IO)
+#if (defined(_WIN32)) || (defined _BROKEN_IO)
 int mdclose(char *maildir, char **uniqname, FILE *fd){
 #else
   int mdclose(char *maildir, char **uniqname, int fd){
@@ -19,7 +19,7 @@ int mdclose(char *maildir, char **uniqname, FILE *fd){
     char *oldpath=NULL, *newpath=NULL;
     int status=0;
     if ((mdfind(maildir)) == -1) {
-#if (defined(__WIN32__)) || (defined _BROKEN_IO)
+#if (defined(_WIN32)) || (defined _BROKEN_IO)
       fflush(fd);
       fclose(fd);
 #else
@@ -32,12 +32,12 @@ int mdclose(char *maildir, char **uniqname, FILE *fd){
     cat(&newpath, maildirpath, "/new/", *uniqname, NULL);
     //cat(&newpath, maildirpath, "/cur/", *uniqname, ":2,", NULL);
 
-#if (defined(__WIN32__)) || (defined _BROKEN_IO)
+#if (defined(_WIN32)) || (defined _BROKEN_IO)
     if (!(status=fclose(fd))){
 #else
       if (!(status=close(fd))){
 #endif
-#ifdef __WIN32__
+#ifdef _WIN32
         status=MoveFile(oldpath, newpath);
 #else
         status=link(oldpath, newpath);

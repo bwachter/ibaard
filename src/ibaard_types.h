@@ -6,7 +6,7 @@
  * used to POSIX feel at home
  */
 
-#ifdef __WIN32__
+#ifdef _WIN32
 // the great win32 sdk needs winsock2.h to be included before windows.h...
 #include <winsock2.h>
 #include <io.h>
@@ -26,7 +26,7 @@
 #endif
 #endif
 
-#ifdef __WIN32__
+#ifdef _WIN32
 #ifndef strcasecmp
 #define strcasecmp(a,b) stricmp(a,b)
 #endif

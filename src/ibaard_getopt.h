@@ -6,7 +6,7 @@
  * not providing getopt()
  */
 
-#if (defined __WIN32__) && !(defined _GNUC_)
+#if (defined _WIN32) && !(defined _GNUC_)
 #include <string.h>
 
 int     getopt(int argc, char * const argv[], const char *optstring);

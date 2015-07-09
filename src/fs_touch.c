@@ -1,6 +1,6 @@
 #include <fcntl.h>
 #include <errno.h>
-#ifdef __WIN32__
+#ifdef _WIN32
 #include <stdio.h>
 #include <io.h>
 #else
@@ -10,7 +10,11 @@
 
 int touch(char *name){
   int fd;
+#ifndef _WIN32
   if ((fd=open(name, O_CREAT|O_RDWR, S_IRUSR|S_IWUSR))==-1) return errno;
+#else
+  if ((fd=open(name, O_CREAT|O_RDWR))==-1) return errno;
+#endif
   close(fd);
   return 0;
 }

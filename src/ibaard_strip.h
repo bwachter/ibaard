@@ -5,7 +5,7 @@
  * Functions to strip some characters from strings
  */
 
-#if (defined __WIN32__) || (defined _BROKEN_IO)
+#if (defined _WIN32) || (defined _BROKEN_IO)
 #include <stdio.h>
 #endif
 

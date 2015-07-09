@@ -9,7 +9,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
-#ifndef __WIN32__
+#ifndef _WIN32
 #include <strings.h>
 #endif
 

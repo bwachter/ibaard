@@ -1,6 +1,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
-#ifndef __WIN32__
+#ifndef _WIN32
 #include <unistd.h>
 #endif
 #include "ibaard_fs.h"

@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
-#ifdef __WIN32__
+#ifdef _WIN32
 #include <stdio.h>
 #include <io.h>
 #else

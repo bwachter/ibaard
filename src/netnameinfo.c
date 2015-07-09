@@ -12,7 +12,7 @@
 int netnameinfo(const struct sockaddr *sa, socklen_t salen,
                 char *hostname, size_t hostlen,
                 char *servname, size_t servlen, int flags){
-#ifdef __WIN32__
+#ifdef _WIN32
   HINSTANCE _hInstance = LoadLibrary( "ws2_32" );
   int (WSAAPI *pfn_getnameinfo) (const struct sockaddr*, socklen_t salen,
                                  char *hostname, size_t hostlen,
@@ -24,7 +24,7 @@ int netnameinfo(const struct sockaddr *sa, socklen_t salen,
     return (pfn_getnameinfo(sa, salen, hostname, hostlen, servname, servlen, flags));
   } else {
 #endif
-#if (defined( __WIN32__)) || (defined(_BROKEN_IO))
+#if (defined( _WIN32)) || (defined(_BROKEN_IO))
 #ifdef __GNUC__
     (void) flags;
     (void) salen;
@@ -51,7 +51,7 @@ int netnameinfo(const struct sockaddr *sa, socklen_t salen,
       strncpy(hostname, tmp, hostlen);
     }
     return 0;
-#ifdef __WIN32__
+#ifdef _WIN32
   }
 #endif
 #else

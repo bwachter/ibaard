@@ -10,14 +10,16 @@
  */
 
 #ifdef _MSC_VER //FIXME: don't recent versions of msvc define WIN32?
-#define __WIN32__
+#ifndef _WIN32
+#define _WIN32
+#endif
 #endif
 
-#if (defined(__WIN32__)) && (defined(__BORLANDC__))
+#if (defined(_WIN32)) && (defined(__BORLANDC__))
 #define __WIN32BORLAND
 #endif
 
-#if (defined(__WIN32__)) && (defined(_MSC_VER))
+#if (defined(_WIN32)) && (defined(_MSC_VER))
 #define __WIN32MSC
 #endif
 

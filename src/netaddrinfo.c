@@ -8,7 +8,7 @@
 #include "ibaard_log.h"
 #include "logtypes.h"
 
-#if (defined(__WIN32__)) || (defined(_BROKEN_IO))
+#if (defined(_WIN32)) || (defined(_BROKEN_IO))
 static struct addrinfo * dup_addrinfo (struct addrinfo *info, void *addr, size_t addrlen) {
   struct addrinfo *ret;
 
@@ -28,7 +28,7 @@ static struct addrinfo * dup_addrinfo (struct addrinfo *info, void *addr, size_t
 #endif
 
 void netfreeaddrinfo (struct addrinfo *ai) {
-#if (defined(__WIN32__)) || (defined(_BROKEN_IO))
+#if (defined(_WIN32)) || (defined(_BROKEN_IO))
   struct addrinfo *next;
 
   while (ai != NULL){
@@ -48,7 +48,7 @@ void netfreeaddrinfo (struct addrinfo *ai) {
 int netaddrinfo(const char *node, const char *service,
                 const struct addrinfo *hints, struct addrinfo **res){
   int err;
-#ifdef __WIN32__
+#ifdef _WIN32
   HINSTANCE _hInstance = LoadLibrary( "ws2_32" );
   int (WSAAPI *pfn_getaddrinfo) (const char*, const char*, const struct addrinfo*, struct addrinfo **);
 
@@ -59,7 +59,7 @@ int netaddrinfo(const char *node, const char *service,
     return (err=pfn_getaddrinfo(node, service, hints, res));
   } else {
 #endif
-#if (defined(__WIN32__)) || (defined(_BROKEN_IO))
+#if (defined(_WIN32)) || (defined(_BROKEN_IO))
     struct hostent *hp;
     struct servent *servent;
     const char *socktype;
@@ -220,7 +220,7 @@ int netaddrinfo(const char *node, const char *service,
 
     *res = sai;
     return 0;
-#ifdef __WIN32__
+#ifdef _WIN32
   }
 #endif
 #else

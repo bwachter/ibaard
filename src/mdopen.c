@@ -14,7 +14,7 @@
 
 // opens a file in maildir/
 // if maildir does not start with a / use subdir in maildir
-#if (defined(__WIN32__)) || (defined _BROKEN_IO)
+#if (defined(_WIN32)) || (defined _BROKEN_IO)
 FILE *mdopen(char *maildir, char **uniqname){
   FILE *fd;
 #else
@@ -28,7 +28,7 @@ FILE *mdopen(char *maildir, char **uniqname){
     mduniqname(uniqname);
     if ((cat(&path, maildirpath, "/tmp/", *uniqname, NULL))) goto errexit;
     logmsg(L_INFO, F_MAILDIR, "spooling to ", path, NULL);
-#if (defined(__WIN32__)) || (defined _BROKEN_IO)
+#if (defined(_WIN32)) || (defined _BROKEN_IO)
     if ((fd=fopen(path, "w+")) == NULL) {
 #else
       if ((fd=open(path, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0644)) == -1) {
@@ -40,7 +40,7 @@ FILE *mdopen(char *maildir, char **uniqname){
       free(path);
       return fd;
       errexit: // with supporting windows-crap / stdio that's easier than many ifdefs
-#if (defined(__WIN32__)) || (defined _BROKEN_IO)
+#if (defined(_WIN32)) || (defined _BROKEN_IO)
       return (FILE*)NULL;
 #else
       return -1;

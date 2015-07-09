@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <ctype.h>
-#ifdef __WIN32__
+#ifdef _WIN32
 #include <winsock2.h>
 // fucking great, msvc will die if we don't put this everywhere
 // before including windows.h

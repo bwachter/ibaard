@@ -10,7 +10,7 @@
 int edit(char *filename){
   char *editor;
 
-#ifndef __WIN32__
+#ifndef _WIN32
   pid_t pid;
 
   if (getenv("EDITOR") == NULL) editor=strdup("vi");

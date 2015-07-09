@@ -18,7 +18,7 @@ int mdfind(char *maildir){
   }
 
   if ((maildirpath=getenv("MAILDIR"))==NULL){
-#ifdef __WIN32__
+#ifdef _WIN32
     if (getenv("USERPROFILE")==NULL){
       logmsg(L_ERROR, F_MAILDIR, "%MAILDIR% not set, %USERPROFILE% not found", NULL);
 #else
@@ -27,7 +27,7 @@ int mdfind(char *maildir){
 #endif
         return -1;
       } else {
-#ifdef __WIN32__
+#ifdef _WIN32
         if (cat(&maildirpath, getenv("USERPROFILE"), "/Maildir", NULL)) return -1;
 #else
         if (cat(&maildirpath, getenv("HOME"), "/Maildir", NULL)) return -1;
