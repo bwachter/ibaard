@@ -4,7 +4,11 @@
  * @date 2005-2011
  */
 
+// windows.h is already included in types
+// things blow up if it gets included before winsock
+#ifndef _WIN32
 #include <dirent.h>
+#endif
 #include <errno.h>
 
 #include "ibaard_maildir.h"
@@ -18,8 +22,13 @@ static int maildir_harddelete=0; // shall we delete the mails, or just mark them
 
 int mdinit(char *maildir, char *subdir, int harddelete){
   // maybe add a flag to recurse into subdirs
+#ifdef _WIN32
+  HANDLE dirptr;
+  WIN32_FIND_DATA fData;
+#else
   DIR *dirptr;
   struct dirent *tmpdirent;
+#endif
   char *mymaildir=NULL;
   maildirent tmpmaildirent;
   struct stat maildirstat;
@@ -36,6 +45,24 @@ int mdinit(char *maildir, char *subdir, int harddelete){
   if (subdir != NULL) cat(&mymaildir, maildirpath, "/", subdir, "/new", NULL);
   else cat(&mymaildir, maildirpath, "/new", NULL);
 
+#ifdef _WIN32
+  char pattern[AM_MAXPATH];
+  snprintf(pattern, "%s\\*.*", mymaildir, AM_MAXPATH);
+  dirptr = FindFirstFile(pattern, &fData);
+
+  if (dirptr == INVALID_HANDLE_VALUE){
+    // TODO: error message
+    free(mymaildir);
+    return -1;
+  }
+
+  do {
+    if (!strncmp(fData.cFileName, ".", 1)) continue;
+    if (!strncmp(fData.cFileName, "..", 2)) continue;
+  } while(FindNextFile(dirptr, &fData));
+
+  FindClose(dirptr);
+#else
   if ((dirptr=opendir(mymaildir))==NULL){
     logmsg(L_ERROR, F_MAILDIR, "unable to open maildir ", mymaildir, ": ", strerror(errno), NULL);
     free(mymaildir);
@@ -55,6 +82,7 @@ int mdinit(char *maildir, char *subdir, int harddelete){
     //maildir_sappend(&tmpmaildirent);
     memset(&tmpmaildirent, 0, sizeof(maildirent));
   }
+#endif
 
   free(mymaildir);
   return 0; //FIXME

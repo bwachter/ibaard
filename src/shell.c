@@ -8,7 +8,6 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <fcntl.h>
 
 #include <stdio.h>
@@ -28,6 +27,7 @@
 #ifdef _WIN32
 #include <io.h>
 #else
+#include <dirent.h>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/reboot.h>
@@ -89,7 +89,9 @@ static void ash_cd(int argc, char **argv){
 static void ash_clear(int argc, char **argv){
   (void) argc;
   (void) argv;
+#ifndef _WIN32
   write(1,"\e[H\e[J",6);
+#endif
 }
 
 static void ash_cp(int argc, char **argv){
@@ -133,8 +135,13 @@ static void ash_exit(int argc, char **argv){
 // TODO: sorted output
 static void ash_ls(int argc, char **argv){
   char *dirname;
+#ifdef _WIN32
+  HANDLE dirptr;
+  WIN32_FIND_DATA fData;
+#else
   struct dirent *e;
   DIR *d;
+#endif
   int i;
 
   for (i=0;i<argc;i++){
@@ -144,6 +151,23 @@ static void ash_ls(int argc, char **argv){
 
     if (argc>2) lmsg(dirname, ":\n", 0);
 
+#ifdef _WIN32
+    char pattern[AM_MAXPATH];
+    _snprintf_s(pattern, sizeof(pattern), AM_MAXPATH, "%s\\*.*", dirname);
+    dirptr = FindFirstFile(pattern, &fData);
+
+    if (dirptr == INVALID_HANDLE_VALUE){
+      // TODO: error message
+      // TODO: file details if single file is given
+      continue;
+    }
+
+    do {
+      lmsg(fData.cFileName, "\n", 0);
+    } while(FindNextFile(dirptr, &fData));
+
+    FindClose(dirptr);
+#else
     if ((d=opendir(dirname))==NULL) {
       if (errno==ENOTDIR) {
         lmsg(dirname, "\n", 0);
@@ -157,11 +181,14 @@ static void ash_ls(int argc, char **argv){
       lmsg(e->d_name, "\n", 0);
     }
     closedir(d);
+#endif
   }
 }
 
 static void ash_mkdir(int argc, char **argv){
+#ifndef _WIN32
   mode_t mode=0777;
+#endif
   int i;
   for (i=1;i<argc;i++){
     if
@@ -350,6 +377,8 @@ static int ash_shellcmd(char *cmd){
     if (strcmp(cdef->name, argv[0]) == 0) break;
   }
 
+  //TODO: reimplement for windows
+#ifndef _WIN32
   if (cdef->name == NULL) {
     pid_t pid;
     pid = fork();
@@ -364,6 +393,7 @@ static int ash_shellcmd(char *cmd){
     }
     return 0;
   }
+#endif
 
   if ((argc < cdef->minArgs) || (argc > cdef->maxArgs)){
     emsg("Usage: ", argv[0], " ", cdef->usage, "\n", 0);

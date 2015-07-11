@@ -1,10 +1,9 @@
 #include <fcntl.h>
-#include <dirent.h>
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef __WIN32
+#ifdef _WIN32
 #include <stdio.h>
 #include <io.h>
 #else

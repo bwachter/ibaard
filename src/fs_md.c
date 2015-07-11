@@ -1,6 +1,8 @@
 #include "ibaard_platform.h"
 #include <fcntl.h>
+#ifndef _WIN32
 #include <dirent.h>
+#endif
 #include <sys/stat.h>
 #include "ibaard_fs.h"
 

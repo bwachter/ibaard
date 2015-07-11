@@ -42,26 +42,6 @@
 /// Maximum path name length (introduced for aardmail)
 #define AM_MAXPATH 1025
 
-#ifdef __BORLANDC__
-#define pclose(a) _pclose(a)
-#define popen(a,b) _popen(a,b)
-struct addrinfo {
-    int     ai_flags;
-    int     ai_family;
-    int     ai_socktype;
-    int     ai_protocol;
-    size_t  ai_addrlen;
-    struct sockaddr *ai_addr;
-    char   *ai_canonname;
-    struct addrinfo *ai_next;
-};
-
-typedef unsigned __int32 uint32_t;
-typedef unsigned __int16 uint16_t;
-typedef uint32_t socklen_t;
-typedef int pid_t;
-#endif
-
 #ifndef NI_MAXHOST
 /// Maximum host name length
 #define NI_MAXHOST 1025

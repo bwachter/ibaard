@@ -6,9 +6,12 @@
 
 #include <time.h>
 #include <stdio.h>
-#include <unistd.h>
 #ifdef _POSIX_SOURCE
+#include <unistd.h>
 #include <sys/time.h>
+#endif
+#ifdef _WIN32
+#include <process.h>
 #endif
 #include "ibaard_maildir.h"
 #include "ibaard_log.h"
@@ -20,10 +23,14 @@ static int deliveries=0;
 int mduniqname(char **uniqname){
   char tmpbuf[512];
   char myhost[NI_MAXHOST];
-  pid_t mypid=getpid();
+
 #ifndef _POSIX_SOURCE
+#ifdef _WIN32
+  int mypid=_getpid();
+#endif
   time_t mytime=time(NULL);
 #else
+  pid_t mypid=getpid();
   struct timeval mytime;
   gettimeofday(&mytime, NULL);
 #endif
