@@ -25,6 +25,7 @@ int mdinit(char *maildir, char *subdir, int harddelete){
 #ifdef _WIN32
   HANDLE dirptr;
   WIN32_FIND_DATA fData;
+  char pattern[AM_MAXPATH];
 #else
   DIR *dirptr;
   struct dirent *tmpdirent;
@@ -46,7 +47,6 @@ int mdinit(char *maildir, char *subdir, int harddelete){
   else cat(&mymaildir, maildirpath, "/new", NULL);
 
 #ifdef _WIN32
-  char pattern[AM_MAXPATH];
   snprintf(pattern, "%s\\*.*", mymaildir, AM_MAXPATH);
   dirptr = FindFirstFile(pattern, &fData);
 

@@ -1,3 +1,5 @@
+#ifndef _WIN32
+//TODO: check if we can do something similar on windows
 #include <fcntl.h>
 #include <sys/stat.h>
 #ifndef _WIN32
@@ -33,3 +35,4 @@ int mf(char* name){
 
   return mf2(name, mode&~mask);
 }
+#endif

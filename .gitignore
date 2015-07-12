@@ -1,5 +1,8 @@
 *.o
 *.obj
+*.lib
+*.exe
+dyn-*.inc
 src/version.h
 dyn-*.mk
 libibaard.a
@@ -12,6 +15,6 @@ doc/man
 test
 test-run/
 coverage/
-mswin32.mak
+
 /targets
 /doc/Doxyfile.bak

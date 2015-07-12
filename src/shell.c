@@ -138,6 +138,7 @@ static void ash_ls(int argc, char **argv){
 #ifdef _WIN32
   HANDLE dirptr;
   WIN32_FIND_DATA fData;
+  char pattern[AM_MAXPATH];
 #else
   struct dirent *e;
   DIR *d;
@@ -152,7 +153,6 @@ static void ash_ls(int argc, char **argv){
     if (argc>2) lmsg(dirname, ":\n", 0);
 
 #ifdef _WIN32
-    char pattern[AM_MAXPATH];
     _snprintf_s(pattern, sizeof(pattern), AM_MAXPATH, "%s\\*.*", dirname);
     dirptr = FindFirstFile(pattern, &fData);
 
