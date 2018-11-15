@@ -1,0 +1,16 @@
+!include <ntwin32.mak>
+
+OBJDIR=src\\
+SRCDIR=src\\
+.PHONY: clean
+
+ibaard.lib:  $(OBJDIR)aardlog.obj $(OBJDIR)authinfo.obj $(OBJDIR)cat.obj $(OBJDIR)cati.obj $(OBJDIR)dmsg.obj $(OBJDIR)edit.obj $(OBJDIR)emsg.obj $(OBJDIR)fs_filewrite.obj $(OBJDIR)fs_md2.obj $(OBJDIR)fs_md.obj $(OBJDIR)fs_mf.obj $(OBJDIR)fs_openreadclose.obj $(OBJDIR)fs_rdf.obj $(OBJDIR)fs_td.obj $(OBJDIR)fs_tf.obj $(OBJDIR)fs_touch.obj $(OBJDIR)fs_xgetcwd.obj $(OBJDIR)kirahvi.obj $(OBJDIR)mdclose.obj $(OBJDIR)mdfind.obj $(OBJDIR)mdinit.obj $(OBJDIR)mdopen.obj $(OBJDIR)mduniqname.obj $(OBJDIR)msg.obj $(OBJDIR)netaddrinfo.obj $(OBJDIR)netconnect.obj $(OBJDIR)netlogportservice.obj $(OBJDIR)netnameinfo.obj $(OBJDIR)netread.obj $(OBJDIR)netreadline.obj $(OBJDIR)netsocket.obj $(OBJDIR)netsslcacert.obj $(OBJDIR)netsslread.obj $(OBJDIR)netsslstart.obj $(OBJDIR)netsslwrite.obj $(OBJDIR)netwriteline.obj $(OBJDIR)shell.obj $(OBJDIR)split.obj $(OBJDIR)strerror_ssl.obj $(OBJDIR)strip.obj
+	$(Q)echo "TLIB $@"
+	$(Q)tlib $(@F) /a $**
+
+.c.obj:
+	$(Q)echo "CC $@"
+	$(Q)$(CC) $(CFLAGS) $(SSLCFLAGS) -o$@ -c $<
+
+clean:
+	$(RM) *.exe *.lib *.tds src\*.obj
