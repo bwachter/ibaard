@@ -1,0 +1,292 @@
+.TH "/home/travis/build/bwachter/ibaard/src/netaddrinfo.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/netaddrinfo.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'ibaard_network\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+\fC#include 'logtypes\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBnetfreeaddrinfo\fP (struct addrinfo *ai)"
+.br
+.ti -1c
+.RI "int \fBnetaddrinfo\fP (const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBnetaddrinfo\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int netaddrinfo (const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res)"
+A wrapper around getaddrinfo() when available, emulation on other platforms
+.PP
+\fBnetaddrinfo()\fP is just a wrapper around getaddrinfo() on systems which support getaddrinfo()\&. On systems which don't support getaddrinfo it gets emulated using traditional socket functions\&. On Windows it first tries to load getaddrinfo() from DLL, and falls back to the emulation code at runtime if required\&.
+.PP
+\fBNote:\fP
+.RS 4
+for detailed information consult the getaddrinfo() documentation
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP internet host name 
+.br
+\fIservice\fP service name 
+.br
+\fIhints\fP addrinfo structure with pointers for selecting socket address structures 
+.br
+\fIres\fP a list of address structures after lookup 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, different errors on failure\&. Consult the getaddrinfo documentation for possible error codes 
+.RE
+.PP
+
+.PP
+Definition at line 48 of file netaddrinfo\&.c\&.
+.PP
+.nf
+49                                                                     {
+50   int err;
+51 #ifdef _WIN32
+52   HINSTANCE _hInstance = LoadLibrary( "ws2_32" );
+53   int (WSAAPI *pfn_getaddrinfo) (const char*, const char*, const struct addrinfo*, struct addrinfo **);
+54 
+55   pfn_getaddrinfo = GetProcAddress( _hInstance, "getaddrinfo" );
+56 
+57   if (pfn_getaddrinfo){
+58     logmsg(L_DEBUG, F_NET, "Using native getaddrinfo()", NULL);
+59     return (err=pfn_getaddrinfo(node, service, hints, res));
+60   } else {
+61 #endif
+62 #if (defined(_WIN32)) || (defined(_BROKEN_IO))
+63     struct hostent *hp;
+64     struct servent *servent;
+65     const char *socktype;
+66     int port;
+67     struct addrinfo hint, result;
+68     struct addrinfo *ai, *sai, *eai;
+69     char **addrs;
+70     err=0;
+71 
+72     memset (&result, 0, sizeof result);
+73 
+74     logmsg(L_DEBUG, F_NET, "Using getaddrinfo() emulation", NULL);
+75 
+76     /* default for hints */
+77     if (hints == NULL){
+78       memset (&hint, 0, sizeof hint);
+79       hint\&.ai_family = PF_UNSPEC;
+80       hints = &hint;
+81     }
+82 
+83     /* servname must not be NULL in this implementation */
+84     if (service == NULL)
+85       return EAI_NONAME;
+86 
+87     /* check for tcp or udp sockets only */
+88     if (hints->ai_socktype == SOCK_STREAM)
+89       socktype = "tcp";
+90     else if (hints->ai_socktype == SOCK_DGRAM)
+91       socktype = "udp";
+92     else
+93       return EAI_SERVICE;
+94     result\&.ai_socktype = hints->ai_socktype;
+95 
+96     /* Note: maintain port in host byte order to make debugging easier */
+97     if (isdigit (*service))
+98       port = strtol (service, NULL, 10);
+99     else if ((servent = getservbyname (service, socktype)) != NULL)
+100       port = ntohs (servent->s_port);
+101     else
+102       return EAI_NONAME;
+103 
+104     /* if nodename == NULL refer to the local host for a client or any
+105        for a server */
+106     if (node == NULL){
+107       struct sockaddr_in sin;
+108 
+109       /* check protocol family is PF_UNSPEC or PF_INET - could try harder
+110          for IPv6 but that's more code than I'm prepared to write */
+111       if (hints->ai_family == PF_UNSPEC || hints->ai_family == PF_INET)
+112         result\&.ai_family = AF_INET;
+113       else
+114         return EAI_FAMILY;
+115 
+116       sin\&.sin_family = result\&.ai_family;
+117       sin\&.sin_port = htons (port);
+118       if (hints->ai_flags & AI_PASSIVE)
+119         sin\&.sin_addr\&.s_addr = htonl (INADDR_ANY);
+120       else
+121         sin\&.sin_addr\&.s_addr = htonl (INADDR_LOOPBACK);
+122       /* Duplicate result and addr and return */
+123       *res = dup_addrinfo (&result, &sin, sizeof sin);
+124       return (*res == NULL) ? EAI_MEMORY : 0;
+125     }
+126 
+127     /* If AI_NUMERIC is specified, use inet_addr to translate numbers and
+128        dots notation\&. */
+129     if (hints->ai_flags & AI_NUMERICHOST){
+130       struct sockaddr_in sin;
+131 
+132       /* check protocol family is PF_UNSPEC or PF_INET */
+133       if (hints->ai_family == PF_UNSPEC || hints->ai_family == PF_INET)
+134         result\&.ai_family = AF_INET;
+135       else
+136         return EAI_FAMILY;
+137 
+138       sin\&.sin_family = result\&.ai_family;
+139       sin\&.sin_port = htons (port);
+140       sin\&.sin_addr\&.s_addr = inet_addr (node);
+141       /* Duplicate result and addr and return */
+142       *res = dup_addrinfo (&result, &sin, sizeof sin);
+143       return (*res == NULL) ? EAI_MEMORY : 0;
+144     }
+145 
+146     hp = gethostbyname (node);
+147     // fixme, translate error codes
+148     if (hp == NULL) return h_errno;
+149 
+150     /* Check that the address family is acceptable\&.
+151      */
+152     switch (hp->h_addrtype){
+153       case AF_INET:
+154         if (!(hints->ai_family == PF_UNSPEC || hints->ai_family == PF_INET))
+155           return EAI_FAMILY;
+156         break;
+157       case AF_INET6:
+158         if (!(hints->ai_family == PF_UNSPEC || hints->ai_family == PF_INET6))
+159           return EAI_FAMILY;
+160         break;
+161       default:
+162         return EAI_FAMILY;
+163     }
+164 
+165     /* For each element pointed to by hp, create an element in the
+166        result linked list\&. */
+167     sai = eai = NULL;
+168     for (addrs = hp->h_addr_list; *addrs != NULL; addrs++){
+169       struct sockaddr sa;
+170       size_t addrlen;
+171 
+172       if (hp->h_length < 1)
+173         continue;
+174       sa\&.sa_family = hp->h_addrtype;
+175       switch (hp->h_addrtype){
+176         case AF_INET:
+177           ((struct sockaddr_in *) &sa)->sin_port = htons (port);
+178           memcpy (&((struct sockaddr_in *) &sa)->sin_addr,
+179                   *addrs, hp->h_length);
+180           addrlen = sizeof (struct sockaddr_in);
+181           break;
+182         case AF_INET6:
+183 # if SIN6_LEN
+184           ((struct sockaddr_in6 *) &sa)->sin6_len = hp->h_length;
+185 # endif
+186           ((struct sockaddr_in6 *) &sa)->sin6_port = htons (port);
+187           memcpy (&((struct sockaddr_in6 *) &sa)->sin6_addr,
+188                   *addrs, hp->h_length);
+189           addrlen = sizeof (struct sockaddr_in6);
+190           break;
+191         default:
+192           continue;
+193       }
+194 
+195       result\&.ai_family = hp->h_addrtype;
+196       ai = dup_addrinfo (&result, &sa, addrlen);
+197       if (ai == NULL){
+198         netfreeaddrinfo (sai);
+199         return EAI_MEMORY;
+200       }
+201       if (sai == NULL)
+202         sai = ai;
+203       else
+204         eai->ai_next = ai;
+205       eai = ai;
+206     }
+207 
+208     if (sai == NULL){
+209       return EAI_NODATA;
+210     }
+211 
+212     if (hints->ai_flags & AI_CANONNAME){
+213       sai->ai_canonname = malloc (strlen (hp->h_name) + 1);
+214       if (sai->ai_canonname == NULL){
+215         netfreeaddrinfo (sai);
+216         return EAI_MEMORY;
+217       }
+218       strcpy (sai->ai_canonname, hp->h_name);
+219     }
+220 
+221     *res = sai;
+222     return 0;
+223 #ifdef _WIN32
+224   }
+225 #endif
+226 #else
+227   (void)err;
+228   return (getaddrinfo(node, service, hints, res));
+229 #endif
+230 }
+.fi
+.SS "void netfreeaddrinfo (struct addrinfo *ai)"
+A wrapper around freeaddrinfo() when available, emulation on other platforms
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 30 of file netaddrinfo\&.c\&.
+.PP
+.nf
+30                                            {
+31 #if (defined(_WIN32)) || (defined(_BROKEN_IO))
+32   struct addrinfo *next;
+33 
+34   while (ai != NULL){
+35     next = ai->ai_next;
+36     if (ai->ai_canonname != NULL)
+37       free (ai->ai_canonname);
+38     if (ai->ai_addr != NULL)
+39       free (ai->ai_addr);
+40     free (ai);
+41     ai = next;
+42   }
+43 #else
+44   freeaddrinfo(ai);
+45 #endif
+46 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

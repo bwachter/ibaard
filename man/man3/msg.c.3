@@ -1,0 +1,69 @@
+.TH "/home/travis/build/bwachter/ibaard/src/msg.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/msg.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdarg\&.h>\fP
+.br
+\fC#include 'ibaard\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBlmsg\fP (char *msg,\&.\&.\&.)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBmsg\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int lmsg (char *msg, \&.\&.\&.)"
+Write a message to stdout
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 12 of file msg\&.c\&.
+.PP
+.nf
+12                         {
+13   va_list arguments;
+14 
+15   va_start(arguments, msg);
+16   while(msg != NULL) {
+17     __write1(msg);
+18     msg=va_arg(arguments, char*);
+19   }
+20   va_end(arguments);
+21   return 0;
+22 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

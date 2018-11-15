@@ -1,0 +1,99 @@
+.TH "/home/travis/build/bwachter/ibaard/src/mdclose.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/mdclose.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <errno\&.h>\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+\fC#include 'ibaard_maildir\&.h'\fP
+.br
+\fC#include 'ibaard_cat\&.h'\fP
+.br
+\fC#include 'logtypes\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBmdclose\fP (char *maildir, char **uniqname, int fd)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBmdclose\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int mdclose (char *maildir, char **uniqname, intfd)"
+Close a file in Maildir, opened by \fBmdopen()\fP
+.PP
+This will move the file from tmp/ to new/
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 17 of file mdclose\&.c\&.
+.PP
+.nf
+17                                                      {
+18 #endif
+19     char *oldpath=NULL, *newpath=NULL;
+20     int status=0;
+21     if ((mdfind(maildir)) == -1) {
+22 #if (defined(_WIN32)) || (defined _BROKEN_IO)
+23       fflush(fd);
+24       fclose(fd);
+25 #else
+26       close(fd);
+27 #endif
+28       return -1;
+29     }
+30 
+31     cat(&oldpath, maildirpath, "/tmp/", *uniqname, NULL);
+32     cat(&newpath, maildirpath, "/new/", *uniqname, NULL);
+33     //cat(&newpath, maildirpath, "/cur/", *uniqname, ":2,", NULL);
+34 
+35 #if (defined(_WIN32)) || (defined _BROKEN_IO)
+36     if (!(status=fclose(fd))){
+37 #else
+38       if (!(status=close(fd))){
+39 #endif
+40 #ifdef _WIN32
+41         status=MoveFile(oldpath, newpath);
+42 #else
+43         status=link(oldpath, newpath);
+44         unlink(oldpath);
+45 #endif
+46       } else logmsg(L_ERROR, F_GENERAL, "Closing mail failed: ", strerror(errno), NULL);
+47 
+48       free(oldpath);
+49       free(newpath);
+50       return status;
+51     }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

@@ -1,0 +1,73 @@
+.TH "/home/travis/build/bwachter/ibaard/src/netwriteline.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/netwriteline.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'ibaard_network\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+\fC#include 'logtypes\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBnetwriteline\fP (int sd, char *buf)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBnetwriteline\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int netwriteline (intsd, char *buf)"
+Write buffer contents to file descriptor
+.PP
+\fBnetwriteline()\fP writes the content of the buffer pointed to by buf to a given file descriptor\&. Since \fBnetwriteline()\fP needs to find the end of the buffer no NULL bytes (except for the terminating one) are allowed in the input\&. It returns the number of bytes written\&.
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 11 of file netwriteline\&.c\&.
+.PP
+.nf
+11                                    {
+12   int i;
+13 
+14   logmsg(L_VERBOSE, F_NET, "> ", buf, NULL);
+15 
+16 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
+17   if (am_sslconf & AM_SSL_USETLS){
+18     i=netsslwrite(ssl, buf, strlen(buf));
+19   } else
+20 #endif
+21     i=send(sd, buf, strlen(buf), 0);
+22   return i;
+23 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

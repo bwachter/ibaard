@@ -1,0 +1,99 @@
+.TH "/home/travis/build/bwachter/ibaard/src/ibaard_types.h" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/ibaard_types.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <unistd\&.h>\fP
+.br
+\fC#include <sys/types\&.h>\fP
+.br
+\fC#include <sys/socket\&.h>\fP
+.br
+\fC#include <netdb\&.h>\fP
+.br
+\fC#include <stdint\&.h>\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBAM_MAXUSER\fP   1025"
+.br
+.RI "\fIMaximum length of username (introduced for aardmail) \fP"
+.ti -1c
+.RI "#define \fBAM_MAXPASS\fP   1025"
+.br
+.RI "\fIMaximum length of password (introduced for aardmail) \fP"
+.ti -1c
+.RI "#define \fBAM_MAXPATH\fP   1025"
+.br
+.RI "\fIMaximum path name length (introduced for aardmail) \fP"
+.ti -1c
+.RI "#define \fBNI_MAXHOST\fP   1025"
+.br
+.RI "\fIMaximum host name length\&. \fP"
+.ti -1c
+.RI "#define \fBNI_MAXSERV\fP   32"
+.br
+.RI "\fIMaximum service name length\&. \fP"
+.ti -1c
+.RI "#define \fBNI_NUMERICSERV\fP   8"
+.br
+.RI "\fIReturn port number instead of service name\&. \fP"
+.ti -1c
+.RI "#define \fBNI_NUMERICHOST\fP   2"
+.br
+.RI "\fIReturn numeric host instead of host name\&. \fP"
+.ti -1c
+.RI "#define \fBEAI_FAMILY\fP   -1"
+.br
+.RI "\fIAddress family not recognized or address length invalid for family\&. \fP"
+.ti -1c
+.RI "#define \fBEAI_NONAME\fP   -4"
+.br
+.RI "\fIName does not resolve\&. \fP"
+.ti -1c
+.RI "#define \fBEAI_SERVICE\fP   -5"
+.br
+.RI "\fIService not supported for this socket type\&. \fP"
+.ti -1c
+.RI "#define \fBEAI_NODATA\fP   \fBEAI_NONAME\fP"
+.br
+.RI "\fIDeprecated years ago, you should use EAI_NONAME\&. \fP"
+.ti -1c
+.RI "#define \fBEAI_MEMORY\fP   -8"
+.br
+.RI "\fIMemory allocation failure\&. \fP"
+.ti -1c
+.RI "#define \fBEAI_FAIL\fP   -9"
+.br
+.RI "\fISome unspecific non-recoverable error\&. \fP"
+.ti -1c
+.RI "#define \fBEAI_AGAIN\fP   -10"
+.br
+.RI "\fICould not resolve name, better luck next time\&. \fP"
+.ti -1c
+.RI "#define \fBAI_NUMERICHOST\fP   1"
+.br
+.RI "\fIDon't resolve names -> you need to specify a numeric hostname\&. \fP"
+.ti -1c
+.RI "#define \fBAI_CANONNAME\fP   2"
+.br
+.RI "\fIWhen set ai_canonname of first addrinfo struct will point to canonical name\&. \fP"
+.ti -1c
+.RI "#define \fBAI_PASSIVE\fP   4"
+.br
+.RI "\fISet this if you want to use the address structure for bind() \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Type definitions, mainly for non-POSIX platforms to make people used to POSIX feel at home 
+.PP
+Definition in file \fBibaard_types\&.h\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

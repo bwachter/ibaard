@@ -1,0 +1,202 @@
+.TH "/home/travis/build/bwachter/ibaard/src/ibaard_log.h" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/ibaard_log.h \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBLOGLEVELS\fP { \fBL_UNSPEC\fP, \fBL_DEADLY\fP, \fBL_ERROR\fP, \fBL_WARNING\fP, \fBL_INFO\fP, \fBL_VERBOSE\fP, \fBL_DEBUG\fP }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBlogmsg\fP (int level, char *facility, char *msg,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "int \fBlogmsg_fd\fP (int fd, int level, char *facility, char *msg,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "int \fBloglevel\fP (int level)"
+.br
+.ti -1c
+.RI "int \fBlmsg\fP (char *msg,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "int \fBemsg\fP (char *msg,\&.\&.\&.)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Log related functions 
+.PP
+Definition in file \fBibaard_log\&.h\fP\&.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBLOGLEVELS\fP"
+Log levels used in logging functions 
+.PP
+Definition at line 9 of file ibaard_log\&.h\&.
+.PP
+.nf
+9                {
+10   L_UNSPEC,
+11   L_DEADLY,
+12   L_ERROR,
+13   L_WARNING,
+14   L_INFO,
+15   L_VERBOSE,
+16   L_DEBUG,
+17 };
+.fi
+.SH "Function Documentation"
+.PP 
+.SS "int emsg (char *msg, \&.\&.\&.)"
+Write a message to stderr
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 12 of file emsg\&.c\&.
+.PP
+.nf
+12                         {
+13   va_list arguments;
+14 
+15   va_start(arguments, msg);
+16   while(msg != NULL) {
+17     __write2(msg);
+18     msg=va_arg(arguments, char*);
+19   }
+20   va_end(arguments);
+21   return 0;
+22 }
+.fi
+.SS "int lmsg (char *msg, \&.\&.\&.)"
+Write a message to stdout
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 12 of file msg\&.c\&.
+.PP
+.nf
+12                         {
+13   va_list arguments;
+14 
+15   va_start(arguments, msg);
+16   while(msg != NULL) {
+17     __write1(msg);
+18     msg=va_arg(arguments, char*);
+19   }
+20   va_end(arguments);
+21   return 0;
+22 }
+.fi
+.SS "int loglevel (intlevel)"
+Change or get loglevel
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlevel\fP 0 to check loglevel, any value from LOGLEVELS to set level 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+the current loglevel, or the new loglevel set 
+.RE
+.PP
+
+.PP
+Definition at line 31 of file aardlog\&.c\&.
+.PP
+.nf
+31                        {
+32   if (level != 0)
+33     current_loglevel = level;
+34   return current_loglevel;
+35 }
+.fi
+.SS "int logmsg (intlevel, char *facility, char *msg, \&.\&.\&.)"
+Write a log message to stdout
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 92 of file aardlog\&.c\&.
+.PP
+.nf
+92                                                       {
+93   va_list ap;
+94   char *tmp;
+95   int die=0;
+96 
+97   if (level > current_loglevel) return 0;
+98 
+99   die=logheader(1, level, facility);
+100 
+101   logwrite(1, msg);
+102   va_start(ap, msg);
+103   while ((tmp = va_arg(ap, char*)))
+104     logwrite(1, tmp);
+105   va_end(ap);
+106   __write1("\n");
+107 
+108   if (die) exit(-1);
+109   return 0;
+110 }
+.fi
+.SS "int logmsg_fd (intfd, intlevel, char *facility, char *msg, \&.\&.\&.)"
+Write a log message to fd
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 71 of file aardlog\&.c\&.
+.PP
+.nf
+71                                                                  {
+72   va_list ap;
+73   char *tmp;
+74   int die=0;
+75 
+76   if (level > current_loglevel) return 0;
+77 
+78   die=logheader(fd, level, facility);
+79 
+80   logwrite(fd, msg);
+81   va_start(ap, msg);
+82   while ((tmp = va_arg(ap, char*)))
+83     logwrite(fd, tmp);
+84   va_end(ap);
+85   __writefd(fd, "\n");
+86 
+87   if (die) exit(-1);
+88   return 0;
+89 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

@@ -1,0 +1,75 @@
+.TH "/home/travis/build/bwachter/ibaard/src/netlogportservice.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/netlogportservice.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'ibaard_network\&.h'\fP
+.br
+\fC#include 'ibaard_cat\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+\fC#include 'ibaard\&.h'\fP
+.br
+\fC#include 'logtypes\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBnetlogportservice\fP (const struct sockaddr *sa, socklen_t salen, char *msg)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBnetlogportservice\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "void netlogportservice (const struct sockaddr *sa, socklen_tsalen, char *msg)"
+Dump hostname and service to log
+.PP
+Mainly usefol for debug reasons
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 13 of file netlogportservice\&.c\&.
+.PP
+.nf
+13                                                                              {
+14   char host[NI_MAXHOST];
+15   char serv[NI_MAXSERV];
+16   char *tmpstring=NULL;
+17 
+18   netnameinfo(sa, salen, host, sizeof(host),serv, sizeof(serv),
+19               NI_NUMERICHOST | NI_NUMERICSERV);
+20   cat(&tmpstring, msg, host, ":", serv, NULL);
+21   logmsg(L_DEBUG, F_NET, tmpstring, NULL);
+22   free(tmpstring);
+23 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

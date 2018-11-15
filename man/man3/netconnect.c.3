@@ -1,0 +1,137 @@
+.TH "/home/travis/build/bwachter/ibaard/src/netconnect.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/netconnect.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'ibaard_network\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+\fC#include 'logtypes\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBnetconnect\fP (char *hostname, char *servicename)"
+.br
+.ti -1c
+.RI "int \fBnetconnect2\fP (char *hostname, char *servicename, char *bindaddress)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBnetconnect\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int netconnect (char *hostname, char *servicename)"
+Opens a socket to the host:service given as arguments and returns the socked file descriptor\&. 
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 12 of file netconnect\&.c\&.
+.PP
+.nf
+12                                                  {
+13   return netconnect2(hostname, servicename, (char*)NULL);
+14 }
+.fi
+.SS "int netconnect2 (char *hostname, char *servicename, char *bindaddress)"
+Opens a socket to the host:service given as arguments and returns the socked file descriptor\&. 
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 16 of file netconnect\&.c\&.
+.PP
+.nf
+16                                                                      {
+17   struct addrinfo *res, *bindres;
+18   struct addrinfo hints;
+19   int sd, err;
+20 #ifdef _WIN32
+21   WSADATA wsaData;
+22 #endif
+23 
+24   memset(&hints, 0, sizeof hints);
+25   hints\&.ai_flags = AI_PASSIVE;
+26   hints\&.ai_socktype = SOCK_STREAM;
+27 
+28 #ifdef _WIN32
+29   WSAStartup( 0x0202, &wsaData );
+30 #endif
+31   if (bindaddress!=NULL){
+32     if ((err=netaddrinfo(bindaddress, NULL, &hints, &bindres))){
+33       logmsg(L_ERROR, F_NET, "unable to resolve local bind address", NULL);
+34       return -1;
+35     }
+36   }
+37 
+38   if ((err=netaddrinfo(hostname, servicename, &hints, &res))){
+39     logmsg(L_ERROR, F_NET, "unable to resolve host", NULL);
+40     netfreeaddrinfo(bindres);
+41     return -1;
+42   } else {
+43     struct addrinfo *r, *b;
+44 
+45     r=res;
+46     while (r){
+47       if (bindaddress!=NULL){
+48         // so far we try to match only the first record of bindres
+49         // TODO: check all entries
+50         b=bindres;
+51         if (b->ai_family==r->ai_family)
+52           if ((sd=netsocket2(&*r, &*b)) > 0){
+53             netfreeaddrinfo(bindres);
+54             netfreeaddrinfo(res);
+55             return sd;
+56           }
+57       } else {
+58         if ((sd=netsocket(&*r)) > 0){
+59           if (bindaddress!=NULL) netfreeaddrinfo(bindres);
+60           netfreeaddrinfo(res);
+61           return sd;
+62         }
+63       }
+64       if(r->ai_next==NULL)
+65         logmsg(L_INFO, F_NET, "r->ai_next is NULL", NULL);
+66       else
+67         logmsg(L_INFO, F_NET, "trying next element", NULL);
+68       r=r->ai_next;
+69     }
+70   }
+71   if (bindaddress!=NULL) netfreeaddrinfo(bindres);
+72   netfreeaddrinfo(res);
+73   return -1;
+74 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

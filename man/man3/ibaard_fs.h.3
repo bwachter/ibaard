@@ -1,0 +1,403 @@
+.TH "/home/travis/build/bwachter/ibaard/src/ibaard_fs.h" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/ibaard_fs.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <fcntl\&.h>\fP
+.br
+\fC#include <sys/stat\&.h>\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBtf\fP (char *name)"
+.br
+.ti -1c
+.RI "int \fBwf\fP (char *name, char *content)"
+.br
+.ti -1c
+.RI "int \fBtd\fP (char *name)"
+.br
+.ti -1c
+.RI "int \fBmd\fP (char *name)"
+.br
+.ti -1c
+.RI "int \fBmd2\fP (char *name, mode_t mode)"
+.br
+.ti -1c
+.RI "int \fBmf\fP (char *name)"
+.br
+.ti -1c
+.RI "int \fBmf2\fP (char *name, mode_t mode)"
+.br
+.ti -1c
+.RI "int \fBrdf\fP (char *name, char **buf)"
+.br
+.ti -1c
+.RI "int \fBtouch\fP (char *name)"
+.br
+.ti -1c
+.RI "int \fBopenreadclose\fP (char *fn, char **buf, unsigned long *len)"
+.br
+.ti -1c
+.RI "int \fBfilewrite\fP (int fd, char *buf, int len)"
+.br
+.ti -1c
+.RI "char * \fBxgetcwd\fP (char *cwd)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Functions to manipulate filesystem objects 
+.PP
+Definition in file \fBibaard_fs\&.h\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int filewrite (intfd, char *buf, intlen)"
+Write to FILE or file descriptor, depending on platform
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 15 of file fs_filewrite\&.c\&.
+.PP
+.nf
+17 {
+18 #if (defined _WIN32) || (defined _BROKEN_IO)
+19   return fwrite(buf, 1, len, fd);
+20 #else
+21   return write(fd, buf, len);
+22 #endif
+23 }
+.fi
+.SS "int md (char *name)"
+Create a directory
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 24 of file fs_md\&.c\&.
+.PP
+.nf
+24                    {
+25 #ifdef _WIN32
+26   return mkdir(name);
+27 #else
+28   mode_t mode=0777;
+29   return md2(name, mode);
+30 #endif
+31 }
+.fi
+.SS "int md2 (char *name, mode_tmode)"
+Create a directory and set mode
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 10 of file fs_md\&.c\&.
+.PP
+.nf
+10                                  {
+11   struct stat dirstat;
+12 
+13   if(stat(name, &dirstat) != -1) {
+14     if (!S_ISDIR(dirstat\&.st_mode))
+15       return -1; // exists, but not as a directory
+16   } else { // does not yet exist
+17     if (mkdir(name, mode))
+18         return -1;
+19   }
+20   return 0; // dir either exists or we were able to create it
+21 }
+.fi
+.SS "int mf (char *name)"
+Create a FIFO
+.PP
+The mode for the new FIFO will be 666, with the value of umask applied\&. For a common umask with 0022 this will give you a FIFO with 644\&.
+.PP
+If the FIFO already exists the mode will be set to 0666&~umask
+.PP
+\fBParameters:\fP
+.RS 4
+\fIname\fP The name of the FIFO 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 on error (unable to create, or exists, but not as FIFO) 
+.RE
+.PP
+
+.PP
+Definition at line 31 of file fs_mf\&.c\&.
+.PP
+.nf
+31                   {
+32   mode_t mode=0666;
+33   mode_t mask=umask(0000);
+34   umask(mask);
+35 
+36   return mf2(name, mode&~mask);
+37 }
+.fi
+.SS "int mf2 (char *name, mode_tmode)"
+Create a FIFO and set mode
+.PP
+The function will ignore umask when setting the mode for the new FIFO\&. If the FIFO already exists only the mode will be adjusted\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIname\fP The name of the FIFO 
+.br
+\fImode\fP The mode for the new FIFO 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 on error (unable to create, or exists, but not as FIFO) 
+.RE
+.PP
+
+.PP
+Definition at line 10 of file fs_mf\&.c\&.
+.PP
+.nf
+10                                 {
+11   struct stat fifostat;
+12 
+13   if(stat(name, &fifostat) != -1) {
+14     if (S_ISFIFO(fifostat\&.st_mode)){
+15       // file exists, and is a fifo: adjust mode
+16       chmod(name, mode);
+17     } else {
+18       // file exists, but is not a fifo
+19       return -1;
+20     }
+21   } else { // does not yet exist
+22     mode_t old_mask=umask(0000);
+23     int ret=mknod(name, S_IFIFO | mode, 0);
+24     umask(old_mask);
+25     if (ret)
+26       return -1;
+27   }
+28   return 0;
+29 }
+.fi
+.SS "int openreadclose (char *fn, char **buf, unsigned long *len)"
+Read contents of file
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 11 of file fs_openreadclose\&.c\&.
+.PP
+.nf
+11                                                             {
+12   int fd=open(fn,O_RDONLY);
+13   if (fd<0) return -1;
+14   if (!*buf) {
+15     *len=lseek(fd,0,SEEK_END);
+16     lseek(fd,0,SEEK_SET);
+17     *buf=(char*)malloc(*len+1);
+18     if (!*buf) {
+19       close(fd);
+20       return -1;
+21     }
+22   }
+23   *len=read(fd,*buf,*len);
+24   if (*len != (unsigned long)-1)
+25     (*buf)[*len]=0;
+26   return close(fd);
+27 }
+.fi
+.SS "int rdf (char *name, char **buf)"
+Read contents of file
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 15 of file fs_rdf\&.c\&.
+.PP
+.nf
+15                                {
+16   int fd, len;
+17   unsigned long flen=0;
+18 
+19   if ((fd=open(name, O_RDONLY))==-1) return -1;
+20   if ((buf=malloc(sizeof(char*)*1024))==NULL){
+21     close(fd);
+22     return -1;
+23   }
+24   while ((len=read(fd,buf,1024))){
+25     flen+=len;
+26     if (len>=1024)
+27       if ((buf=realloc(buf,strlen(*buf)*sizeof(char*)*1024))==NULL){
+28         close(fd);
+29         return -1;
+30       }
+31   }
+32   buf[flen]='\0';
+33   return 0;
+34 }
+.fi
+.SS "int td (char *name)"
+Test if directory exists
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 4 of file fs_td\&.c\&.
+.PP
+.nf
+4                   {
+5   struct stat dirstat;
+6   if (!stat(name, &dirstat))
+7     if (S_ISDIR(dirstat\&.st_mode)) return 0;
+8   return -1;
+9 }
+.fi
+.SS "int tf (char *name)"
+Test if file exists \fIand\fP can be opened by the user
+.PP
+\fBParameters:\fP
+.RS 4
+\fIname\fP The filename to test 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 if the file exists and is readable, negative values (errno) otherwise 
+.RE
+.PP
+
+.PP
+Definition at line 11 of file fs_tf\&.c\&.
+.PP
+.nf
+11                   {
+12   int fd;
+13   if ((fd=open(name, O_RDONLY))==-1) return errno;
+14   close(fd);
+15   return 0;
+16 }
+.fi
+.SS "int touch (char *name)"
+Create a new, empty file
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 11 of file fs_touch\&.c\&.
+.PP
+.nf
+11                      {
+12   int fd;
+13 #ifndef _WIN32
+14   if ((fd=open(name, O_CREAT|O_RDWR, S_IRUSR|S_IWUSR))==-1) return errno;
+15 #else
+16   if ((fd=open(name, O_CREAT|O_RDWR))==-1) return errno;
+17 #endif
+18   close(fd);
+19   return 0;
+20 }
+.fi
+.SS "int wf (char *name, char *content)"
+Write string to file
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 17 of file fs_wf\&.c\&.
+.PP
+.nf
+17                                  {
+18   int fd;
+19   int len;
+20 #ifdef _WIN32
+21   if ((fd=open(name, O_CREAT|O_TRUNC|O_WRONLY))==-1) return errno;
+22 #else
+23   if ((fd=open(name, O_CREAT|O_TRUNC|O_WRONLY, S_IWUSR|S_IRUSR))==-1) return errno;
+24 #endif
+25   len=write(fd, content, strlen(content));
+26   close(fd);
+27   return len;
+28 }
+.fi
+.SS "char* xgetcwd (char *cwd)"
+Return current directory with unlimited length
+.PP
+\fBNote:\fP
+.RS 4
+ripped from busybox 
+.RE
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 23 of file fs_xgetcwd\&.c\&.
+.PP
+.nf
+24 {
+25   char *ret;
+26   unsigned path_max = 256;
+27 
+28   if(cwd==0)
+29     cwd = malloc (path_max);
+30 
+31   while ((ret = getcwd (cwd, path_max)) == NULL && errno == ERANGE) {
+32     path_max += 32;
+33     cwd = realloc (cwd, path_max);
+34   }
+35 
+36   if (ret == NULL) {
+37     // errmsg(errno);
+38     free (cwd);
+39     return NULL;
+40   }
+41   return cwd;
+42 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

@@ -1,0 +1,733 @@
+.TH "/home/travis/build/bwachter/ibaard/src/ibaard_network.h" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/ibaard_network.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <string\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <errno\&.h>\fP
+.br
+\fC#include <ctype\&.h>\fP
+.br
+\fC#include <arpa/inet\&.h>\fP
+.br
+\fC#include <sys/types\&.h>\fP
+.br
+\fC#include <sys/socket\&.h>\fP
+.br
+\fC#include <netdb\&.h>\fP
+.br
+\fC#include 'ibaard_types\&.h'\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBMAXNETBUF\fP   1024"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBAM_SSL\fP { \fBAM_SSL_ALLOWPLAIN\fP =1, \fBAM_SSL_USETLS\fP =2, \fBAM_SSL_STARTTLS\fP =4 }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBnetaddrinfo\fP (const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res)"
+.br
+.ti -1c
+.RI "void \fBnetfreeaddrinfo\fP (struct addrinfo *ai)"
+.br
+.ti -1c
+.RI "int \fBnetconnect\fP (char *hostname, char *servicename)"
+.br
+.ti -1c
+.RI "int \fBnetconnect2\fP (char *hostname, char *servicename, char *bindaddress)"
+.br
+.ti -1c
+.RI "int \fBnetread\fP (int sd, char *buf)"
+.br
+.ti -1c
+.RI "int \fBnetreadline\fP (int sd, char *buf)"
+.br
+.ti -1c
+.RI "int \fBnetwriteline\fP (int sd, char *buf)"
+.br
+.ti -1c
+.RI "void \fBnetlogportservice\fP (const struct sockaddr *sa, socklen_t salen, char *msg)"
+.br
+.ti -1c
+.RI "int \fBnetnameinfo\fP (const struct sockaddr *sa, socklen_t salen, char *hostname, size_t hostlen, char *servname, size_t servlen, int flags)"
+.br
+.ti -1c
+.RI "int \fBnetsocket\fP (struct addrinfo *ai)"
+.br
+.ti -1c
+.RI "int \fBnetsocket2\fP (struct addrinfo *ai, struct addrinfo *lai)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Network functions and types 
+.PP
+Definition in file \fBibaard_network\&.h\fP\&.
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define MAXNETBUF   1024"
+Maximum buffer size for network functions 
+.PP
+\fBTodo\fP
+.RS 4
+: rework network functions to work with arbitrary buffer sizes
+.RE
+.PP
+
+.PP
+Definition at line 31 of file ibaard_network\&.h\&.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBAM_SSL\fP"
+Constants to specify use of SSL-encrypted connections 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIAM_SSL_ALLOWPLAIN \fP\fP
+Allow fallback to unencrypted connection\&. 
+.TP
+\fB\fIAM_SSL_USETLS \fP\fP
+Use TLS\&. 
+.TP
+\fB\fIAM_SSL_STARTTLS \fP\fP
+Use STARTTLS\&. 
+.PP
+Definition at line 34 of file ibaard_network\&.h\&.
+.PP
+.nf
+34             {
+36   AM_SSL_ALLOWPLAIN=1,
+38   AM_SSL_USETLS=2,
+40   AM_SSL_STARTTLS=4,
+41 };
+.fi
+.SH "Function Documentation"
+.PP 
+.SS "int netaddrinfo (const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res)"
+A wrapper around getaddrinfo() when available, emulation on other platforms
+.PP
+\fBnetaddrinfo()\fP is just a wrapper around getaddrinfo() on systems which support getaddrinfo()\&. On systems which don't support getaddrinfo it gets emulated using traditional socket functions\&. On Windows it first tries to load getaddrinfo() from DLL, and falls back to the emulation code at runtime if required\&.
+.PP
+\fBNote:\fP
+.RS 4
+for detailed information consult the getaddrinfo() documentation
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP internet host name 
+.br
+\fIservice\fP service name 
+.br
+\fIhints\fP addrinfo structure with pointers for selecting socket address structures 
+.br
+\fIres\fP a list of address structures after lookup 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, different errors on failure\&. Consult the getaddrinfo documentation for possible error codes 
+.RE
+.PP
+
+.PP
+Definition at line 48 of file netaddrinfo\&.c\&.
+.PP
+.nf
+49                                                                     {
+50   int err;
+51 #ifdef _WIN32
+52   HINSTANCE _hInstance = LoadLibrary( "ws2_32" );
+53   int (WSAAPI *pfn_getaddrinfo) (const char*, const char*, const struct addrinfo*, struct addrinfo **);
+54 
+55   pfn_getaddrinfo = GetProcAddress( _hInstance, "getaddrinfo" );
+56 
+57   if (pfn_getaddrinfo){
+58     logmsg(L_DEBUG, F_NET, "Using native getaddrinfo()", NULL);
+59     return (err=pfn_getaddrinfo(node, service, hints, res));
+60   } else {
+61 #endif
+62 #if (defined(_WIN32)) || (defined(_BROKEN_IO))
+63     struct hostent *hp;
+64     struct servent *servent;
+65     const char *socktype;
+66     int port;
+67     struct addrinfo hint, result;
+68     struct addrinfo *ai, *sai, *eai;
+69     char **addrs;
+70     err=0;
+71 
+72     memset (&result, 0, sizeof result);
+73 
+74     logmsg(L_DEBUG, F_NET, "Using getaddrinfo() emulation", NULL);
+75 
+76     /* default for hints */
+77     if (hints == NULL){
+78       memset (&hint, 0, sizeof hint);
+79       hint\&.ai_family = PF_UNSPEC;
+80       hints = &hint;
+81     }
+82 
+83     /* servname must not be NULL in this implementation */
+84     if (service == NULL)
+85       return EAI_NONAME;
+86 
+87     /* check for tcp or udp sockets only */
+88     if (hints->ai_socktype == SOCK_STREAM)
+89       socktype = "tcp";
+90     else if (hints->ai_socktype == SOCK_DGRAM)
+91       socktype = "udp";
+92     else
+93       return EAI_SERVICE;
+94     result\&.ai_socktype = hints->ai_socktype;
+95 
+96     /* Note: maintain port in host byte order to make debugging easier */
+97     if (isdigit (*service))
+98       port = strtol (service, NULL, 10);
+99     else if ((servent = getservbyname (service, socktype)) != NULL)
+100       port = ntohs (servent->s_port);
+101     else
+102       return EAI_NONAME;
+103 
+104     /* if nodename == NULL refer to the local host for a client or any
+105        for a server */
+106     if (node == NULL){
+107       struct sockaddr_in sin;
+108 
+109       /* check protocol family is PF_UNSPEC or PF_INET - could try harder
+110          for IPv6 but that's more code than I'm prepared to write */
+111       if (hints->ai_family == PF_UNSPEC || hints->ai_family == PF_INET)
+112         result\&.ai_family = AF_INET;
+113       else
+114         return EAI_FAMILY;
+115 
+116       sin\&.sin_family = result\&.ai_family;
+117       sin\&.sin_port = htons (port);
+118       if (hints->ai_flags & AI_PASSIVE)
+119         sin\&.sin_addr\&.s_addr = htonl (INADDR_ANY);
+120       else
+121         sin\&.sin_addr\&.s_addr = htonl (INADDR_LOOPBACK);
+122       /* Duplicate result and addr and return */
+123       *res = dup_addrinfo (&result, &sin, sizeof sin);
+124       return (*res == NULL) ? EAI_MEMORY : 0;
+125     }
+126 
+127     /* If AI_NUMERIC is specified, use inet_addr to translate numbers and
+128        dots notation\&. */
+129     if (hints->ai_flags & AI_NUMERICHOST){
+130       struct sockaddr_in sin;
+131 
+132       /* check protocol family is PF_UNSPEC or PF_INET */
+133       if (hints->ai_family == PF_UNSPEC || hints->ai_family == PF_INET)
+134         result\&.ai_family = AF_INET;
+135       else
+136         return EAI_FAMILY;
+137 
+138       sin\&.sin_family = result\&.ai_family;
+139       sin\&.sin_port = htons (port);
+140       sin\&.sin_addr\&.s_addr = inet_addr (node);
+141       /* Duplicate result and addr and return */
+142       *res = dup_addrinfo (&result, &sin, sizeof sin);
+143       return (*res == NULL) ? EAI_MEMORY : 0;
+144     }
+145 
+146     hp = gethostbyname (node);
+147     // fixme, translate error codes
+148     if (hp == NULL) return h_errno;
+149 
+150     /* Check that the address family is acceptable\&.
+151      */
+152     switch (hp->h_addrtype){
+153       case AF_INET:
+154         if (!(hints->ai_family == PF_UNSPEC || hints->ai_family == PF_INET))
+155           return EAI_FAMILY;
+156         break;
+157       case AF_INET6:
+158         if (!(hints->ai_family == PF_UNSPEC || hints->ai_family == PF_INET6))
+159           return EAI_FAMILY;
+160         break;
+161       default:
+162         return EAI_FAMILY;
+163     }
+164 
+165     /* For each element pointed to by hp, create an element in the
+166        result linked list\&. */
+167     sai = eai = NULL;
+168     for (addrs = hp->h_addr_list; *addrs != NULL; addrs++){
+169       struct sockaddr sa;
+170       size_t addrlen;
+171 
+172       if (hp->h_length < 1)
+173         continue;
+174       sa\&.sa_family = hp->h_addrtype;
+175       switch (hp->h_addrtype){
+176         case AF_INET:
+177           ((struct sockaddr_in *) &sa)->sin_port = htons (port);
+178           memcpy (&((struct sockaddr_in *) &sa)->sin_addr,
+179                   *addrs, hp->h_length);
+180           addrlen = sizeof (struct sockaddr_in);
+181           break;
+182         case AF_INET6:
+183 # if SIN6_LEN
+184           ((struct sockaddr_in6 *) &sa)->sin6_len = hp->h_length;
+185 # endif
+186           ((struct sockaddr_in6 *) &sa)->sin6_port = htons (port);
+187           memcpy (&((struct sockaddr_in6 *) &sa)->sin6_addr,
+188                   *addrs, hp->h_length);
+189           addrlen = sizeof (struct sockaddr_in6);
+190           break;
+191         default:
+192           continue;
+193       }
+194 
+195       result\&.ai_family = hp->h_addrtype;
+196       ai = dup_addrinfo (&result, &sa, addrlen);
+197       if (ai == NULL){
+198         netfreeaddrinfo (sai);
+199         return EAI_MEMORY;
+200       }
+201       if (sai == NULL)
+202         sai = ai;
+203       else
+204         eai->ai_next = ai;
+205       eai = ai;
+206     }
+207 
+208     if (sai == NULL){
+209       return EAI_NODATA;
+210     }
+211 
+212     if (hints->ai_flags & AI_CANONNAME){
+213       sai->ai_canonname = malloc (strlen (hp->h_name) + 1);
+214       if (sai->ai_canonname == NULL){
+215         netfreeaddrinfo (sai);
+216         return EAI_MEMORY;
+217       }
+218       strcpy (sai->ai_canonname, hp->h_name);
+219     }
+220 
+221     *res = sai;
+222     return 0;
+223 #ifdef _WIN32
+224   }
+225 #endif
+226 #else
+227   (void)err;
+228   return (getaddrinfo(node, service, hints, res));
+229 #endif
+230 }
+.fi
+.SS "int netconnect (char *hostname, char *servicename)"
+Opens a socket to the host:service given as arguments and returns the socked file descriptor\&. 
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 12 of file netconnect\&.c\&.
+.PP
+.nf
+12                                                  {
+13   return netconnect2(hostname, servicename, (char*)NULL);
+14 }
+.fi
+.SS "int netconnect2 (char *hostname, char *servicename, char *bindaddress)"
+Opens a socket to the host:service given as arguments and returns the socked file descriptor\&. 
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 16 of file netconnect\&.c\&.
+.PP
+.nf
+16                                                                      {
+17   struct addrinfo *res, *bindres;
+18   struct addrinfo hints;
+19   int sd, err;
+20 #ifdef _WIN32
+21   WSADATA wsaData;
+22 #endif
+23 
+24   memset(&hints, 0, sizeof hints);
+25   hints\&.ai_flags = AI_PASSIVE;
+26   hints\&.ai_socktype = SOCK_STREAM;
+27 
+28 #ifdef _WIN32
+29   WSAStartup( 0x0202, &wsaData );
+30 #endif
+31   if (bindaddress!=NULL){
+32     if ((err=netaddrinfo(bindaddress, NULL, &hints, &bindres))){
+33       logmsg(L_ERROR, F_NET, "unable to resolve local bind address", NULL);
+34       return -1;
+35     }
+36   }
+37 
+38   if ((err=netaddrinfo(hostname, servicename, &hints, &res))){
+39     logmsg(L_ERROR, F_NET, "unable to resolve host", NULL);
+40     netfreeaddrinfo(bindres);
+41     return -1;
+42   } else {
+43     struct addrinfo *r, *b;
+44 
+45     r=res;
+46     while (r){
+47       if (bindaddress!=NULL){
+48         // so far we try to match only the first record of bindres
+49         // TODO: check all entries
+50         b=bindres;
+51         if (b->ai_family==r->ai_family)
+52           if ((sd=netsocket2(&*r, &*b)) > 0){
+53             netfreeaddrinfo(bindres);
+54             netfreeaddrinfo(res);
+55             return sd;
+56           }
+57       } else {
+58         if ((sd=netsocket(&*r)) > 0){
+59           if (bindaddress!=NULL) netfreeaddrinfo(bindres);
+60           netfreeaddrinfo(res);
+61           return sd;
+62         }
+63       }
+64       if(r->ai_next==NULL)
+65         logmsg(L_INFO, F_NET, "r->ai_next is NULL", NULL);
+66       else
+67         logmsg(L_INFO, F_NET, "trying next element", NULL);
+68       r=r->ai_next;
+69     }
+70   }
+71   if (bindaddress!=NULL) netfreeaddrinfo(bindres);
+72   netfreeaddrinfo(res);
+73   return -1;
+74 }
+.fi
+.SS "void netfreeaddrinfo (struct addrinfo *ai)"
+A wrapper around freeaddrinfo() when available, emulation on other platforms
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 30 of file netaddrinfo\&.c\&.
+.PP
+.nf
+30                                            {
+31 #if (defined(_WIN32)) || (defined(_BROKEN_IO))
+32   struct addrinfo *next;
+33 
+34   while (ai != NULL){
+35     next = ai->ai_next;
+36     if (ai->ai_canonname != NULL)
+37       free (ai->ai_canonname);
+38     if (ai->ai_addr != NULL)
+39       free (ai->ai_addr);
+40     free (ai);
+41     ai = next;
+42   }
+43 #else
+44   freeaddrinfo(ai);
+45 #endif
+46 }
+.fi
+.SS "void netlogportservice (const struct sockaddr *sa, socklen_tsalen, char *msg)"
+Dump hostname and service to log
+.PP
+Mainly usefol for debug reasons
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 13 of file netlogportservice\&.c\&.
+.PP
+.nf
+13                                                                              {
+14   char host[NI_MAXHOST];
+15   char serv[NI_MAXSERV];
+16   char *tmpstring=NULL;
+17 
+18   netnameinfo(sa, salen, host, sizeof(host),serv, sizeof(serv),
+19               NI_NUMERICHOST | NI_NUMERICSERV);
+20   cat(&tmpstring, msg, host, ":", serv, NULL);
+21   logmsg(L_DEBUG, F_NET, tmpstring, NULL);
+22   free(tmpstring);
+23 }
+.fi
+.SS "int netnameinfo (const struct sockaddr *sa, socklen_tsalen, char *hostname, size_thostlen, char *servname, size_tservlen, intflags)"
+A wrapper around getnameinfo() when available, emulation on other platforms
+.PP
+\fBnetnameinfo()\fP is just a wrapper around getnameinfo() on systems which support it, just like \fBnetaddrinfo()\fP\&.
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation (parameters, return value) 
+.RE
+.PP
+
+.PP
+Definition at line 12 of file netnameinfo\&.c\&.
+.PP
+.nf
+14                                                           {
+15 #ifdef _WIN32
+16   HINSTANCE _hInstance = LoadLibrary( "ws2_32" );
+17   int (WSAAPI *pfn_getnameinfo) (const struct sockaddr*, socklen_t salen,
+18                                  char *hostname, size_t hostlen,
+19                                  char *servname, size_t servlen, int flags);
+20 
+21   pfn_getnameinfo =     GetProcAddress( _hInstance, "getnameinfo" );
+22 
+23   if (pfn_getnameinfo){
+24     return (pfn_getnameinfo(sa, salen, hostname, hostlen, servname, servlen, flags));
+25   } else {
+26 #endif
+27 #if (defined( _WIN32)) || (defined(_BROKEN_IO))
+28 #ifdef __GNUC__
+29     (void) flags;
+30     (void) salen;
+31 #endif
+32     char *tmp;
+33     if ((tmp = malloc((NI_MAXHOST+1)*sizeof(char))) == NULL) {
+34       logmsg(L_ERROR, F_NET, "malloc() failed", NULL);
+35       return -1;
+36     }
+37 
+38     if (servname != NULL) {
+39       uint16_t service_int;
+40       service_int = ntohs(((struct sockaddr_in*)sa)->sin_port);
+41       snprintf(tmp, NI_MAXHOST, "%i", service_int);
+42       strncpy(servname, tmp, servlen);
+43     }
+44 
+45     free(tmp);
+46 
+47     if (hostname != NULL) {
+48       if ((tmp = inet_ntoa(((struct sockaddr_in*)sa)->sin_addr)) == NULL){
+49         logmsg(L_ERROR, F_NET, "converting ip failed", NULL);
+50       }
+51       strncpy(hostname, tmp, hostlen);
+52     }
+53     return 0;
+54 #ifdef _WIN32
+55   }
+56 #endif
+57 #else
+58   return (getnameinfo(sa, salen, hostname, hostlen, servname, servlen, flags));
+59 #endif
+60 }
+.fi
+.SS "int netread (intsd, char *buf)"
+Read data from a file descriptor
+.PP
+\fBnetread()\fP reads up to MAXNETBUF bytes from a given file descriptor and returns the number of bytes read\&. The read bytes are stored (NULL- terminated) in the buffer specified by buf\&. You need to make sure that buf has enough space for MAXNETBUF + 1 bytes\&.
+.PP
+\fBnetread()\fP, as well as the the functions \fBnetreadline()\fP and \fBnetwriteline()\fP can handle both plaintext and SSL\&. If there's an open SSL connection they'll use SSL, if not they'll read/write plaintext\&.
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 9 of file netread\&.c\&.
+.PP
+.nf
+9                               {
+10   int i;
+11 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
+12   if (am_sslconf & AM_SSL_USETLS){
+13     i=netsslread(ssl, buf, MAXNETBUF);
+14   } else
+15 #endif
+16     i=recv(sd, buf, MAXNETBUF, 0);
+17   buf[i]='\0';
+18   return i;
+19 }
+.fi
+.SS "int netreadline (intsd, char *buf)"
+Read data from a file descriptor, up to \\r\\n
+.PP
+\fBnetreadline()\fP reads up to MAXNETBUF bytes from a given file descriptor\&. It stops if either \\r\\n or a NULL byte occurs\&. It returns the number of bytes read (and stored)\&. Since strlen() can't cope with NULL bytes (it will take the first NULL byte as end of string) always use the return value, never use strlen() on the returned string\&.
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 5 of file netreadline\&.c\&.
+.PP
+.nf
+5                                   {
+6   int i,cnt;
+7   char tmpbuf[1];
+8 
+9   buf[0]='\0';
+10   for (cnt=0; cnt<MAXNETBUF-2; cnt++){
+11 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
+12     if (am_sslconf & AM_SSL_USETLS){
+13       i=netsslread(ssl, tmpbuf, 1);
+14     } else
+15 #endif
+16       i=recv(sd, tmpbuf, 1, 0);
+17     if (i==0) return 0; // usually this means peer exited
+18     if (i==-1) return -1;
+19 
+20     if (tmpbuf[0] == '\0'){
+21       // nullbyte handling will work as long as any functions using
+22       // our output won't rely on strlen()
+23       logmsg(L_WARNING, F_NET, "nullbyte detected, mail might be corrupted", NULL);
+24       logmsg(L_VERBOSE, F_NET, "< ", buf, NULL);
+25       return cnt;
+26     } else {
+27       strncat(buf, tmpbuf, 1);
+28       if (buf[cnt] == '\n' && buf[cnt-1]=='\r'){
+29         logmsg(L_VERBOSE, F_NET, "< ", buf, NULL);
+30         return cnt; 
+31       }
+32     }
+33   }
+34   logmsg(L_VERBOSE, F_NET, "< ", buf, NULL);
+35   return MAXNETBUF-3;
+36 }
+.fi
+.SS "int netsocket (struct addrinfo *ai)"
+Open a network socket
+.PP
+Used by \fBnetconnect()\fP
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 12 of file netsocket\&.c\&.
+.PP
+.nf
+12                                   {
+13   return netsocket2(ai, NULL);
+14 }
+.fi
+.SS "int netsocket2 (struct addrinfo *ai, struct addrinfo *lai)"
+Open a network socket and bind to specific address
+.PP
+Used by \fBnetconnect()\fP
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 16 of file netsocket\&.c\&.
+.PP
+.nf
+16                                                          {
+17   int sd;
+18 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
+19   int err;
+20 #endif
+21 
+22   if (loglevel(0) > 0)
+23     netlogportservice(ai->ai_addr, ai->ai_addrlen, "Trying to connect to: ");
+24 
+25   if ((sd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol)) < 0){
+26     logmsg(L_ERROR, F_NET, "socket() failed: ", strerror(errno), NULL);
+27     return -1;
+28   }
+29 
+30   if (lai!=NULL)
+31     if (bind(sd, lai->ai_addr, lai->ai_addrlen) < 0){
+32       logmsg(L_ERROR, F_NET, "bind() failed: ", strerror(errno), NULL);
+33       return -1;
+34     }
+35 
+36   if (connect(sd, ai->ai_addr, ai->ai_addrlen) < 0){
+37     logmsg(L_ERROR, F_NET, "connect() failed: ", strerror(errno), NULL);
+38     return -1;
+39   }
+40 
+41 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
+42   if (am_sslconf & AM_SSL_USETLS){
+43     if ((err=netsslstart(sd)) && (am_sslconf & AM_SSL_ALLOWPLAIN)){
+44       logmsg(L_WARNING, F_NET, "no ssl available, continuing from start", NULL);
+45       close(sd);
+46       return netsocket(ai);
+47     } else if (err && !(am_sslconf & AM_SSL_ALLOWPLAIN)){
+48       logmsg(L_DEADLY, F_NET, "unable to open ssl connection, plaintext fallback disabled\&.", NULL);
+49     }
+50   }
+51 #endif
+52   return sd;
+53 }
+.fi
+.SS "int netwriteline (intsd, char *buf)"
+Write buffer contents to file descriptor
+.PP
+\fBnetwriteline()\fP writes the content of the buffer pointed to by buf to a given file descriptor\&. Since \fBnetwriteline()\fP needs to find the end of the buffer no NULL bytes (except for the terminating one) are allowed in the input\&. It returns the number of bytes written\&.
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 11 of file netwriteline\&.c\&.
+.PP
+.nf
+11                                    {
+12   int i;
+13 
+14   logmsg(L_VERBOSE, F_NET, "> ", buf, NULL);
+15 
+16 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
+17   if (am_sslconf & AM_SSL_USETLS){
+18     i=netsslwrite(ssl, buf, strlen(buf));
+19   } else
+20 #endif
+21     i=send(sd, buf, strlen(buf), 0);
+22   return i;
+23 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

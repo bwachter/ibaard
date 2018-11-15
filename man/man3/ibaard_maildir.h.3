@@ -1,0 +1,340 @@
+.TH "/home/travis/build/bwachter/ibaard/src/ibaard_maildir.h" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/ibaard_maildir.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <string\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <sys/stat\&.h>\fP
+.br
+\fC#include 'ibaard_types\&.h'\fP
+.br
+
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef struct _maildirent \fBmaildirent\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBmduniqname\fP (char **uniqname)"
+.br
+.ti -1c
+.RI "int \fBmdopen\fP (char *maildir, char **uniqname)"
+.br
+.ti -1c
+.RI "int \fBmdclose\fP (char *maildir, char **uniqname, int fd)"
+.br
+.ti -1c
+.RI "int \fBmdinit\fP (char *maildir, char *subdir, int harddelete)"
+.br
+.ti -1c
+.RI "int \fBmdfind\fP (char *maildir)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "char * \fBmaildirpath\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Functions for handling Maildirs 
+.PP
+Definition in file \fBibaard_maildir\&.h\fP\&.
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef struct _maildirent \fBmaildirent\fP"
+An entry in a Maildir 
+.PP
+Definition at line 18 of file ibaard_maildir\&.h\&.
+.SH "Function Documentation"
+.PP 
+.SS "int mdclose (char *maildir, char **uniqname, intfd)"
+Close a file in Maildir, opened by \fBmdopen()\fP
+.PP
+This will move the file from tmp/ to new/
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 17 of file mdclose\&.c\&.
+.PP
+.nf
+17                                                      {
+18 #endif
+19     char *oldpath=NULL, *newpath=NULL;
+20     int status=0;
+21     if ((mdfind(maildir)) == -1) {
+22 #if (defined(_WIN32)) || (defined _BROKEN_IO)
+23       fflush(fd);
+24       fclose(fd);
+25 #else
+26       close(fd);
+27 #endif
+28       return -1;
+29     }
+30 
+31     cat(&oldpath, maildirpath, "/tmp/", *uniqname, NULL);
+32     cat(&newpath, maildirpath, "/new/", *uniqname, NULL);
+33     //cat(&newpath, maildirpath, "/cur/", *uniqname, ":2,", NULL);
+34 
+35 #if (defined(_WIN32)) || (defined _BROKEN_IO)
+36     if (!(status=fclose(fd))){
+37 #else
+38       if (!(status=close(fd))){
+39 #endif
+40 #ifdef _WIN32
+41         status=MoveFile(oldpath, newpath);
+42 #else
+43         status=link(oldpath, newpath);
+44         unlink(oldpath);
+45 #endif
+46       } else logmsg(L_ERROR, F_GENERAL, "Closing mail failed: ", strerror(errno), NULL);
+47 
+48       free(oldpath);
+49       free(newpath);
+50       return status;
+51     }
+.fi
+.SS "int mdfind (char *maildir)"
+Try to locate the users Mailder
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 13 of file mdfind\&.c\&.
+.PP
+.nf
+13                          {
+14   // TODO: maybe look what's in maildirpath\&. check if directory exists
+15   if (maildir) {
+16     maildirpath=strdup(maildir);
+17     if (!td(maildirpath)) return 0;
+18   }
+19 
+20   if ((maildirpath=getenv("MAILDIR"))==NULL){
+21 #ifdef _WIN32
+22     if (getenv("USERPROFILE")==NULL){
+23       logmsg(L_ERROR, F_MAILDIR, "%MAILDIR% not set, %USERPROFILE% not found", NULL);
+24 #else
+25       if (getenv("HOME")==NULL){
+26         logmsg(L_ERROR, F_MAILDIR, "$MAILDIR not set, $HOME not found", NULL);
+27 #endif
+28         return -1;
+29       } else {
+30 #ifdef _WIN32
+31         if (cat(&maildirpath, getenv("USERPROFILE"), "/Maildir", NULL)) return -1;
+32 #else
+33         if (cat(&maildirpath, getenv("HOME"), "/Maildir", NULL)) return -1;
+34 #endif
+35         else if (!td(maildirpath)) return 0;
+36       }
+37     } else {
+38       maildirpath=strdup(getenv("MAILDIR"));
+39       if (!td(maildirpath)) return 0;
+40     }
+41 
+42     return -1; // if we got that far we did not find a usable maildir
+43   }
+.fi
+.SS "int mdinit (char *maildir, char *subdir, intharddelete)"
+Prepare maildir for RW-Access
+.PP
+\fBTodo\fP
+.RS 4
+function is incomplete 
+.PP
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 23 of file mdinit\&.c\&.
+.PP
+.nf
+23                                                        {
+24   // maybe add a flag to recurse into subdirs
+25 #ifdef _WIN32
+26   HANDLE dirptr;
+27   WIN32_FIND_DATA fData;
+28   char pattern[AM_MAXPATH];
+29 #else
+30   DIR *dirptr;
+31   struct dirent *tmpdirent;
+32 #endif
+33   char *mymaildir=NULL;
+34   maildirent tmpmaildirent;
+35   struct stat maildirstat;
+36 
+37   maildir_harddelete = harddelete;
+38   memset(&maildirstat, 0, sizeof(struct stat));
+39   memset(&tmpmaildirent, 0, sizeof(maildirent));
+40 
+41   if (mdfind(maildir)){
+42     logmsg(L_ERROR, F_MAILDIR, "unable to find maildir", NULL);
+43     return -1;
+44   }
+45 
+46   if (subdir != NULL) cat(&mymaildir, maildirpath, "/", subdir, "/new", NULL);
+47   else cat(&mymaildir, maildirpath, "/new", NULL);
+48 
+49 #ifdef _WIN32
+50   snprintf(pattern, "%s\\*\&.*", mymaildir, AM_MAXPATH);
+51   dirptr = FindFirstFile(pattern, &fData);
+52 
+53   if (dirptr == INVALID_HANDLE_VALUE){
+54     // TODO: error message
+55     free(mymaildir);
+56     return -1;
+57   }
+58 
+59   do {
+60     if (!strncmp(fData\&.cFileName, "\&.", 1)) continue;
+61     if (!strncmp(fData\&.cFileName, "\&.\&.", 2)) continue;
+62   } while(FindNextFile(dirptr, &fData));
+63 
+64   FindClose(dirptr);
+65 #else
+66   if ((dirptr=opendir(mymaildir))==NULL){
+67     logmsg(L_ERROR, F_MAILDIR, "unable to open maildir ", mymaildir, ": ", strerror(errno), NULL);
+68     free(mymaildir);
+69     return -1;
+70   }
+71 
+72   for (tmpdirent=readdir(dirptr); tmpdirent!=NULL; tmpdirent=readdir(dirptr)){
+73     if (!strncmp(tmpdirent->d_name, "\&.", 1)) continue;
+74     if (!strncmp(tmpdirent->d_name, "\&.\&.", 2)) continue;
+75     if (stat(cati(mymaildir, "/", tmpdirent->d_name, NULL), &maildirstat)==-1){
+76       logmsg(L_ERROR, F_MAILDIR, "stat() for file in maildir failed ", NULL);
+77       free(mymaildir);
+78       return -1;
+79     }
+80     strncpy(tmpmaildirent\&.name, tmpdirent->d_name, AM_MAXPATH);
+81     tmpmaildirent\&.size = maildirstat\&.st_size;
+82     //maildir_sappend(&tmpmaildirent);
+83     memset(&tmpmaildirent, 0, sizeof(maildirent));
+84   }
+85 #endif
+86 
+87   free(mymaildir);
+88   return 0; //FIXME
+89 }
+.fi
+.SS "int mdopen (char *maildir, char **uniqname)"
+Open a file in Maildir for writing
+.PP
+Create a file in Maildir/tmp\&. Use \fBmdclose()\fP to close the file
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 21 of file mdopen\&.c\&.
+.PP
+.nf
+21                                             {
+22     int fd;
+23 #endif
+24     char *path=NULL;
+25 
+26     if ((mdfind(maildir)) == -1) goto errexit;
+27 
+28     mduniqname(uniqname);
+29     if ((cat(&path, maildirpath, "/tmp/", *uniqname, NULL))) goto errexit;
+30     logmsg(L_INFO, F_MAILDIR, "spooling to ", path, NULL);
+31 #if (defined(_WIN32)) || (defined _BROKEN_IO)
+32     if ((fd=fopen(path, "w+")) == NULL) {
+33 #else
+34       if ((fd=open(path, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0644)) == -1) {
+35 #endif
+36         logmsg(L_ERROR, F_MAILDIR, "open ", path, " for writing failed: ", strerror(errno), NULL);
+37         free(path);
+38         goto errexit;
+39       }
+40       free(path);
+41       return fd;
+42       errexit: // with supporting windows-crap / stdio that's easier than many ifdefs
+43 #if (defined(_WIN32)) || (defined _BROKEN_IO)
+44       return (FILE*)NULL;
+45 #else
+46       return -1;
+47 #endif
+48     }
+.fi
+.SS "int mduniqname (char **uniqname)"
+Create a unique name to store a mail in Maildir
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 23 of file mduniqname\&.c\&.
+.PP
+.nf
+23                                {
+24   char tmpbuf[512];
+25   char myhost[NI_MAXHOST];
+26 
+27 #ifndef _POSIX_SOURCE
+28 #ifdef _WIN32
+29   int mypid=_getpid();
+30 #endif
+31   time_t mytime=time(NULL);
+32 #else
+33   pid_t mypid=getpid();
+34   struct timeval mytime;
+35   gettimeofday(&mytime, NULL);
+36 #endif
+37 
+38   if (gethostname(myhost, NI_MAXHOST)==-1){
+39     logmsg(L_WARNING, F_MAILDIR, "unable to get hostname, setting to localhost\&.localdomain", NULL);
+40     strcpy(myhost, "localhost\&.localdomain");
+41   }
+42 
+43   deliveries++;
+44 
+45 #ifdef _POSIX_SOURCE
+46   sprintf(tmpbuf, "%li\&.M%liP%iQ%i", (unsigned long)mytime\&.tv_sec, (unsigned long)mytime\&.tv_usec, (int) mypid, deliveries);
+47 #else
+48   sprintf(tmpbuf, "%li\&.P%iQ%i", (unsigned long)mytime, (int) mypid, deliveries);
+49 #endif
+50   cat(&*uniqname, tmpbuf, "\&.", myhost, NULL);
+51 
+52   return 0; // FIXME, kludge
+53 }
+.fi
+.SH "Variable Documentation"
+.PP 
+.SS "char* maildirpath"
+The path to the Maildir, once found 
+.PP
+Definition at line 29 of file ibaard_maildir\&.h\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

@@ -1,0 +1,135 @@
+.TH "/home/travis/build/bwachter/ibaard/src/mdinit.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/mdinit.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <dirent\&.h>\fP
+.br
+\fC#include <errno\&.h>\fP
+.br
+\fC#include 'ibaard_maildir\&.h'\fP
+.br
+\fC#include 'ibaard_fs\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+\fC#include 'ibaard_cat\&.h'\fP
+.br
+\fC#include 'logtypes\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBmdinit\fP (char *maildir, char *subdir, int harddelete)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBmdinit\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int mdinit (char *maildir, char *subdir, intharddelete)"
+Prepare maildir for RW-Access
+.PP
+\fBTodo\fP
+.RS 4
+function is incomplete 
+.PP
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 23 of file mdinit\&.c\&.
+.PP
+.nf
+23                                                        {
+24   // maybe add a flag to recurse into subdirs
+25 #ifdef _WIN32
+26   HANDLE dirptr;
+27   WIN32_FIND_DATA fData;
+28   char pattern[AM_MAXPATH];
+29 #else
+30   DIR *dirptr;
+31   struct dirent *tmpdirent;
+32 #endif
+33   char *mymaildir=NULL;
+34   maildirent tmpmaildirent;
+35   struct stat maildirstat;
+36 
+37   maildir_harddelete = harddelete;
+38   memset(&maildirstat, 0, sizeof(struct stat));
+39   memset(&tmpmaildirent, 0, sizeof(maildirent));
+40 
+41   if (mdfind(maildir)){
+42     logmsg(L_ERROR, F_MAILDIR, "unable to find maildir", NULL);
+43     return -1;
+44   }
+45 
+46   if (subdir != NULL) cat(&mymaildir, maildirpath, "/", subdir, "/new", NULL);
+47   else cat(&mymaildir, maildirpath, "/new", NULL);
+48 
+49 #ifdef _WIN32
+50   snprintf(pattern, "%s\\*\&.*", mymaildir, AM_MAXPATH);
+51   dirptr = FindFirstFile(pattern, &fData);
+52 
+53   if (dirptr == INVALID_HANDLE_VALUE){
+54     // TODO: error message
+55     free(mymaildir);
+56     return -1;
+57   }
+58 
+59   do {
+60     if (!strncmp(fData\&.cFileName, "\&.", 1)) continue;
+61     if (!strncmp(fData\&.cFileName, "\&.\&.", 2)) continue;
+62   } while(FindNextFile(dirptr, &fData));
+63 
+64   FindClose(dirptr);
+65 #else
+66   if ((dirptr=opendir(mymaildir))==NULL){
+67     logmsg(L_ERROR, F_MAILDIR, "unable to open maildir ", mymaildir, ": ", strerror(errno), NULL);
+68     free(mymaildir);
+69     return -1;
+70   }
+71 
+72   for (tmpdirent=readdir(dirptr); tmpdirent!=NULL; tmpdirent=readdir(dirptr)){
+73     if (!strncmp(tmpdirent->d_name, "\&.", 1)) continue;
+74     if (!strncmp(tmpdirent->d_name, "\&.\&.", 2)) continue;
+75     if (stat(cati(mymaildir, "/", tmpdirent->d_name, NULL), &maildirstat)==-1){
+76       logmsg(L_ERROR, F_MAILDIR, "stat() for file in maildir failed ", NULL);
+77       free(mymaildir);
+78       return -1;
+79     }
+80     strncpy(tmpmaildirent\&.name, tmpdirent->d_name, AM_MAXPATH);
+81     tmpmaildirent\&.size = maildirstat\&.st_size;
+82     //maildir_sappend(&tmpmaildirent);
+83     memset(&tmpmaildirent, 0, sizeof(maildirent));
+84   }
+85 #endif
+86 
+87   free(mymaildir);
+88   return 0; //FIXME
+89 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

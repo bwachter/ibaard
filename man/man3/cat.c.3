@@ -1,0 +1,104 @@
+.TH "/home/travis/build/bwachter/ibaard/src/cat.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/cat.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'ibaard_platform\&.h'\fP
+.br
+\fC#include <stdarg\&.h>\fP
+.br
+\fC#include <string\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <unistd\&.h>\fP
+.br
+\fC#include 'ibaard_cat\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBcat\fP (char **dest, char *str,\&.\&.\&.)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBcat\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int cat (char **dest, char *str, \&.\&.\&.)"
+Concatenate strings into a buffer
+.PP
+\fBNote:\fP
+.RS 4
+\fBcat()\fP allocates the needed memory by itself, but for obvious reasons does not free it\&. Remember to free the memory as soon as you don't need it anymore\&.
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdest\fP the buffer to store the new string 
+.br
+\fIstr\fP the first string 
+.br
+\fI\&.\&.\&.\fP the remaining strings, terminated by NULL 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 on error 
+.RE
+.PP
+
+.PP
+Definition at line 22 of file cat\&.c\&.
+.PP
+.nf
+22                                     {
+23   va_list ap;
+24   int len;
+25   char *ptr, *tmp;
+26 
+27   if (*dest != NULL)
+28     free(*dest);
+29 
+30   len = strlen(str);
+31   va_start(ap, str);
+32   while ((tmp = va_arg(ap, char*)))
+33     len += strlen(tmp);
+34   va_end(ap);
+35 
+36   if (!(*dest=malloc(len+1)))
+37     return -1;
+38 
+39   ptr = *dest;
+40   for (tmp=str; *tmp; tmp++) *ptr++ = *tmp;
+41   va_start(ap, str);
+42   while ((tmp = va_arg(ap, char*)))
+43     while (*tmp) *ptr++ = *tmp++;
+44   va_end(ap);
+45   *ptr = '\0';
+46   return 0;
+47 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

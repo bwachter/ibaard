@@ -1,0 +1,60 @@
+.TH "/home/travis/build/bwachter/ibaard/src/ibaard_shell.h" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/ibaard_shell.h \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBash_init\fP (char *info)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+A minimalistic rescue shell 
+.PP
+Definition in file \fBibaard_shell\&.h\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int ash_init (char *info)"
+Initialize a minimalistic rescue shell
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinfo\fP a message to display on shell launch 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+always returns 0 
+.RE
+.PP
+
+.PP
+Definition at line 413 of file shell\&.c\&.
+.PP
+.nf
+413                         {
+414   char buf[512];
+415 
+416   emsg(info, 0);
+417   ash_settings\&.fancyprompt=0;
+418 
+419   while(strcmp(buf,"exit")){
+420     if (ash_settings\&.fancyprompt)
+421       lmsg(xgetcwd(buf), "> ", 0);
+422     else
+423       lmsg("> ", 0);
+424     ash_read(buf);
+425     ash_shellcmd(buf);
+426   }
+427   return 0;
+428 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

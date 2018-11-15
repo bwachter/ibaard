@@ -1,0 +1,116 @@
+.TH "/home/travis/build/bwachter/ibaard/src/ibaard.h" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/ibaard.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'ibaard_platform\&.h'\fP
+.br
+\fC#include 'ibaard_types\&.h'\fP
+.br
+\fC#include <string\&.h>\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "char ** \fBsplit\fP (char *buf, int c, int *len, int plus, int ofs)"
+.br
+.ti -1c
+.RI "void \fBkirahvi\fP ()"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void kirahvi ()"
+Draw a nice ascii-art giraffe 
+.PP
+Definition at line 3 of file kirahvi\&.c\&.
+.PP
+.nf
+3               {
+4 
+5   __write1("       oo _,        \n");
+6   __write1("     _((-' _/       \n");
+7   __write1("    /       \"\",   \n");
+8   __write1("  ,',O   |  #  \",   The one\n");
+9   __write1(" ,'   __/ -\&.  #  \"   knows what\n");
+10   __write1("(;_,``'     \\     \"   this is about\&.\n");
+11   __write1("             \\ #   \",     \n");
+12   __write1("              \\  #  \"     \n");
+13   __write1("               \\     \"    \n");
+14   __write1("                \\ # # \",  \n");
+15   __write1("                 \\    # \",        \n");
+16   __write1("                  \\   #  \",       \n");
+17   __write1("                   \\  # # \",      \n");
+18   __write1("                    \\     #\",     \n");
+19   __write1("                     \\#   #   \",_ \n");
+20   __write1("                      \\ #  #     '``\&.__     \n");
+21   __write1("                       \\   #    #    # ''\&._         \n");
+22   __write1("                        |#     #      #    '\&.        \n");
+23   __write1("                        ;  #     #   #     # \\     \n");
+24   __write1("                        :     #  #     #  #   \\    \n");
+25   __write1("                        :  #    #    #  # /#  :     \n");
+26   __write1("                        : # |  #         /   # |\\  \n");
+27   __write1("                        :   :      |#     # | #|\\\\        \n");
+28 }
+.fi
+.SS "char** split (char *buf, intc, int *len, intplus, intofs)"
+Split a string
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbuf\fP 
+.br
+\fIc\fP 
+.br
+\fIlen\fP 
+.br
+\fIplus\fP 
+.br
+\fIofs\fP 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+.RE
+.PP
+\fBTodo\fP
+.RS 4
+.RE
+.PP
+
+.PP
+Definition at line 6 of file split\&.c\&.
+.PP
+.nf
+6                                                         {
+7   int n=1;
+8   char **v=0;
+9   char **w;
+10   /* step 1: count tokens */
+11   char *s;
+12   for (s=buf; *s; s++) if (*s==c) n++;
+13   /* step 2: allocate space for pointers */
+14   v=(char **)malloc((n+plus)*sizeof(char*));
+15   if (!v) return 0;
+16   w=v+ofs;
+17   *w++=buf;
+18   for (s=buf; ; s++) {
+19     while (*s && *s!=c) s++;
+20     if (*s==0) break;
+21     if (*s==c) {
+22       *s=0;
+23       *w++=s+1;
+24     }
+25   }
+26   *len=w-v;
+27   return v;
+28 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

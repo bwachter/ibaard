@@ -1,0 +1,84 @@
+.TH "/home/travis/build/bwachter/ibaard/src/edit.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/edit.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'ibaard_cat\&.h'\fP
+.br
+\fC#include 'ibaard_edit\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBedit\fP (char *filename)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2006-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBedit\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int edit (char *filename)"
+Open a file in the default editor
+.PP
+\fBedit()\fP will try to open a file in the editor set in the EDITOR environment variable or, if this does not exist, in vi\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP the file to open 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+-1 on error, or the (old!) pid of the editor on success 
+.RE
+.PP
+
+.PP
+Definition at line 10 of file edit\&.c\&.
+.PP
+.nf
+10                         {
+11   char *editor;
+12 
+13 #ifndef _WIN32
+14   pid_t pid;
+15 
+16   if (getenv("EDITOR") == NULL) editor=strdup("vi");
+17   else editor=strdup(getenv("EDITOR"));
+18 
+19   if ((pid=fork())==-1){
+20     return -1;
+21   }
+22 
+23   if (pid==0){
+24     execlp("/bin/sh", "sh", "-c", cati(editor, " ", filename, NULL), (char*)NULL);
+25     exit(-1);
+26   } else {
+27     return wait(NULL);
+28   }
+29 #endif
+30 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

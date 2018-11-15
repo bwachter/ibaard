@@ -1,0 +1,94 @@
+.TH "/home/travis/build/bwachter/ibaard/src/mdopen.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/mdopen.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <errno\&.h>\fP
+.br
+\fC#include <fcntl\&.h>\fP
+.br
+\fC#include 'ibaard_maildir\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+\fC#include 'ibaard_cat\&.h'\fP
+.br
+\fC#include 'logtypes\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBmdopen\fP (char *maildir, char **uniqname)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBmdopen\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int mdopen (char *maildir, char **uniqname)"
+Open a file in Maildir for writing
+.PP
+Create a file in Maildir/tmp\&. Use \fBmdclose()\fP to close the file
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 21 of file mdopen\&.c\&.
+.PP
+.nf
+21                                             {
+22     int fd;
+23 #endif
+24     char *path=NULL;
+25 
+26     if ((mdfind(maildir)) == -1) goto errexit;
+27 
+28     mduniqname(uniqname);
+29     if ((cat(&path, maildirpath, "/tmp/", *uniqname, NULL))) goto errexit;
+30     logmsg(L_INFO, F_MAILDIR, "spooling to ", path, NULL);
+31 #if (defined(_WIN32)) || (defined _BROKEN_IO)
+32     if ((fd=fopen(path, "w+")) == NULL) {
+33 #else
+34       if ((fd=open(path, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0644)) == -1) {
+35 #endif
+36         logmsg(L_ERROR, F_MAILDIR, "open ", path, " for writing failed: ", strerror(errno), NULL);
+37         free(path);
+38         goto errexit;
+39       }
+40       free(path);
+41       return fd;
+42       errexit: // with supporting windows-crap / stdio that's easier than many ifdefs
+43 #if (defined(_WIN32)) || (defined _BROKEN_IO)
+44       return (FILE*)NULL;
+45 #else
+46       return -1;
+47 #endif
+48     }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

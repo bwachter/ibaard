@@ -1,0 +1,187 @@
+.TH "/home/travis/build/bwachter/ibaard/src/ibaard_cat.h" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/ibaard_cat.h \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBcat\fP (char **dest, char *str,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "int \fBcatn\fP (char **dest, int len, char *str,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "char * \fBcati\fP (char *str,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "void \fBfreecati\fP ()"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "int cat (char **dest, char *str, \&.\&.\&.)"
+Concatenate strings into a buffer
+.PP
+\fBNote:\fP
+.RS 4
+\fBcat()\fP allocates the needed memory by itself, but for obvious reasons does not free it\&. Remember to free the memory as soon as you don't need it anymore\&.
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdest\fP the buffer to store the new string 
+.br
+\fIstr\fP the first string 
+.br
+\fI\&.\&.\&.\fP the remaining strings, terminated by NULL 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 on error 
+.RE
+.PP
+
+.PP
+Definition at line 22 of file cat\&.c\&.
+.PP
+.nf
+22                                     {
+23   va_list ap;
+24   int len;
+25   char *ptr, *tmp;
+26 
+27   if (*dest != NULL)
+28     free(*dest);
+29 
+30   len = strlen(str);
+31   va_start(ap, str);
+32   while ((tmp = va_arg(ap, char*)))
+33     len += strlen(tmp);
+34   va_end(ap);
+35 
+36   if (!(*dest=malloc(len+1)))
+37     return -1;
+38 
+39   ptr = *dest;
+40   for (tmp=str; *tmp; tmp++) *ptr++ = *tmp;
+41   va_start(ap, str);
+42   while ((tmp = va_arg(ap, char*)))
+43     while (*tmp) *ptr++ = *tmp++;
+44   va_end(ap);
+45   *ptr = '\0';
+46   return 0;
+47 }
+.fi
+.SS "char* cati (char *str, \&.\&.\&.)"
+Concatenate strings inline
+.PP
+\fBNote:\fP
+.RS 4
+\fBcati()\fP uses a shared buffer\&. Don't use cati in functions which expect strings as arguments\&. Due to the shared memory bad things happen if the function gets called with cati in one argument\&.
+.RE
+.PP
+\fBTodo\fP
+.RS 4
+Add option to specify different levels of buffers to avoid the above problem
+.RE
+.PP
+.PP
+\fBParameters:\fP
+.RS 4
+\fIstr\fP the first string 
+.br
+\fI\&.\&.\&.\fP the remaining strings, terminated by NULL 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+a pointer to the concatenated string 
+.RE
+.PP
+
+.PP
+Definition at line 29 of file cati\&.c\&.
+.PP
+.nf
+29                            {
+30   va_list ap;
+31   size_t len=0;
+32   char *ptr, *tmp;
+33 
+34   if (!str) return (char*)NULL;
+35 
+36   len = strlen(str);
+37 
+38   va_start(ap, str);
+39   while ((tmp = va_arg(ap, char*)))
+40     len += strlen(tmp);
+41   va_end(ap);
+42 
+43   if (len+1 >= catmem\&.buflen) {
+44     if (!(tmp = realloc(catmem\&.dest, len+1)))
+45       return (char*)NULL;
+46     else {
+47       catmem\&.buflen = len+1;
+48       catmem\&.dest = tmp;
+49     }
+50   }
+51 
+52   ptr = catmem\&.dest;
+53 
+54   for (tmp=str; *tmp; tmp++) *ptr++ = *tmp;
+55 
+56   va_start(ap, str);
+57   while ((tmp = va_arg(ap, char*))){
+58     while (*tmp) *ptr++ = *tmp++;
+59   }
+60   va_end(ap);
+61   *ptr = '\0';
+62   return catmem\&.dest;
+63 }
+.fi
+.SS "int catn (char **dest, intlen, char *str, \&.\&.\&.)"
+Concatenate strings into a buffer with limit
+.PP
+\fBNote:\fP
+.RS 4
+: You should free the buffer malloc()d by cat after use
+.RE
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdest\fP the buffer to store the new string 
+.br
+\fIlen\fP the maximum string length 
+.br
+\fIstr\fP the first string 
+.br
+\fI\&.\&.\&.\fP the remaining strings, terminated by NULL 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 on error 
+.RE
+.PP
+
+.SS "void freecati ()"
+Free the memory used by \fBcati()\fP 
+.PP
+Definition at line 66 of file cati\&.c\&.
+.PP
+.nf
+66                      {
+67   free (catmem\&.dest);
+68   catmem\&.dest = 0;
+69   catmem\&.buflen = 0;
+70 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

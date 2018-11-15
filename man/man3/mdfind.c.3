@@ -1,0 +1,93 @@
+.TH "/home/travis/build/bwachter/ibaard/src/mdfind.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/mdfind.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'ibaard_maildir\&.h'\fP
+.br
+\fC#include 'ibaard_fs\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+\fC#include 'ibaard_cat\&.h'\fP
+.br
+\fC#include 'logtypes\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBmdfind\fP (char *maildir)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBmdfind\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int mdfind (char *maildir)"
+Try to locate the users Mailder
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 13 of file mdfind\&.c\&.
+.PP
+.nf
+13                          {
+14   // TODO: maybe look what's in maildirpath\&. check if directory exists
+15   if (maildir) {
+16     maildirpath=strdup(maildir);
+17     if (!td(maildirpath)) return 0;
+18   }
+19 
+20   if ((maildirpath=getenv("MAILDIR"))==NULL){
+21 #ifdef _WIN32
+22     if (getenv("USERPROFILE")==NULL){
+23       logmsg(L_ERROR, F_MAILDIR, "%MAILDIR% not set, %USERPROFILE% not found", NULL);
+24 #else
+25       if (getenv("HOME")==NULL){
+26         logmsg(L_ERROR, F_MAILDIR, "$MAILDIR not set, $HOME not found", NULL);
+27 #endif
+28         return -1;
+29       } else {
+30 #ifdef _WIN32
+31         if (cat(&maildirpath, getenv("USERPROFILE"), "/Maildir", NULL)) return -1;
+32 #else
+33         if (cat(&maildirpath, getenv("HOME"), "/Maildir", NULL)) return -1;
+34 #endif
+35         else if (!td(maildirpath)) return 0;
+36       }
+37     } else {
+38       maildirpath=strdup(getenv("MAILDIR"));
+39       if (!td(maildirpath)) return 0;
+40     }
+41 
+42     return -1; // if we got that far we did not find a usable maildir
+43   }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

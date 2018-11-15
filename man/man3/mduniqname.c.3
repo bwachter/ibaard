@@ -1,0 +1,95 @@
+.TH "/home/travis/build/bwachter/ibaard/src/mduniqname.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/mduniqname.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <time\&.h>\fP
+.br
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include 'ibaard_maildir\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+\fC#include 'ibaard_cat\&.h'\fP
+.br
+\fC#include 'logtypes\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBmduniqname\fP (char **uniqname)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBmduniqname\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int mduniqname (char **uniqname)"
+Create a unique name to store a mail in Maildir
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 23 of file mduniqname\&.c\&.
+.PP
+.nf
+23                                {
+24   char tmpbuf[512];
+25   char myhost[NI_MAXHOST];
+26 
+27 #ifndef _POSIX_SOURCE
+28 #ifdef _WIN32
+29   int mypid=_getpid();
+30 #endif
+31   time_t mytime=time(NULL);
+32 #else
+33   pid_t mypid=getpid();
+34   struct timeval mytime;
+35   gettimeofday(&mytime, NULL);
+36 #endif
+37 
+38   if (gethostname(myhost, NI_MAXHOST)==-1){
+39     logmsg(L_WARNING, F_MAILDIR, "unable to get hostname, setting to localhost\&.localdomain", NULL);
+40     strcpy(myhost, "localhost\&.localdomain");
+41   }
+42 
+43   deliveries++;
+44 
+45 #ifdef _POSIX_SOURCE
+46   sprintf(tmpbuf, "%li\&.M%liP%iQ%i", (unsigned long)mytime\&.tv_sec, (unsigned long)mytime\&.tv_usec, (int) mypid, deliveries);
+47 #else
+48   sprintf(tmpbuf, "%li\&.P%iQ%i", (unsigned long)mytime, (int) mypid, deliveries);
+49 #endif
+50   cat(&*uniqname, tmpbuf, "\&.", myhost, NULL);
+51 
+52   return 0; // FIXME, kludge
+53 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

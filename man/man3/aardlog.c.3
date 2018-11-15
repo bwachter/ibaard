@@ -1,0 +1,148 @@
+.TH "/home/travis/build/bwachter/ibaard/src/aardlog.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/aardlog.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'ibaard_platform\&.h'\fP
+.br
+\fC#include <stdarg\&.h>\fP
+.br
+\fC#include <string\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <strings\&.h>\fP
+.br
+\fC#include 'ibaard\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBloglevel\fP (int level)"
+.br
+.ti -1c
+.RI "int \fBlogmsg_fd\fP (int fd, int level, char *facility, char *msg,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "int \fBlogmsg\fP (int level, char *facility, char *msg,\&.\&.\&.)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBaardlog\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int loglevel (intlevel)"
+Change or get loglevel
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlevel\fP 0 to check loglevel, any value from LOGLEVELS to set level 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+the current loglevel, or the new loglevel set 
+.RE
+.PP
+
+.PP
+Definition at line 31 of file aardlog\&.c\&.
+.PP
+.nf
+31                        {
+32   if (level != 0)
+33     current_loglevel = level;
+34   return current_loglevel;
+35 }
+.fi
+.SS "int logmsg (intlevel, char *facility, char *msg, \&.\&.\&.)"
+Write a log message to stdout
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 92 of file aardlog\&.c\&.
+.PP
+.nf
+92                                                       {
+93   va_list ap;
+94   char *tmp;
+95   int die=0;
+96 
+97   if (level > current_loglevel) return 0;
+98 
+99   die=logheader(1, level, facility);
+100 
+101   logwrite(1, msg);
+102   va_start(ap, msg);
+103   while ((tmp = va_arg(ap, char*)))
+104     logwrite(1, tmp);
+105   va_end(ap);
+106   __write1("\n");
+107 
+108   if (die) exit(-1);
+109   return 0;
+110 }
+.fi
+.SS "int logmsg_fd (intfd, intlevel, char *facility, char *msg, \&.\&.\&.)"
+Write a log message to fd
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 71 of file aardlog\&.c\&.
+.PP
+.nf
+71                                                                  {
+72   va_list ap;
+73   char *tmp;
+74   int die=0;
+75 
+76   if (level > current_loglevel) return 0;
+77 
+78   die=logheader(fd, level, facility);
+79 
+80   logwrite(fd, msg);
+81   va_start(ap, msg);
+82   while ((tmp = va_arg(ap, char*)))
+83     logwrite(fd, tmp);
+84   va_end(ap);
+85   __writefd(fd, "\n");
+86 
+87   if (die) exit(-1);
+88   return 0;
+89 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

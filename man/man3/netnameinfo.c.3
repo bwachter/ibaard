@@ -1,0 +1,109 @@
+.TH "/home/travis/build/bwachter/ibaard/src/netnameinfo.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/netnameinfo.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdint\&.h>\fP
+.br
+\fC#include 'ibaard_network\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+\fC#include 'logtypes\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBnetnameinfo\fP (const struct sockaddr *sa, socklen_t salen, char *hostname, size_t hostlen, char *servname, size_t servlen, int flags)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBnetnameinfo\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int netnameinfo (const struct sockaddr *sa, socklen_tsalen, char *hostname, size_thostlen, char *servname, size_tservlen, intflags)"
+A wrapper around getnameinfo() when available, emulation on other platforms
+.PP
+\fBnetnameinfo()\fP is just a wrapper around getnameinfo() on systems which support it, just like \fBnetaddrinfo()\fP\&.
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation (parameters, return value) 
+.RE
+.PP
+
+.PP
+Definition at line 12 of file netnameinfo\&.c\&.
+.PP
+.nf
+14                                                           {
+15 #ifdef _WIN32
+16   HINSTANCE _hInstance = LoadLibrary( "ws2_32" );
+17   int (WSAAPI *pfn_getnameinfo) (const struct sockaddr*, socklen_t salen,
+18                                  char *hostname, size_t hostlen,
+19                                  char *servname, size_t servlen, int flags);
+20 
+21   pfn_getnameinfo =     GetProcAddress( _hInstance, "getnameinfo" );
+22 
+23   if (pfn_getnameinfo){
+24     return (pfn_getnameinfo(sa, salen, hostname, hostlen, servname, servlen, flags));
+25   } else {
+26 #endif
+27 #if (defined( _WIN32)) || (defined(_BROKEN_IO))
+28 #ifdef __GNUC__
+29     (void) flags;
+30     (void) salen;
+31 #endif
+32     char *tmp;
+33     if ((tmp = malloc((NI_MAXHOST+1)*sizeof(char))) == NULL) {
+34       logmsg(L_ERROR, F_NET, "malloc() failed", NULL);
+35       return -1;
+36     }
+37 
+38     if (servname != NULL) {
+39       uint16_t service_int;
+40       service_int = ntohs(((struct sockaddr_in*)sa)->sin_port);
+41       snprintf(tmp, NI_MAXHOST, "%i", service_int);
+42       strncpy(servname, tmp, servlen);
+43     }
+44 
+45     free(tmp);
+46 
+47     if (hostname != NULL) {
+48       if ((tmp = inet_ntoa(((struct sockaddr_in*)sa)->sin_addr)) == NULL){
+49         logmsg(L_ERROR, F_NET, "converting ip failed", NULL);
+50       }
+51       strncpy(hostname, tmp, hostlen);
+52     }
+53     return 0;
+54 #ifdef _WIN32
+55   }
+56 #endif
+57 #else
+58   return (getnameinfo(sa, salen, hostname, hostlen, servname, servlen, flags));
+59 #endif
+60 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

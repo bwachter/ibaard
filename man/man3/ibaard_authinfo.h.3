@@ -1,0 +1,179 @@
+.TH "/home/travis/build/bwachter/ibaard/src/ibaard_authinfo.h" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/ibaard_authinfo.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <netdb\&.h>\fP
+.br
+\fC#include 'ibaard_types\&.h'\fP
+.br
+
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef struct _authinfo \fBauthinfo\fP"
+.br
+.ti -1c
+.RI "typedef struct _authinfo_key \fBauthinfo_key\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBauthinfo_init\fP ()"
+.br
+.ti -1c
+.RI "int \fBauthinfo_lookup\fP (\fBauthinfo\fP *authinfo_data)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Functions for authinfo parsing 
+.PP
+Definition in file \fBibaard_authinfo\&.h\fP\&.
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef struct _authinfo \fBauthinfo\fP"
+An entry in \&.authinfo 
+.PP
+Definition at line 18 of file ibaard_authinfo\&.h\&.
+.SS "typedef struct _authinfo_key \fBauthinfo_key\fP"
+A key in authinfo, with information if it has arguments 
+.PP
+Definition at line 21 of file ibaard_authinfo\&.h\&.
+.SH "Function Documentation"
+.PP 
+.SS "int authinfo_init ()"
+Parse authinfo
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.PP
+\fBReturns:\fP
+.RS 4
+-1 on error, 0 on success 
+.RE
+.PP
+.RE
+.PP
+
+.PP
+Definition at line 39 of file authinfo\&.c\&.
+.PP
+.nf
+39                    {
+40   int err, nextrecord=0;
+41   char *home, *authinfo_content=0, *tmp, *tmp1;
+42   char *path=NULL;
+43   unsigned long authinfo_len, l;
+44   authinfo authinfo_tmp;
+45   authinfo_key *key;
+46 
+47   if (((home=getenv("HOME"))==NULL) && ((home=getenv("USERPROFILE"))==NULL)){
+48     logmsg(L_WARNING, F_AUTHINFO, "unable to find the home directory", NULL);
+49     return -1;
+50   }
+51 
+52   if (cat(&path, home, "/\&.authinfo", NULL)) return -1;
+53   if ((err=tf(path))==-1){
+54     logmsg(L_INFO, F_AUTHINFO, "no authinfo found: ", strerror(err), NULL);
+55     free(path);
+56     return -1;
+57   }
+58   if ((err=openreadclose(path, &authinfo_content, &authinfo_len))){
+59     logmsg(L_WARNING, F_AUTHINFO, "unable to read authinfo: ", strerror(err), NULL);
+60     free(path);
+61     free(authinfo_content);
+62     return -1;
+63   }
+64 
+65   logmsg(L_INFO, F_AUTHINFO, "using authinfo file in ", path, NULL);
+66   free(path);
+67 
+68   tmp=authinfo_content;
+69   l=0;
+70   memset(&authinfo_tmp, 0, sizeof(authinfo));
+71   while (l<authinfo_len){
+72     for (key=authinfo_keys; key->name; key++){
+73       if (!strncmp(authinfo_content+l, key->name, strlen(key->name))){
+74         l+=strlen(key->name)+1;
+75         if (key->hasargs){
+76           for (tmp=authinfo_content+l,tmp1=tmp;*tmp!=' ' && *tmp!='\n';tmp++,l++);
+77           if (*tmp=='\n') nextrecord=1;
+78           *tmp=0;
+79           if (!strcmp(key->name, "machine")) strcpy(authinfo_tmp\&.machine, tmp1);
+80           if (!strcmp(key->name, "port")) strcpy(authinfo_tmp\&.port, tmp1);
+81           if (!strcmp(key->name, "login")) strcpy(authinfo_tmp\&.login, tmp1);
+82           if (!strcmp(key->name, "password")) strcpy(authinfo_tmp\&.password, tmp1);
+83           if (!strcmp(key->name, "force"))
+84             if (!strcmp(tmp1, "yes")) authinfo_tmp\&.force=1;
+85         } else {
+86           if (!strcmp(key->name, "default")) authinfo_tmp\&.defaultauth=1;
+87           l--;
+88         }
+89         break;
+90       }
+91     }
+92     if ((!strncmp(authinfo_content+l, "\n", 1)) || nextrecord){
+93       authinfo_append(&authinfo_tmp);
+94       memset(&authinfo_tmp, 0, sizeof(authinfo));
+95       nextrecord=0;
+96     }
+97     l++;
+98   }
+99 
+100   free(authinfo_content);
+101   return 0;
+102 }
+.fi
+.SS "int authinfo_lookup (\fBauthinfo\fP *authinfo_data)"
+Look up an authinfo record
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 104 of file authinfo\&.c\&.
+.PP
+.nf
+104                                             {
+105   authinfo *p, defaultauth;
+106   memset(&defaultauth, 0, sizeof(authinfo));
+107   for (p=authinfo_storage; p!=NULL; p=p->next){
+108     if (p->defaultauth){
+109       memcpy(&defaultauth, p, sizeof(authinfo));
+110       continue;
+111     }
+112     if (strcmp(authinfo_data->machine, ""))
+113       if (strcmp(authinfo_data->machine, p->machine))
+114         continue;
+115     if (strcmp(authinfo_data->port, ""))
+116       if (strcmp(authinfo_data->port, p->port))
+117         continue;
+118     if (strcmp(authinfo_data->login, ""))
+119       if (strcmp(authinfo_data->login, p->login))
+120         continue;
+121     if (strcmp(authinfo_data->password, ""))
+122       if (strcmp(authinfo_data->password, p->password))
+123         continue;
+124     // if we got that far we either found a valid data, or
+125     // all fields are set to NULL
+126     memcpy(authinfo_data, p, sizeof(authinfo));
+127     authinfo_data->next=NULL;
+128     return 0;
+129   }
+130   return -1; // we did not find a key
+131 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.

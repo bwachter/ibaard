@@ -1,0 +1,122 @@
+.TH "/home/travis/build/bwachter/ibaard/src/netsocket.c" 3 "Thu Nov 15 2018" "ibaard" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/travis/build/bwachter/ibaard/src/netsocket.c \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'ibaard_network\&.h'\fP
+.br
+\fC#include 'ibaard_types\&.h'\fP
+.br
+\fC#include 'ibaard_log\&.h'\fP
+.br
+\fC#include 'logtypes\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBnetsocket\fP (struct addrinfo *ai)"
+.br
+.ti -1c
+.RI "int \fBnetsocket2\fP (struct addrinfo *ai, struct addrinfo *lai)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor:\fP
+.RS 4
+Bernd Wachter bwachter@lart.info 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+2005-2011 
+.RE
+.PP
+
+.PP
+Definition in file \fBnetsocket\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "int netsocket (struct addrinfo *ai)"
+Open a network socket
+.PP
+Used by \fBnetconnect()\fP
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 12 of file netsocket\&.c\&.
+.PP
+.nf
+12                                   {
+13   return netsocket2(ai, NULL);
+14 }
+.fi
+.SS "int netsocket2 (struct addrinfo *ai, struct addrinfo *lai)"
+Open a network socket and bind to specific address
+.PP
+Used by \fBnetconnect()\fP
+.PP
+\fBTodo\fP
+.RS 4
+complete documentation 
+.RE
+.PP
+
+.PP
+Definition at line 16 of file netsocket\&.c\&.
+.PP
+.nf
+16                                                          {
+17   int sd;
+18 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
+19   int err;
+20 #endif
+21 
+22   if (loglevel(0) > 0)
+23     netlogportservice(ai->ai_addr, ai->ai_addrlen, "Trying to connect to: ");
+24 
+25   if ((sd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol)) < 0){
+26     logmsg(L_ERROR, F_NET, "socket() failed: ", strerror(errno), NULL);
+27     return -1;
+28   }
+29 
+30   if (lai!=NULL)
+31     if (bind(sd, lai->ai_addr, lai->ai_addrlen) < 0){
+32       logmsg(L_ERROR, F_NET, "bind() failed: ", strerror(errno), NULL);
+33       return -1;
+34     }
+35 
+36   if (connect(sd, ai->ai_addr, ai->ai_addrlen) < 0){
+37     logmsg(L_ERROR, F_NET, "connect() failed: ", strerror(errno), NULL);
+38     return -1;
+39   }
+40 
+41 #if (defined HAVE_SSL) || (defined HAVE_MATRIXSSL)
+42   if (am_sslconf & AM_SSL_USETLS){
+43     if ((err=netsslstart(sd)) && (am_sslconf & AM_SSL_ALLOWPLAIN)){
+44       logmsg(L_WARNING, F_NET, "no ssl available, continuing from start", NULL);
+45       close(sd);
+46       return netsocket(ai);
+47     } else if (err && !(am_sslconf & AM_SSL_ALLOWPLAIN)){
+48       logmsg(L_DEADLY, F_NET, "unable to open ssl connection, plaintext fallback disabled\&.", NULL);
+49     }
+50   }
+51 #endif
+52   return sd;
+53 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ibaard from the source code\&.
