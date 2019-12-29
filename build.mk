@@ -12,7 +12,7 @@ $(SRCDIR)/version.h: CHANGES
 
 clean:
 	$(Q)echo "cleaning up"
-	$(Q)$(RM) *.a *.exe *.lib $(BD_OBJ)/*.{o,obj,lib} crammd5/*.{o,obj,lib} $(BD_OBJ)/*.o dyn-*.mk
+	$(Q)$(RM) *.a *.exe *.lib lib/*.{a,o} $(BD_OBJ)/*.{o,obj,lib} crammd5/*.{o,obj,lib} $(BD_OBJ)/*.o dyn-*.mk
 	$(Q)$(RM) $(BD_OBJ)/*.gc* test tests/*.{o,obj,lib} tests/*.gc* *.gcov
 	$(Q)$(RM) -R test-run coverage
 
