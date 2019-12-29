@@ -15,6 +15,7 @@ doc/man
 test
 test-run/
 coverage/
+/html
 
 /targets
 /doc/Doxyfile.bak

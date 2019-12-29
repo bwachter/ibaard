@@ -1,0 +1,10 @@
+* ibaard
+
+This is a library with various helper functions useful in small C-programs. It works well with statically linked binaries and for embedded devices. The library itself is only built as static library. Preferred use is to compile it within a project, either as git submodule, or by downloading a tarball.
+
+Projects using ibaard include:
+
+- [[http://bwachter.lart.info/projects/aardmail/][aardmail]], a simple pop3 and smtp client
+- [[http://bwachter.lart.info/projects/asvm/][asvm]], a tiny service monitor
+
+API documentation can be built using doxygen, and is published to [[https://bwachter.github.io/ibaard/html/][github pages]].
