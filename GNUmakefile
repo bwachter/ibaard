@@ -20,6 +20,11 @@ CFLAGS=$(DEBUG_CFLAGS)
 LDFLAGS=$(DEBUG_LDFLAGS)
 endif
 
+ifdef NDK_TARGET
+CFLAGS+=-target $(NDK_TARGET) -D_POSIX_SOURCE=1
+LDFLAGS+=-target $(NDK_TARGET)
+endif
+
 ifdef WIN32
 LIBS+=-lws2_32 -lwsock32 -lgdi32
 EXE=.exe
@@ -82,4 +87,3 @@ endif
 
 dep: dyn-gmake.mk dyn-conf.mk
 	$(MAKE)
-
