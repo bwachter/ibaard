@@ -45,6 +45,9 @@ STRIP=
 CFLAGS=-g -Wall -W
 endif
 endif
+ifeq ($(shell uname),Darwin)
+CFLAGS+=-D_DARWIN_C_SOURCE
+endif
 endif
 
 ifdef BROKEN

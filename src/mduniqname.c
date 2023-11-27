@@ -6,7 +6,7 @@
 
 #include <time.h>
 #include <stdio.h>
-#ifdef _POSIX_SOURCE
+#if (defined _POSIX_SOURCE) || (defined _DARWIN_C_SOURCE)
 #include <unistd.h>
 #include <sys/time.h>
 #endif
@@ -24,15 +24,15 @@ int mduniqname(char **uniqname){
   char tmpbuf[512];
   char myhost[NI_MAXHOST];
 
-#ifndef _POSIX_SOURCE
+#if (defined _POSIX_SOURCE) || (defined _DARWIN_C_SOURCE)
+  pid_t mypid=getpid();
+  struct timeval mytime;
+  gettimeofday(&mytime, NULL);
+#else
 #ifdef _WIN32
   int mypid=_getpid();
 #endif
   time_t mytime=time(NULL);
-#else
-  pid_t mypid=getpid();
-  struct timeval mytime;
-  gettimeofday(&mytime, NULL);
 #endif
 
   if (gethostname(myhost, NI_MAXHOST)==-1){
@@ -42,7 +42,7 @@ int mduniqname(char **uniqname){
 
   deliveries++;
 
-#ifdef _POSIX_SOURCE
+#if (defined _POSIX_SOURCE) || (defined _DARWIN_C_SOURCE)
   sprintf(tmpbuf, "%li.M%liP%iQ%i", (unsigned long)mytime.tv_sec, (unsigned long)mytime.tv_usec, (int) mypid, deliveries);
 #else
   sprintf(tmpbuf, "%li.P%iQ%i", (unsigned long)mytime, (int) mypid, deliveries);

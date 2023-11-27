@@ -33,6 +33,10 @@
 #include <sys/reboot.h>
 #endif
 
+#ifdef _DARWIN_C_SOURCE
+#include <hfs/hfs_mount.h>
+#endif
+
 #include "ibaard_shell.h"
 #include "ibaard_types.h"
 #include "ibaard_log.h"
@@ -275,7 +279,22 @@ static void ash_mount(int argc, char **argv){
   (void) argc;
   if (argv[3]==NULL) return;
 
-  if (mount(argv[1], argv[2], argv[3], MS_MGC_VAL, "")){
+#ifdef _DARWIN_C_SOURCE
+  // this needs fixing and other filesystem support, for now this
+  // is just good enough to make this compile
+  struct hfs_mount_args data;
+  data.fspec = argv[2];
+#endif
+
+  if
+#ifdef _DARWIN_C_SOURCE
+    // type, target, flags, data
+    (mount(argv[3], argv[1], MNT_CPROTECT, (void*)&data))
+#else
+    // source, target, type, flags, data
+    (mount(argv[1], argv[2], argv[3], MS_MGC_VAL, ""))
+#endif
+  {
     emsg("mount: ", argv[1], " on ", argv[2], " as ", argv[3], " failed: ", strerror(errno), "\n", 0);
   }
 }
@@ -283,7 +302,13 @@ static void ash_mount(int argc, char **argv){
 static void ash_umount(int argc, char **argv){
   (void) argc;
 
-  if (umount(argv[1])) {
+  if
+#ifdef _DARWIN_C_SOURCE
+    (unmount(argv[1], MNT_FORCE))
+#else
+    (umount(argv[1]))
+#endif
+  {
 #ifdef __linux__
     emsg("umount: umounting ", argv[1], " failed, umounting with MNT_DETACH\n", 0);
     if (umount2(argv[1], MNT_DETACH))
