@@ -26,7 +26,7 @@ struct _maildirent {
 
 
 /** The path to the Maildir, once found */
-char *maildirpath;
+extern char *maildirpath;
 
 /** Create a unique name to store a mail in Maildir
  *

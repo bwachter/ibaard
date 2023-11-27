@@ -17,6 +17,8 @@
 #include "ibaard_cat.h"
 #include "logtypes.h"
 
+char *maildirpath;
+
 // FIXME
 static int maildir_harddelete=0; // shall we delete the mails, or just mark them deleted and remove them on cleanup?
 
