@@ -14,7 +14,7 @@ dyn-binary-targets.mk: targets build.mk system.mk
 	DEPS=`grep $$i targets | sed "s/\$$i//" | sed "s/\.exe//" | sed "s/\.c/\.o/g" | sed 's,src/,\$$(BD_OBJ)/,g'`;\
 	for j in $$DEPS; do echo -n "$$j " >&2; printf "$$j "; done;\
 	printf '\n\t$$(Q)echo "LD $$@"\n';\
-	printf '\t$$(Q)$$(DIET) $$(CROSS)$$(CC) $$(LDFLAGS) $$(INCLUDES) -o $$@ $(MK_ALL) $$(LIBS)\n\n';\
+	printf '\t$$(Q)$$(DIET) $$(CROSS)$$(LINKER) $$(LDFLAGS) $$(INCLUDES) -o $$@ $(MK_ALL) $$(LIBS)\n\n';\
 	  echo "" >&2 ;\
 	done 2>&1 >> $@
 
@@ -69,7 +69,7 @@ dyn-tests.mk: build.mk system.mk
 	done >> $@
 	$(Q)for i in 1; do \
 	  printf '\n\t$$(Q)echo "LD $$@"\n' ;\
-	  printf '\t$$(Q)$$(DIET) $$(CROSS)$$(CC) $$(LDFLAGS) $$(INCLUDES) -o $$@ $(MK_ALL) $$(LIBS) -lcheck ' ;\
+	  printf '\t$$(Q)$$(DIET) $$(CROSS)$$(LINKER) $$(LDFLAGS) $$(INCLUDES) -o $$@ $(MK_ALL) $$(LIBS) -lcheck ' ;\
 	  printf "`echo $(BD_LIB)|awk '{for (i=1;i<=NF;i++) printf " -l"$$i}'`\n" ;\
 	  printf '\t$$(Q)rm -Rf test-run && mkdir -p test-run && ./$$@\n' ;\
 	  printf '\t$$(Q)if [ -n "$$(MEMCHECK)" ]; then rm -Rf test-run && mkdir -p test-run && valgrind $$(VALGRIND_OPTS) ./$$@; fi\n\n' ;\

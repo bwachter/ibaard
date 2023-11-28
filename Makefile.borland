@@ -1,5 +1,5 @@
 CC=bcc32
-LD=bcc32
+LINKER=bcc32
 RM=del /F
 LDFLAGS=-tWC -w- -k- -q -O2 -lq -lc -lx -lGpd -lGn -lGl -lw- -v
 CFLAGS=-w- -O2 -q
@@ -9,10 +9,10 @@ SSLLIBS=ssleay32.lib libeay32.lib
 SSLCFLAGS=-DHAVE_SSL
 !endif
 Q=@
-OBJDIR=src\\
+BD_OBJ=src\\
 SRCDIR=src\\
 .PHONY: clean
-ibaard.lib:  $(OBJDIR)aardlog.obj $(OBJDIR)authinfo.obj $(OBJDIR)cat.obj $(OBJDIR)cati.obj $(OBJDIR)dmsg.obj $(OBJDIR)edit.obj $(OBJDIR)emsg.obj $(OBJDIR)fs_filewrite.obj $(OBJDIR)fs_md2.obj $(OBJDIR)fs_md.obj $(OBJDIR)fs_mf.obj $(OBJDIR)fs_openreadclose.obj $(OBJDIR)fs_rdf.obj $(OBJDIR)fs_td.obj $(OBJDIR)fs_tf.obj $(OBJDIR)fs_touch.obj $(OBJDIR)fs_xgetcwd.obj $(OBJDIR)kirahvi.obj $(OBJDIR)mdclose.obj $(OBJDIR)mdfind.obj $(OBJDIR)mdinit.obj $(OBJDIR)mdopen.obj $(OBJDIR)mduniqname.obj $(OBJDIR)msg.obj $(OBJDIR)netaddrinfo.obj $(OBJDIR)netconnect.obj $(OBJDIR)netlogportservice.obj $(OBJDIR)netnameinfo.obj $(OBJDIR)netread.obj $(OBJDIR)netreadline.obj $(OBJDIR)netsocket.obj $(OBJDIR)netsslcacert.obj $(OBJDIR)netsslread.obj $(OBJDIR)netsslstart.obj $(OBJDIR)netsslwrite.obj $(OBJDIR)netwriteline.obj $(OBJDIR)shell.obj $(OBJDIR)split.obj $(OBJDIR)strerror_ssl.obj $(OBJDIR)strip.obj
+ibaard.lib:  $(BD_OBJ)aardlog.obj $(BD_OBJ)authinfo.obj $(BD_OBJ)cat.obj $(BD_OBJ)cati.obj $(BD_OBJ)edit.obj $(BD_OBJ)emsg.obj $(BD_OBJ)fs_filewrite.obj $(BD_OBJ)fs_md.obj $(BD_OBJ)fs_mf.obj $(BD_OBJ)fs_openreadclose.obj $(BD_OBJ)fs_rdf.obj $(BD_OBJ)fs_td.obj $(BD_OBJ)fs_tf.obj $(BD_OBJ)fs_touch.obj $(BD_OBJ)fs_wf.obj $(BD_OBJ)fs_xgetcwd.obj $(BD_OBJ)kirahvi.obj $(BD_OBJ)mdclose.obj $(BD_OBJ)mdfind.obj $(BD_OBJ)mdinit.obj $(BD_OBJ)mdopen.obj $(BD_OBJ)mduniqname.obj $(BD_OBJ)msg.obj $(BD_OBJ)netaddrinfo.obj $(BD_OBJ)netconnect.obj $(BD_OBJ)netlogportservice.obj $(BD_OBJ)netnameinfo.obj $(BD_OBJ)netread.obj $(BD_OBJ)netreadline.obj $(BD_OBJ)netsocket.obj $(BD_OBJ)netsslcacert.obj $(BD_OBJ)netsslread.obj $(BD_OBJ)netsslstart.obj $(BD_OBJ)netsslwrite.obj $(BD_OBJ)netwriteline.obj $(BD_OBJ)shell.obj $(BD_OBJ)split.obj $(BD_OBJ)strerror_ssl.obj $(BD_OBJ)strip.obj
 	$(Q)echo "TLIB $@"
 	$(Q)tlib $(@F) /a $**
 

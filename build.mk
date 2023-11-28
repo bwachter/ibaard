@@ -27,7 +27,7 @@ debug: clean
 	$(MAKE) DEBUG=1
 
 coverage: debug
-	$(MAKE) test DEBUG=1 
+	$(MAKE) test DEBUG=1
 	$(Q)for i in src/*.gcda; do \
 	  SOURCE=`echo $$i|sed 's/\.gcda/.c/'` ;\
 	  gcov -o src $$SOURCE ;\
@@ -77,7 +77,7 @@ mswin32.mak:
 Makefile.borland:
 	$(Q)for i in 1; do \
 	printf "CC=bcc32\n";\
-	printf "LD=bcc32\nRM=del /F\n";\
+	printf "LINKER=bcc32\nRM=del /F\n";\
 	printf "LDFLAGS=-tWC -w- -k- -q -O2 -lq -lc -lx -lGpd -lGn -lGl -lw- -v\n";\
 	printf "CFLAGS=-w- -O2 -q\n";\
 	printf "LIBS=ws2_32.lib\n";\
