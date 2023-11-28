@@ -1,4 +1,9 @@
-dyn-conf.mk: targets build.mk
+common-clean:
+	$(Q)$(RM) $(BD_OBJ)/*.{o,obj,lib} dyn-*.mk *.{a,exe,lib,tds} *.so* $(BD_BINDIR)/* $(BD_LIBDIR)/*
+
+dyn-conf.mk: targets build.mk $(LOCAL_CONF)
+	$(Q)echo "ALL=" > $@
+	$(Q)if [ -n "$(LOCAL_CONF)" ]; then echo "$(MK_INCLUDE) $(LOCAL_CONF)"; fi >> $@
 	$(Q)for i in $(BD_LIB); do \
 	  if [ "x$(STATIC_LIBRARY)" = "x1" ]; then printf "ALL+=$(BD_LIBDIR)lib$$i.a\n"; fi ;\
 	  if [ "x$(DYNAMIC_LIBRARY)" = "x1" ]; then printf "ALL+=$(BD_LIBDIR)lib$$i.so.$(MAJOR).$(MINOR).$(RELEASE)\n"; fi \
@@ -11,7 +16,7 @@ dyn-binary-targets.mk: targets build.mk system.mk
 	$(Q)echo > $@; mkdir -p $(BD_BINDIR); for i in $(BD_BIN); do \
 	  echo -n "DEP LD $$i... " >&2;\
 	  printf "$(BD_BINDIR)$$i: " ;\
-	DEPS=`grep $$i targets | sed "s/\$$i//" | sed "s/\.exe//" | sed "s/\.c/\.o/g" | sed 's,src/,\$$(BD_OBJ)/,g'`;\
+	DEPS=`awk -v target=$$i -f mk/build-deps.awk targets`;\
 	for j in $$DEPS; do echo -n "$$j " >&2; printf "$$j "; done;\
 	printf '\n\t$$(Q)echo "LD $$@"\n';\
 	printf '\t$$(Q)$$(DIET) $$(CROSS)$$(LINKER) $$(LDFLAGS) $$(INCLUDES) -o $$@ $(MK_ALL) $$(LIBS)\n\n';\
@@ -23,7 +28,7 @@ dyn-library-targets.mk: targets build.mk system.mk
 	$(Q)echo > $@; mkdir -p $(BD_LIBDIR); for i in $(BD_LIB); do \
 	  _LIB=lib$$i ;\
 	  echo -n "DEP LIB $$i... " >&2;\
-	  DEPS=`grep $$i targets | sed "s/\$$i//" | sed "s/\.lib//" | sed "s/\.c/\.o/g" | sed 's,src/,\$$(BD_OBJ)/,g'`;\
+	  DEPS=`awk -v target=$$i -f mk/build-deps.awk targets`;\
 	  printf "$(BD_LIBDIR)$$_LIB.a:" ;\
 	for j in $$DEPS; do printf "$$j "; done;\
 	printf '\n\t$$(Q)echo "AR $$@"\n';\
@@ -71,6 +76,6 @@ dyn-tests.mk: build.mk system.mk
 	  printf '\n\t$$(Q)echo "LD $$@"\n' ;\
 	  printf '\t$$(Q)$$(DIET) $$(CROSS)$$(LINKER) $$(LDFLAGS) $$(INCLUDES) -o $$@ $(MK_ALL) $$(LIBS) -lcheck ' ;\
 	  printf "`echo $(BD_LIB)|awk '{for (i=1;i<=NF;i++) printf " -l"$$i}'`\n" ;\
-	  printf '\t$$(Q)rm -Rf test-run && mkdir -p test-run && ./$$@\n' ;\
+	  printf '\t$$(Q)rm -Rf test-run && mkdir -p test-run && ./$$@\n\n' ;\
 	  printf '\t$$(Q)if [ -n "$$(MEMCHECK)" ]; then rm -Rf test-run && mkdir -p test-run && valgrind $$(VALGRIND_OPTS) ./$$@; fi\n\n' ;\
 	done >> $@
